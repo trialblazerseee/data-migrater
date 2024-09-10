@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -81,7 +82,7 @@ public class TrackerUtil {
                 try {
                     statement = conn.createStatement();
                     statement.execute("SELECT COUNT(*) FROM " + TRACKER_TABLE_NAME);
-                    if(additionalFields != null && !additionalFields.isEmpty()) {
+                    if(StringUtils.hasText(additionalFields)) {
                         List<TrackerAdditionalColumns> val = mapper.readValue(additionalFields, new TypeReference<List<TrackerAdditionalColumns>>() {});
                         for(TrackerAdditionalColumns detail : val) {
                             PACKET_TRACKER_ADDITIONAL_FIELDS.put(detail.getColumnName(), detail.getIdSchemaField());
@@ -404,7 +405,7 @@ public class TrackerUtil {
                 sb.append(addColumn("UPD_BY", String.class, 100, false, dbTypes) + ",");
                 sb.append(addColumn("UPD_DTIMES", Timestamp.class, 100, false, dbTypes));
 
-                if(additionalFields != null && !additionalFields.isEmpty()) {
+                if(StringUtils.hasText(additionalFields)) {
                     List<TrackerAdditionalColumns> val = mapper.readValue(additionalFields, new TypeReference<List<TrackerAdditionalColumns>>() {});
                     for(TrackerAdditionalColumns detail : val) {
                         sb.append("," + addColumn(detail.getColumnName(), getClass(detail.getColumnType()), detail.getLength(), detail.getIsNotNull(), dbTypes));

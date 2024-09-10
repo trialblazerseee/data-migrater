@@ -166,23 +166,25 @@ public class PacketCreator {
                         demoMap.put("individualBiometrics", mapper.writeValueAsString(indiBiotype));
                     }
                 }
-            } else if (type.equals("documentType")) {
-                if (demoDetails.containsKey(id) && demoDetails.get(id) != null)
-                    demoMap.put(id, String.valueOf(demoDetails.get(id)));
             } else if (demoDetails.containsKey(id) && demoDetails.get(id) != null) {
-                switch (type) {
-                    case "simpleType":
-                        List<SimpleType> valList = new ArrayList<>();
-                        SimpleType simpleType = new SimpleType(primaryLamguage, demoDetails.get(id) == null ? "":demoDetails.get(id).toString());
-                        valList.add(simpleType);
-                        demoMap.put(id, mapper.writeValueAsString(valList));
-                        break;
+                if (type.equals("documentType")) {
+                    demoMap.put(id, String.valueOf(demoDetails.get(id)));
+                } else if (demoDetails.containsKey(id) && demoDetails.get(id) != null) {
+                    switch (type) {
+                        case "simpleType":
+                            List<SimpleType> valList = new ArrayList<>();
+                            SimpleType simpleType = new SimpleType(primaryLamguage, demoDetails.get(id) == null ? "":demoDetails.get(id).toString());
+                            valList.add(simpleType);
+                            demoMap.put(id, mapper.writeValueAsString(valList));
+                            break;
 
-                    case "number":
-
-                    case "string" :
-                        demoMap.put(id, demoDetails.get(id) == null ? "" : String.valueOf(demoDetails.get(id)));
-                        break;
+                        case "number":
+                        case "string":
+                            demoMap.put(id, demoDetails.get(id) == null ? "" : String.valueOf(demoDetails.get(id)));
+                            break;
+                        default:
+                            throw new Exception("Type '" + type + "' implementation missing in setDemographic");
+                    }
                 }
             } else if (required && !ignorableFields.contains(id)) {
                 throw new Exception("Mandatory Field '" + id + "' value missing");

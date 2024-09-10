@@ -85,7 +85,7 @@ public class TableDataMapperUtil implements DataMapperUtil {
                                 map.put(parameter.getParameterName(), formatter.replaceColumntoDataIfAny(value, dataMap2));
                             } catch (Exception e) {
                                 String param = value.replace("${", "").replace("}", "");
-                                map.put(parameter.getParameterName(), resultSet.get(param));
+                                    map.put(parameter.getParameterName(), resultSet.get(param));
                             }
                         } else {
                             map.put(parameter.getParameterName(), parameter.getParameterValue());
