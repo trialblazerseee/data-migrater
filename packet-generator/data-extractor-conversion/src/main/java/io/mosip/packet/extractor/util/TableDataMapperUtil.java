@@ -225,27 +225,30 @@ public class TableDataMapperUtil implements DataMapperUtil {
                     if(objectStoreFetchEnabled)
                         byteVal = objectStoreHelper.getBiometricObject(new String(byteVal, StandardCharsets.UTF_8));
                     byteVal = bioDocApiFactory.getDocData(byteVal, fieldMap).get(fieldMap);
-                    document.setDocument(byteVal);
-                    if(fieldFormatRequest.getDocumentAttributes() != null) {
-                        DocumentAttributes documentAttributes = fieldFormatRequest.getDocumentAttributes();
-                        String refField = documentAttributes.getDocumentRefNoField().contains("STATIC") ? "STATIC_" +  commonUtil.getDocumentAttributeStaticValue(documentAttributes.getDocumentRefNoField())
-                                :  fieldFormatRequest.getFieldNameWithoutSchema(documentAttributes.getDocumentRefNoField());
-                        document.setRefNumber(String.valueOf(resultSet.get(searchField + "_" + refField)));
-                        dataMap2.get(fieldFormatRequest.getFieldCategory()).put(fieldMap + ":" + refField, document.getRefNumber());
 
-                        String formatField = documentAttributes.getDocumentFormatField().contains("STATIC") ? "STATIC_" + commonUtil.getDocumentAttributeStaticValue(documentAttributes.getDocumentFormatField())
-                                :  fieldFormatRequest.getFieldNameWithoutSchema(documentAttributes.getDocumentFormatField());
-                        document.setFormat(String.valueOf(resultSet.get(searchField + "_" + formatField.toUpperCase())));
-                        dataMap2.get(fieldFormatRequest.getFieldCategory()).put(fieldMap + ":" + formatField, document.getFormat());
+                    if(byteVal != null) {
+                        document.setDocument(byteVal);
+                        if(fieldFormatRequest.getDocumentAttributes() != null) {
+                            DocumentAttributes documentAttributes = fieldFormatRequest.getDocumentAttributes();
+                            String refField = documentAttributes.getDocumentRefNoField().contains("STATIC") ? "STATIC_" +  commonUtil.getDocumentAttributeStaticValue(documentAttributes.getDocumentRefNoField())
+                                    :  fieldFormatRequest.getFieldNameWithoutSchema(documentAttributes.getDocumentRefNoField());
+                            document.setRefNumber(String.valueOf(resultSet.get(searchField + "_" + refField)));
+                            dataMap2.get(fieldFormatRequest.getFieldCategory()).put(fieldMap + ":" + refField, document.getRefNumber());
 
-                        String codeField = documentAttributes.getDocumentCodeField().contains("STATIC") ? "STATIC_" + commonUtil.getDocumentAttributeStaticValue(documentAttributes.getDocumentCodeField())
-                                :  fieldFormatRequest.getFieldNameWithoutSchema(documentAttributes.getDocumentCodeField());
-                        document.setType(String.valueOf(resultSet.get(searchField + "_" + codeField.toUpperCase())));
-                        dataMap2.get(fieldFormatRequest.getFieldCategory()).put(fieldMap + ":" + codeField, document.getType());
+                            String formatField = documentAttributes.getDocumentFormatField().contains("STATIC") ? "STATIC_" + commonUtil.getDocumentAttributeStaticValue(documentAttributes.getDocumentFormatField())
+                                    :  fieldFormatRequest.getFieldNameWithoutSchema(documentAttributes.getDocumentFormatField());
+                            document.setFormat(String.valueOf(resultSet.get(searchField + "_" + formatField.toUpperCase())));
+                            dataMap2.get(fieldFormatRequest.getFieldCategory()).put(fieldMap + ":" + formatField, document.getFormat());
+
+                            String codeField = documentAttributes.getDocumentCodeField().contains("STATIC") ? "STATIC_" + commonUtil.getDocumentAttributeStaticValue(documentAttributes.getDocumentCodeField())
+                                    :  fieldFormatRequest.getFieldNameWithoutSchema(documentAttributes.getDocumentCodeField());
+                            document.setType(String.valueOf(resultSet.get(searchField + "_" + codeField.toUpperCase())));
+                            dataMap2.get(fieldFormatRequest.getFieldCategory()).put(fieldMap + ":" + codeField, document.getType());
+                        }
+
+                        dataMap2.get(fieldFormatRequest.getFieldCategory()).put(fieldMap, mapper.writeValueAsString(document));
+                        dataMap2.get(fieldFormatRequest.getFieldCategory()).put(fieldFormatRequest.getFieldToMap() + "_" +originalField, "");
                     }
-
-                    dataMap2.get(fieldFormatRequest.getFieldCategory()).put(fieldMap, mapper.writeValueAsString(document));
-                    dataMap2.get(fieldFormatRequest.getFieldCategory()).put(fieldFormatRequest.getFieldToMap() + "_" +originalField, "");
                 }
             }
         }
