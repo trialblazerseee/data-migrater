@@ -14,7 +14,7 @@
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <kernel.khazana.version>1.2.0.1-SNAPSHOT</kernel.khazana.version>
+        <kernel.khazana.version>1.2.0.1</kernel.khazana.version>
     </properties>
 
     <repositories>
