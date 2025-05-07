@@ -247,8 +247,8 @@ public class CommonUtil {
             FieldFormatRequest dobFieldFormatRequest = (FieldFormatRequest) columnConfig.get(dob);
             FieldFormatRequest crdFieldFormatRequest = (FieldFormatRequest) columnConfig.get(crdt);
 
-            if(dobFieldFormatRequest == null)
-                throw new Exception("Missing Column Configuration in ApiRequest.json for the attribute " + dob + " and " + crdt);
+//            if(dobFieldFormatRequest == null)
+//               throw new Exception("Missing Column Configuration in ApiRequest.json for the attribute " + dob + " and " + crdt);
 
             LocalDate dateOfBirth = demoDetails.get(dob) != null ? convertStringToLocalDate((String) demoDetails.get(dob), dobFieldFormatRequest.getDestFormat().get(dobFieldFormatRequest.getDestFormat().size()-1).getFormat()) : null;
             LocalDate creationDate = demoDetails.get(crdt) != null ? convertStringToLocalDate((String) demoDetails.get(crdt), crdFieldFormatRequest.getDestFormat().get(crdFieldFormatRequest.getDestFormat().size()-1).getFormat()) : null;
