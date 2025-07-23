@@ -3,6 +3,7 @@ package io.mosip.packet.data.biosdk.bqat;
 import com.google.gson.Gson;
 import io.mosip.kernel.biometrics.entities.BIR;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.constant.ApiName;
 import io.mosip.packet.core.dto.biosdk.BioSDKRequestWrapper;
 import io.mosip.packet.core.logger.DataProcessLogger;
@@ -25,7 +26,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static io.mosip.packet.core.constant.GlobalConfig.IS_ONLY_FOR_QUALITY_CHECK;
-import static io.mosip.packet.core.constant.GlobalConfig.WRITE_BIOSDK_RESPONSE;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
@@ -44,6 +44,9 @@ public class BQATSdkImpl implements BioSdkApiFactory {
 
     @Autowired
     private Environment env;
+
+    @Autowired
+    private ApplicationConfig appConfig;
 
     @PostConstruct
     public void initialize() {
@@ -99,7 +102,7 @@ public class BQATSdkImpl implements BioSdkApiFactory {
             } finally {
                 LOGGER.debug("SESSION_ID", "QUALITY_CHECK", "calculateBioQuality()", "Existing BIOSDK for Quality Calculation. Reference Id : " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS)+ " ms)");
 
-                if(WRITE_BIOSDK_RESPONSE) {
+                if(appConfig.isWriteBiosdkResponseEnabled()) {
                     HashMap<String, String> csvMap = (HashMap<String, String>) bioSDKRequestWrapper.getInputObject();
                     csvMap.put(bioSDKRequestWrapper.getBiometricField(),  (new Gson()).toJson(bioSDKResponse));
                 }

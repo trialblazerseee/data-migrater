@@ -3,6 +3,7 @@ package io.mosip.packet.data.datareader;
 import com.google.gson.Gson;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.config.activity.Activity;
 import io.mosip.packet.core.constant.*;
 import io.mosip.packet.core.constant.activity.ActivityName;
@@ -30,7 +31,6 @@ import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.mosip.packet.core.constant.GlobalConfig.SESSION_KEY;
 import static io.mosip.packet.core.constant.GlobalConfig.*;
 import static io.mosip.packet.core.constant.RegistrationConstants.*;
 
@@ -72,6 +72,9 @@ public class DataBaseUtil implements DataReader {
 
     @Autowired
     private Activity activity;
+
+    @Autowired
+    private ApplicationConfig appConfig;
 
     private boolean oneTimeCheckForZeroOffset;
 
@@ -195,7 +198,7 @@ public class DataBaseUtil implements DataReader {
                         filterCondition += " AND ";
                     }
 
-                    filterCondition += trackColumn + String.format(" NOT IN (SELECT REF_ID FROM %s WHERE SESSION_KEY = '%s') ", TRACKER_TABLE_NAME, SESSION_KEY);
+                    filterCondition += trackColumn + String.format(" NOT IN (SELECT REF_ID FROM %s WHERE SESSION_KEY = '%s') ", TRACKER_TABLE_NAME, appConfig.getPredefinedSessionKey());
                     selectSql += filterCondition;
                 }
 
@@ -351,7 +354,7 @@ public class DataBaseUtil implements DataReader {
 
                             if ((processPercentage > 0.05 && processPercentage != 0) || (processPercentage == 0 && OFFSET_VALUE > 0 && oneTimeCheckForZeroOffset) || threadPool.getCurrentPendingCount() > 0) {
                             } else {
-                                if(IS_TRACKER_REQUIRED)
+                                if(appConfig.isTrackerEnabled())
                                     trackerUtil.closeStatement();
 
                                 OFFSET_VALUE = trackerUtil.getDatabaseOffset();

@@ -11,6 +11,7 @@ import io.mosip.kernel.keymanagerservice.dto.KeyPairGenerateResponseDto;
 import io.mosip.kernel.keymanagerservice.dto.UploadCertificateRequestDto;
 import io.mosip.kernel.keymanagerservice.service.KeymanagerService;
 import io.mosip.kernel.keymanagerservice.util.KeymanagerUtil;
+import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.constant.ApiName;
 import io.mosip.packet.core.constant.RegistrationConstants;
 import io.mosip.packet.core.dto.RequestWrapper;
@@ -84,6 +85,9 @@ public class ConfigUtil {
     @Autowired
     private KeymanagerUtil keymanagerUtil;
 
+    @Autowired
+    private ApplicationConfig appConfig;
+
 
     private static ConfigUtil configUtil;
 
@@ -141,7 +145,7 @@ public class ConfigUtil {
                     System.out.println("Nerwork Not available for Host : " + env.getProperty("mosip.internal.host") + "  Do you want to Continue (Y-Yes, N-No)");
                     String option = "Y";
 
-                    if(!IS_RUNNING_AS_BATCH) {
+                    if(!appConfig.isRunningAsBatch()) {
                         Scanner scanner = new Scanner(System.in);
                         option = scanner.next();
                     } else {

@@ -2,6 +2,7 @@ package io.mosip.packet.data.datapostprocessor;
 
 import io.mosip.commons.packet.dto.packet.PacketDto;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.constant.FieldCategory;
 import io.mosip.packet.core.constant.tracker.TrackerStatus;
 import io.mosip.packet.core.dto.DataProcessorResponseDto;
@@ -24,7 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static io.mosip.packet.core.constant.GlobalConfig.*;
+import static io.mosip.packet.core.constant.GlobalConfig.IS_ONLY_FOR_QUALITY_CHECK;
+import static io.mosip.packet.core.constant.GlobalConfig.getActivityName;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
@@ -51,6 +53,9 @@ public class MosipPacketDTOProcessor implements DataProcessor {
     @Autowired
     private TrackerUtil trackerUtil;
 
+    @Autowired
+    private ApplicationConfig appConfig;
+
     @Override
     public DataProcessorResponseDto process(DBImportRequest dbImportRequest, Object data, ResultSetter setter) throws Exception {
         DataProcessorResponseDto responseDto = new DataProcessorResponseDto();
@@ -75,7 +80,7 @@ public class MosipPacketDTOProcessor implements DataProcessor {
                         registrationId = commonUtil.generateRegistrationId(ConfigUtil.getConfigUtil().getCenterId(), ConfigUtil.getConfigUtil().getMachineId());
                     }
                 }
-                trackerUtil.addTrackerLocalEntry(dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()).toString(), registrationId, TrackerStatus.STARTED, dbImportRequest.getProcess(), null, SESSION_KEY, getActivityName());
+                trackerUtil.addTrackerLocalEntry(dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()).toString(), registrationId, TrackerStatus.STARTED, dbImportRequest.getProcess(), null, appConfig.getPredefinedSessionKey(), getActivityName());
 
                 Long startTime = System.nanoTime();
                 HashMap<String, Object> demoDetails = dataHashMap.get(FieldCategory.DEMO);

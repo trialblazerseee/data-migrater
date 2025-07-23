@@ -2,6 +2,7 @@ package io.mosip.packet.data.dataexporter;
 
 import com.google.gson.Gson;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.constant.GlobalConfig;
 import io.mosip.packet.core.constant.activity.ActivityName;
 import io.mosip.packet.core.constant.tracker.TrackerStatus;
@@ -22,7 +23,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static io.mosip.packet.core.constant.GlobalConfig.SESSION_KEY;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
@@ -36,6 +36,9 @@ public class MosipPacketExporter implements DataExporter {
     @Autowired
     PacketUploaderService packetUploaderService;
 
+    @Autowired
+    private ApplicationConfig appConfig;
+
 
     @Override
     public Object export(DataPostProcessorResponseDto dataPostProcessorResponseDto, Long processStartTime, ResultSetter setter) throws Exception {
@@ -46,7 +49,7 @@ public class MosipPacketExporter implements DataExporter {
         uploadList.add(uploadDTO);
         HashMap<String, PacketUploadResponseDTO> response = new HashMap<>();
         packetUploaderService.syncPacket(uploadList, ConfigUtil.getConfigUtil().getCenterId(), ConfigUtil.getConfigUtil().getMachineId(), response);
-        trackerUtil.addTrackerLocalEntry(dataPostProcessorResponseDto.getRefId(), uploadDTO.getPacketId(), TrackerStatus.SYNCED, null, uploadList, SESSION_KEY, GlobalConfig.getActivityName());
+        trackerUtil.addTrackerLocalEntry(dataPostProcessorResponseDto.getRefId(), uploadDTO.getPacketId(), TrackerStatus.SYNCED, null, uploadList, appConfig.getPredefinedSessionKey(), GlobalConfig.getActivityName());
         packetUploaderService.uploadSyncedPacket(uploadList, response);
         LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Packet Upload Response for " + refId + " : " + (new Gson()).toJson(response));
         ResultDto resultDto = new ResultDto();

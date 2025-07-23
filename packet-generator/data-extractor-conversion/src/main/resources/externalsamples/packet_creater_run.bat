@@ -1,1 +1,1 @@
-java -Dmosip.packet.creator.refer.internal.json.file=true -Dfile.encoding=UTF8 -jar ./data-extractor-conversion-1.2.0.1-SNAPSHOT.jar --spring.profiles.active=default --spring.config.location=application-default.properties
+java -Dmosip.data-extractor.application.config.refer-inernal-json-request-file=true -Dfile.encoding=UTF8 -jar ./data-extractor-conversion-1.2.0.1-SNAPSHOT.jar --spring.profiles.active=default --spring.config.location=application-default.properties

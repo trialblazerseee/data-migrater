@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import io.mosip.commons.packet.dto.PacketInfo;
 import io.mosip.commons.packet.dto.packet.PacketDto;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.constant.GlobalConfig;
 import io.mosip.packet.core.constant.activity.ActivityName;
 import io.mosip.packet.core.constant.tracker.TrackerStatus;
@@ -35,7 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static io.mosip.packet.core.constant.GlobalConfig.SESSION_KEY;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
@@ -58,6 +58,9 @@ public class MOSIPPostProcessor implements DataPostProcessor {
     @Value("${mosip.packet.uploader.enable:true}")
     private boolean enablePacketUpload;
 
+    @Autowired
+    private ApplicationConfig appConfig;
+
     @Override
     public DataPostProcessorResponseDto postProcess(DataProcessorResponseDto processObject, ResultSetter setter, Long processStartTime) throws Exception {
         DataPostProcessorResponseDto responseDto = new DataPostProcessorResponseDto();
@@ -77,7 +80,7 @@ public class MOSIPPostProcessor implements DataPostProcessor {
         Long timeDifference = System.nanoTime()-processStartTime;
         LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken for Packet Creation in Local Storage " + trackerRefId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
 
-        trackerUtil.addTrackerLocalEntry(processObject.getRefId(), info.getId(), TrackerStatus.CREATED, processObject.getProcess(), demoDetails, SESSION_KEY, GlobalConfig.getActivityName());
+        trackerUtil.addTrackerLocalEntry(processObject.getRefId(), info.getId(), TrackerStatus.CREATED, processObject.getProcess(), demoDetails, appConfig.getPredefinedSessionKey(), GlobalConfig.getActivityName());
 
         Path identityFile = Paths.get(System.getProperty("user.dir"), "identity.json");
 
@@ -118,7 +121,7 @@ public class MOSIPPostProcessor implements DataPostProcessor {
 
             if (enablePacketUpload) {
                 responseDto.getResponses().put("uploadDTO", uploadDTO);
-                trackerUtil.addTrackerLocalEntry(processObject.getRefId(), info.getId(), TrackerStatus.READY_TO_SYNC, null, responseDto, SESSION_KEY, GlobalConfig.getActivityName());
+                trackerUtil.addTrackerLocalEntry(processObject.getRefId(), info.getId(), TrackerStatus.READY_TO_SYNC, null, responseDto, appConfig.getPredefinedSessionKey(), GlobalConfig.getActivityName());
             } else {
                 responseDto.getResponses().put("message", "Successfully Inserted into Packet Tracker Table with Status PROCESSED_WITHOUT_UPLOAD");
                 LOGGER.warn("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Packet Uploader Disabled : " + trackerRefId);

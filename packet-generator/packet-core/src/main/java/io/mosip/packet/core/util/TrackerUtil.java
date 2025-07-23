@@ -6,6 +6,7 @@ import io.mosip.kernel.clientcrypto.service.impl.ClientCryptoFacade;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.constant.database.DBDriverType;
 import io.mosip.packet.core.constant.database.DBTypes;
 import io.mosip.packet.core.constant.TableQueries;
@@ -29,8 +30,8 @@ import java.io.ObjectOutputStream;
 import java.sql.*;
 import java.util.*;
 
-import static io.mosip.packet.core.constant.GlobalConfig.SESSION_KEY;
-import static io.mosip.packet.core.constant.GlobalConfig.*;
+import static io.mosip.packet.core.constant.GlobalConfig.IS_TPM_AVAILABLE;
+import static io.mosip.packet.core.constant.GlobalConfig.PACKET_TRACKER_ADDITIONAL_FIELDS;
 import static io.mosip.packet.core.constant.RegistrationConstants.*;
 
 @Component
@@ -64,16 +65,15 @@ public class TrackerUtil {
     @Autowired
     private QueryFormatter queryFormatter;
 
+    @Autowired
+    private ApplicationConfig appConfig;
+
     private ObjectMapper mapper = new ObjectMapper();
 
     @PostConstruct
     public void initialize(){
         try {
-
-            IS_TRACKER_REQUIRED = env.getProperty("mosip.packet.creator.tracking.required") == null ? false : Boolean.valueOf(env.getProperty("mosip.packet.creator.tracking.required"));
-            IS_RUNNING_AS_BATCH = env.getProperty("mosip.packet.creator.run.as.batch.execution") == null ? false : Boolean.valueOf(env.getProperty("mosip.packet.creator.run.as.batch.execution"));
-
-            if(conn == null && IS_TRACKER_REQUIRED) {
+            if(conn == null && appConfig.isTrackerEnabled()) {
                 DBTypes dbType = Enum.valueOf(DBTypes.class, env.getProperty("spring.datasource.tracker.dbtype"));
 
                 Class driverClass = Class.forName(dbType.getDriver());
@@ -97,7 +97,7 @@ public class TrackerUtil {
                 } catch (Exception e) {
                     System.out.println("Table " + TRACKER_TABLE_NAME +  " not Present in DB " + env.getProperty("spring.datasource.tracker.jdbcurl") +  ". Do you want to create ? Y-Yes, N-No");
                     String option ="";
-                    if(!IS_RUNNING_AS_BATCH) {
+                    if(!appConfig.isRunningAsBatch()) {
                         Scanner scanner = new Scanner(System.in);
                         option = scanner.next();
                     } else {
@@ -130,7 +130,7 @@ public class TrackerUtil {
                 } catch (Exception e) {
                     System.out.println("Table " + OFFSET_TRACKER_TABLE_NAME +  " not Present in DB " + env.getProperty("spring.datasource.tracker.jdbcurl") +  ". Do you want to create ? Y-Yes, N-No");
                     String option ="";
-                    if(!IS_RUNNING_AS_BATCH) {
+                    if(!appConfig.isRunningAsBatch()) {
                         Scanner scanner = new Scanner(System.in);
                         option = scanner.next();
                     } else {
@@ -165,7 +165,7 @@ public class TrackerUtil {
     }
 
     public synchronized void addTrackerEntry(TrackerRequestDto trackerRequestDto) throws SQLException {
-        if(IS_TRACKER_REQUIRED) {
+        if(appConfig.isTrackerEnabled()) {
             PreparedStatement preparedStatement = null;
             DBTypes dbType = Enum.valueOf(DBTypes.class, env.getProperty("spring.datasource.tracker.dbtype"));
 
@@ -250,7 +250,7 @@ public class TrackerUtil {
     }
 
     public synchronized void updateDatabaseOffset(Long offset) throws SQLException, InterruptedException {
-        if(IS_TRACKER_REQUIRED) {
+        if(appConfig.isTrackerEnabled()) {
             PreparedStatement preparedStatement = null;
             DBTypes dbType = Enum.valueOf(DBTypes.class, env.getProperty("spring.datasource.tracker.dbtype"));
 
@@ -258,7 +258,7 @@ public class TrackerUtil {
                 String query = TableQueries.getInsertQueries(OFFSET_TRACKER_TABLE_NAME, dbType);
                 Map<String, String> valueMap = new HashMap<>();
                 valueMap.put("TABLE_NAME", OFFSET_TRACKER_TABLE_NAME);
-                valueMap.put("SESSION_ID", SESSION_KEY);
+                valueMap.put("SESSION_ID", appConfig.getPredefinedSessionKey());
                 valueMap.put("VALUE", offset.toString());
                 valueMap.put("IN_USE", "N");
 
@@ -275,7 +275,7 @@ public class TrackerUtil {
     }
 
     public synchronized Long getDatabaseOffset() throws SQLException, InterruptedException {
-        if(IS_TRACKER_REQUIRED) {
+        if(appConfig.isTrackerEnabled()) {
             Statement statement = null;
             ResultSet resultSet = null;
             DBTypes dbType = Enum.valueOf(DBTypes.class, env.getProperty("spring.datasource.tracker.dbtype"));
@@ -285,13 +285,13 @@ public class TrackerUtil {
                     Thread.sleep(2000);
 
                 statement = conn.createStatement();
-                resultSet = statement.executeQuery("SELECT OFFSET_VALUE, IN_USE FROM " + OFFSET_TRACKER_TABLE_NAME + " WHERE SESSION_KEY = '" + SESSION_KEY + "'");
+                resultSet = statement.executeQuery("SELECT OFFSET_VALUE, IN_USE FROM " + OFFSET_TRACKER_TABLE_NAME + " WHERE SESSION_KEY = '" + appConfig.getPredefinedSessionKey() + "'");
                 if(resultSet.next()) {
                     Long value = resultSet.getLong(1);
                     String inUse = resultSet.getString(2);
 
                     if(inUse == null || inUse.equals("N") || inUse.isEmpty()) {
-                        statement.executeUpdate("UPDATE " + OFFSET_TRACKER_TABLE_NAME + " SET IN_USE = 'Y' WHERE SESSION_KEY = '" + SESSION_KEY + "'");
+                        statement.executeUpdate("UPDATE " + OFFSET_TRACKER_TABLE_NAME + " SET IN_USE = 'Y' WHERE SESSION_KEY = '" + appConfig.getPredefinedSessionKey() + "'");
                         return value;
                     } else {
                         LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "OffSet Tracker Table in Use retry after 5 seconds");
@@ -302,7 +302,7 @@ public class TrackerUtil {
                     String query = TableQueries.getInsertQueries(OFFSET_TRACKER_TABLE_NAME, dbType);
                     Map<String, String> valueMap = new HashMap<>();
                     valueMap.put("TABLE_NAME", OFFSET_TRACKER_TABLE_NAME);
-                    valueMap.put("SESSION_ID", SESSION_KEY);
+                    valueMap.put("SESSION_ID", appConfig.getPredefinedSessionKey());
                     valueMap.put("VALUE", "0");
                     valueMap.put("IN_USE", "Y");
                     statement.execute(queryFormatter.queryFormatter(query, valueMap));
@@ -322,7 +322,7 @@ public class TrackerUtil {
 
     @PreDestroy
     public void closeStatement() {
-        if(IS_TRACKER_REQUIRED) {
+        if(appConfig.isTrackerEnabled()) {
             if (conn != null) {
                 try {
                     if(preparedStatement != null) {
@@ -338,7 +338,7 @@ public class TrackerUtil {
     }
 
     public synchronized boolean isRecordPresent(Object value, String activity) throws SQLException, InterruptedException {
-        if(IS_TRACKER_REQUIRED) {
+        if(appConfig.isTrackerEnabled()) {
             PreparedStatement statement = null;
             ResultSet resultSet = null;
 
@@ -349,7 +349,7 @@ public class TrackerUtil {
                 statement = conn.prepareStatement(String.format("SELECT 1 FROM %s WHERE REF_ID = ? AND ACTIVITY = ? AND SESSION_KEY = ? AND STATUS != 'FAILED'", TRACKER_TABLE_NAME));
                 statement.setString(1, value.toString());
                 statement.setString(2, activity);
-                statement.setString(3, SESSION_KEY);
+                statement.setString(3, appConfig.getPredefinedSessionKey());
                 resultSet = statement.executeQuery();
 
                 if(resultSet.next())

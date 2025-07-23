@@ -7,6 +7,7 @@ import io.mosip.commons.packet.dto.packet.PacketDto;
 import io.mosip.kernel.biometrics.entities.BIR;
 import io.mosip.kernel.clientcrypto.service.impl.ClientCryptoFacade;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.config.activity.Activity;
 import io.mosip.packet.core.constant.*;
 import io.mosip.packet.core.constant.activity.ActivityName;
@@ -49,7 +50,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static io.mosip.packet.core.constant.GlobalConfig.SESSION_KEY;
 import static io.mosip.packet.core.constant.GlobalConfig.*;
 import static io.mosip.packet.core.constant.RegistrationConstants.*;
 
@@ -124,6 +124,9 @@ public class DataExtractionServiceImpl implements DataExtractionService {
     private Activity activity;
 
     private ObjectMapper mapper = new ObjectMapper();
+
+    @Autowired
+    private ApplicationConfig appConfig;
 
 
     @Override
@@ -213,12 +216,12 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                     trackerRequestDto.setRefId(resultDto.getRefId());
                     trackerRequestDto.setProcess(dbImportRequest.getProcess());
                     trackerRequestDto.setActivity(GlobalConfig.getActivityName());
-                    trackerRequestDto.setSessionKey(SESSION_KEY);
+                    trackerRequestDto.setSessionKey(appConfig.getPredefinedSessionKey());
                     trackerRequestDto.setStatus(resultDto.getStatus().toString());
                     trackerRequestDto.setComments(resultDto.getComments());
                     trackerRequestDto.setAdditionalMaps(resultDto.getAdditionalMaps());
                     trackerUtil.addTrackerEntry(trackerRequestDto);
-                    trackerUtil.addTrackerLocalEntry(resultDto.getRefId(), null, resultDto.getStatus(), dbImportRequest.getProcess(), resultDto.getComments(), SESSION_KEY, GlobalConfig.getActivityName());
+                    trackerUtil.addTrackerLocalEntry(resultDto.getRefId(), null, resultDto.getStatus(), dbImportRequest.getProcess(), resultDto.getComments(), appConfig.getPredefinedSessionKey(), GlobalConfig.getActivityName());
                 }
             };
 
@@ -233,7 +236,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                     trackerRequestDto.setRefId(dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()).toString());
                     trackerRequestDto.setProcess(dbImportRequest.getProcess());
                     trackerRequestDto.setActivity(GlobalConfig.getActivityName());
-                    trackerRequestDto.setSessionKey(SESSION_KEY);
+                    trackerRequestDto.setSessionKey(appConfig.getPredefinedSessionKey());
                     trackerRequestDto.setStatus(TrackerStatus.STARTED.toString());
                     trackerRequestDto.setComments("Object Ready For Processing");
                     trackerUtil.addTrackerEntry(trackerRequestDto);

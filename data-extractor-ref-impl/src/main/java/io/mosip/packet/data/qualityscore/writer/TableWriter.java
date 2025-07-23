@@ -2,6 +2,7 @@ package io.mosip.packet.data.qualityscore.writer;
 
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.constant.database.DBDriverType;
 import io.mosip.packet.core.constant.database.DBTypes;
 import io.mosip.packet.core.constant.tracker.NumberType;
@@ -26,7 +27,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
-import static io.mosip.packet.core.constant.GlobalConfig.IS_RUNNING_AS_BATCH;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
@@ -58,14 +58,15 @@ public class TableWriter implements QualityWriterFactory {
     @Value("${mosip.tablewriter.clear.table.required:true}")
     private boolean tableClearRequired;
 
+    @Autowired
+    private ApplicationConfig appConfig;
+
     @PostConstruct
     public void initialize(){
         columnMap.put("REF_ID", String.class);
         columnMap.put("REG_NO", String.class);
 
         try {
-            IS_RUNNING_AS_BATCH = env.getProperty("mosip.packet.creator.run.as.batch.execution") == null ? false : Boolean.valueOf(env.getProperty("mosip.packet.creator.run.as.batch.execution"));
-
             if(conn == null) {
                 DBTypes dbType = Enum.valueOf(DBTypes.class, env.getProperty("spring.datasource.tracker.dbtype"));
 
@@ -86,7 +87,7 @@ public class TableWriter implements QualityWriterFactory {
                         if(ifTablePresent) {
                             System.out.println("Table : " + WRITER_TABLE_NAME +  " Do you want to clear Table ? Y-Yes, N-No");
                             String option ="";
-                            if(!IS_RUNNING_AS_BATCH) {
+                            if(!appConfig.isRunningAsBatch()) {
                                 Scanner scanner = new Scanner(System.in);
                                 option = scanner.next();
                             } else if(tableClearRequired) {
@@ -100,7 +101,7 @@ public class TableWriter implements QualityWriterFactory {
                     } catch (Exception e) {
                         System.out.println("Table " + WRITER_TABLE_NAME +  " not Present in DB " + env.getProperty("spring.datasource.tracker.host") +  ". Do you want to create ? Y-Yes, N-No");
                         String option ="";
-                        if(!IS_RUNNING_AS_BATCH) {
+                        if(!appConfig.isRunningAsBatch()) {
                             Scanner scanner = new Scanner(System.in);
                             option = scanner.next();
                         } else {

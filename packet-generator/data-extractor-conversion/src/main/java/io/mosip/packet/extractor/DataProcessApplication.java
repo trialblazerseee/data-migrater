@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mosip.kernel.dataaccess.hibernate.config.HibernateDaoConfig;
 import io.mosip.kernel.dataaccess.hibernate.repository.impl.HibernateRepositoryImpl;
+import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.config.activity.Activity;
 import io.mosip.packet.core.constant.GlobalConfig;
 import io.mosip.packet.core.constant.activity.ActivityName;
@@ -38,17 +39,9 @@ public class DataProcessApplication {
     public static void main(String[] args) {
         ConfigurableApplicationContext context = SpringApplication.run(DataProcessApplication.class, args);
         try {
-            boolean internal = Boolean.parseBoolean(context.getEnvironment().getProperty("mosip.packet.creator.refer.internal.json.file"));
-            if(context.getEnvironment().getProperty("mosip.biometric.sdk.provider.write.sdk.response") != null)
-                WRITE_BIOSDK_RESPONSE = Boolean.parseBoolean(context.getEnvironment().getProperty("mosip.biometric.sdk.provider.write.sdk.response"));
-            if(context.getEnvironment().getProperty("mosip.packet.creator.tracking.required") != null)
-                IS_TRACKER_REQUIRED = Boolean.parseBoolean(context.getEnvironment().getProperty("mosip.packet.creator.tracking.required"));
-            if(context.getEnvironment().getProperty("mosip.packet.creator.run.as.batch.execution") != null)
-                IS_RUNNING_AS_BATCH = Boolean.parseBoolean(context.getEnvironment().getProperty("mosip.packet.creator.run.as.batch.execution"));
-            if(context.getEnvironment().getProperty("mosip.packet.creator.use.existing.session.key") != null)
-                SESSION_KEY = context.getEnvironment().getProperty("mosip.packet.creator.use.existing.session.key");
-            else
-                SESSION_KEY = RandomStringUtils.randomAlphanumeric(20);
+            ApplicationConfig appConfig = context.getBean(ApplicationConfig.class);
+            if(appConfig.getPredefinedSessionKey() == null)
+                appConfig.setPredefinedSessionKey(RandomStringUtils.randomAlphanumeric(20));
 
             context.getBean(MockDeviceUtil.class).resetDevices();
             context.getBean(MockDeviceUtil.class).initDeviceHelpers();
@@ -58,20 +51,20 @@ public class DataProcessApplication {
             if(GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_REPROCESSOR))
                 context.getBean(DataReProcessorApiFactory.class).reProcess();
 
-            if(internal) {
-                System.out.println("Current Session Key is " + SESSION_KEY + ". Please Enter New Session Key in-case Change.");
+            if(appConfig.isReferInernalJsonRequestFile()) {
+                System.out.println("Current Session Key is " + appConfig.getPredefinedSessionKey() + ". Please Enter New Session Key in-case Change.");
                 String sessionKey = "";
 
-                if(!IS_RUNNING_AS_BATCH) {
+                if(!appConfig.isRunningAsBatch()) {
                     Scanner scanner = new Scanner(System.in);
                     sessionKey = scanner.next();
-                    SESSION_KEY = sessionKey.trim().toUpperCase();
+                    appConfig.setPredefinedSessionKey(sessionKey.trim().toUpperCase());
                 }
 
                 System.out.println("Current Flow Enabled for  " + getActivityName() + " . Do you want to Continue (Y-Yes, N-No)");
                 String option = "";
 
-                if(!IS_RUNNING_AS_BATCH) {
+                if(!appConfig.isRunningAsBatch()) {
                     Scanner scanner = new Scanner(System.in);
                     option = scanner.next();
                 } else {
@@ -89,7 +82,7 @@ public class DataProcessApplication {
                 }
 
   // TODO Temporary removing this Need uncomment
-                //  if(!IS_RUNNING_AS_BATCH)
+                  // if(!appConfig.isRunningAsBatch())
                     System.exit(0);
             }
         } catch (UnknownHostException e) {

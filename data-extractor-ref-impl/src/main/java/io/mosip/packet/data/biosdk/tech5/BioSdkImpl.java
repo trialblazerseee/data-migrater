@@ -2,6 +2,7 @@ package io.mosip.packet.data.biosdk.tech5;
 
 import com.google.gson.Gson;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.constant.ApiName;
 import io.mosip.packet.core.dto.ResponseWrapper;
 import io.mosip.packet.core.dto.biosdk.*;
@@ -15,13 +16,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static io.mosip.packet.core.constant.GlobalConfig.IS_ONLY_FOR_QUALITY_CHECK;
-import static io.mosip.packet.core.constant.GlobalConfig.WRITE_BIOSDK_RESPONSE;
 
 @Component
 public class BioSdkImpl implements BioSdkApiFactory {
 
     @Autowired
     private DataRestClientService restApiClient;
+
+    @Autowired
+    private ApplicationConfig appConfig;
 
     private static final Logger LOGGER = DataProcessLogger.getLogger(BioSdkImpl.class);
 
@@ -43,7 +46,7 @@ public class BioSdkImpl implements BioSdkApiFactory {
         bioSDKRequest.setRequest(encodedRequest);
 
         ResponseWrapper response= (ResponseWrapper) restApiClient.postApi(ApiName.BIOSDK_QUALITY_CHECK, null, "", bioSDKRequest, ResponseWrapper.class, trakerRefid);
-        if(WRITE_BIOSDK_RESPONSE) {
+        if(appConfig.isWriteBiosdkResponseEnabled()) {
             HashMap<String, String> csvMap = (HashMap<String, String>) bioSDKRequestWrapper.getInputObject();
             csvMap.put(bioSDKRequestWrapper.getBiometricField(),  (new Gson()).toJson(response));
         }
