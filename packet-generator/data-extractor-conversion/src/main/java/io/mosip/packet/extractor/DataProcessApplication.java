@@ -2,6 +2,8 @@ package io.mosip.packet.extractor;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
+import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.dataaccess.hibernate.config.HibernateDaoConfig;
 import io.mosip.kernel.dataaccess.hibernate.repository.impl.HibernateRepositoryImpl;
 import io.mosip.packet.core.config.ApplicationConfig;
@@ -11,6 +13,7 @@ import io.mosip.packet.core.constant.activity.ActivityName;
 import io.mosip.packet.core.dto.RequestWrapper;
 import io.mosip.packet.core.dto.dbimport.DBImportRequest;
 import io.mosip.packet.core.dto.dbimport.PacketCreatorResponse;
+import io.mosip.packet.core.logger.DataProcessLogger;
 import io.mosip.packet.core.spi.datareprocessor.DataReProcessorApiFactory;
 import io.mosip.packet.core.util.regclient.ConfigUtil;
 import io.mosip.packet.extractor.service.DataExtractionService;
@@ -30,17 +33,20 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 import static io.mosip.packet.core.constant.GlobalConfig.*;
+import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
+import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
-@SpringBootApplication(scanBasePackages = { "io.mosip.packet.*", "${mosip.auth.adapter.impl.basepackage}", "io.mosip.kernel.clientcrypto.*", "io.mosip.kernel.dataaccess", "io.mosip.kernel.keymanagerservice.*", "io.mosip.kernel.biometrics.*","io.mosip.kernel.cbeffutil.*"}, exclude = {SecurityAutoConfiguration.class, HibernateDaoConfig.class, HibernateJpaAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = {"io.mosip.packet.*", "${mosip.auth.adapter.impl.basepackage}", "io.mosip.kernel.clientcrypto.*", "io.mosip.kernel.dataaccess", "io.mosip.kernel.keymanagerservice.*", "io.mosip.kernel.biometrics.*", "io.mosip.kernel.cbeffutil.*"}, exclude = {SecurityAutoConfiguration.class, HibernateDaoConfig.class, HibernateJpaAutoConfiguration.class})
 @EntityScan(basePackages = {"io.mosip.packet.core.entity", "io.mosip.kernel.idgenerator.rid.entity", "io.mosip.kernel.keymanagerservice.entity"})
-@EnableJpaRepositories(basePackages = {"io.mosip.packet.core.repository", "io.mosip.kernel.idgenerator.rid.repository", "io.mosip.kernel.keymanagerservice.repository"} , repositoryBaseClass = HibernateRepositoryImpl.class)
+@EnableJpaRepositories(basePackages = {"io.mosip.packet.core.repository", "io.mosip.kernel.idgenerator.rid.repository", "io.mosip.kernel.keymanagerservice.repository"}, repositoryBaseClass = HibernateRepositoryImpl.class)
 public class DataProcessApplication {
 
     public static void main(String[] args) {
+        Logger LOGGER = DataProcessLogger.getLogger(DataProcessApplication.class);
         ConfigurableApplicationContext context = SpringApplication.run(DataProcessApplication.class, args);
         try {
             ApplicationConfig appConfig = context.getBean(ApplicationConfig.class);
-            if(appConfig.getPredefinedSessionKey() == null)
+            if (appConfig.getPredefinedSessionKey() == null)
                 appConfig.setPredefinedSessionKey(RandomStringUtils.randomAlphanumeric(20));
 
             context.getBean(MockDeviceUtil.class).resetDevices();
@@ -48,42 +54,53 @@ public class DataProcessApplication {
             context.getBean(ConfigUtil.class).loadConfigDetails();
             GlobalConfig.setActivity(context.getBean(Activity.class).setActivity(null));
 
-            if(GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_REPROCESSOR))
+            if (GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_REPROCESSOR))
                 context.getBean(DataReProcessorApiFactory.class).reProcess();
 
-            if(appConfig.isReferInernalJsonRequestFile()) {
-                System.out.println("Current Session Key is " + appConfig.getPredefinedSessionKey() + ". Please Enter New Session Key in-case Change.");
-                String sessionKey = "";
-
-                if(!appConfig.isRunningAsBatch()) {
+            if (!appConfig.isRunningAsBatch()) {
+                do {
+                    System.out.println("Current Session Key is " + appConfig.getPredefinedSessionKey() + ". Please Enter New Session Key in-case Change.");
                     Scanner scanner = new Scanner(System.in);
-                    sessionKey = scanner.next();
-                    appConfig.setPredefinedSessionKey(sessionKey.trim().toUpperCase());
-                }
+                    String sessionKey = scanner.next();
+                    if (sessionKey != null && !sessionKey.isEmpty()) {
+                        appConfig.setPredefinedSessionKey(sessionKey.trim().toUpperCase());
+                        break;
+                    }
+                } while (appConfig.getPredefinedSessionKey() == null || appConfig.getPredefinedSessionKey().isEmpty());
+            } else {
+                System.out.println("Current Session Key is " + appConfig.getPredefinedSessionKey());
+            }
+            LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current Session Key is " + appConfig.getPredefinedSessionKey());
 
-                System.out.println("Current Flow Enabled for  " + getActivityName() + " . Do you want to Continue (Y-Yes, N-No)");
+
+            if (appConfig.isReferInernalJsonRequestFile()) {
                 String option = "";
 
-                if(!appConfig.isRunningAsBatch()) {
+                if (!appConfig.isRunningAsBatch()) {
+                    System.out.println("Current Flow Enabled for  " + getActivityName() + " . Do you want to Continue (Y-Yes, N-No)");
                     Scanner scanner = new Scanner(System.in);
                     option = scanner.next();
                 } else {
+                    System.out.println("Current Flow Enabled for  " + getActivityName());
                     option = "Y";
                 }
+                LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current Flow Enabled for  " + getActivityName());
 
-                if(option.equalsIgnoreCase("Y")) {
+
+                if (option.equalsIgnoreCase("Y")) {
                     FileInputStream io = new FileInputStream("./ApiRequest.json");
                     String requestJson = new String(io.readAllBytes(), StandardCharsets.UTF_8);
                     ObjectMapper mapper = new ObjectMapper();
-                    RequestWrapper<DBImportRequest> request = mapper.readValue(requestJson, new TypeReference<RequestWrapper<DBImportRequest>>() {});
-        //            System.out.println("Request : " + (new Gson()).toJson(request));
-                    PacketCreatorResponse response =  context.getBean(DataExtractionService.class).createPacketFromDataBase(request.getRequest());
-        //            System.out.println("Response : " + (new Gson()).toJson(response));
+                    RequestWrapper<DBImportRequest> request = mapper.readValue(requestJson, new TypeReference<RequestWrapper<DBImportRequest>>() {
+                    });
+                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Request  : " + (new Gson()).toJson(request));
+                    PacketCreatorResponse response = context.getBean(DataExtractionService.class).createPacketFromDataBase(request.getRequest());
+                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Response  : " + (new Gson()).toJson(response));
                 }
 
-  // TODO Temporary removing this Need uncomment
-                  // if(!appConfig.isRunningAsBatch())
-                    System.exit(0);
+                System.exit(0);
+            } else {
+                System.out.println("Current Flow Enabled for  " + getActivityName());
             }
         } catch (UnknownHostException e) {
             e.printStackTrace();
