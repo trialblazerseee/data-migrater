@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import static io.mosip.packet.core.constant.GlobalConfig.getActivityName;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
@@ -55,7 +56,7 @@ public class TableWriter implements QualityWriterFactory {
     @Autowired
     private QueryFormatter queryFormatter;
 
-    @Value("${mosip.tablewriter.clear.table.required:true}")
+    @Value("${mosip.tablewriter.clear.table.required:false}")
     private boolean tableClearRequired;
 
     @Autowired
@@ -85,12 +86,15 @@ public class TableWriter implements QualityWriterFactory {
                         boolean ifTablePresent = statement.execute("SELECT COUNT(*) FROM " + WRITER_TABLE_NAME);
 
                         if(ifTablePresent) {
-                            System.out.println("Table : " + WRITER_TABLE_NAME +  " Do you want to clear Table ? Y-Yes, N-No");
                             String option ="";
                             if(!appConfig.isRunningAsBatch()) {
+                                System.out.println("Table : " + WRITER_TABLE_NAME +  " Do you want to clear Table ? Y-Yes, N-No");
+                                LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Table : " + WRITER_TABLE_NAME +  " Do you want to clear Table ? Y-Yes, N-No");
                                 Scanner scanner = new Scanner(System.in);
                                 option = scanner.next();
                             } else if(tableClearRequired) {
+                                System.out.println("Table : " + WRITER_TABLE_NAME +  " truncating now.");
+                                LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Table : " + WRITER_TABLE_NAME +  " Clearing now.");
                                 option = "Y";
                             }
 

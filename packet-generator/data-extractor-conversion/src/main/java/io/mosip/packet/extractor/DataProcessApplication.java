@@ -46,8 +46,6 @@ public class DataProcessApplication {
         ConfigurableApplicationContext context = SpringApplication.run(DataProcessApplication.class, args);
         try {
             ApplicationConfig appConfig = context.getBean(ApplicationConfig.class);
-            if (appConfig.getPredefinedSessionKey() == null)
-                appConfig.setPredefinedSessionKey(RandomStringUtils.randomAlphanumeric(20));
 
             context.getBean(MockDeviceUtil.class).resetDevices();
             context.getBean(MockDeviceUtil.class).initDeviceHelpers();
@@ -56,22 +54,6 @@ public class DataProcessApplication {
 
             if (GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_REPROCESSOR))
                 context.getBean(DataReProcessorApiFactory.class).reProcess();
-
-            if (!appConfig.isRunningAsBatch()) {
-                do {
-                    System.out.println("Current Session Key is " + appConfig.getPredefinedSessionKey() + ". Please Enter New Session Key in-case Change.");
-                    Scanner scanner = new Scanner(System.in);
-                    String sessionKey = scanner.next();
-                    if (sessionKey != null && !sessionKey.isEmpty()) {
-                        appConfig.setPredefinedSessionKey(sessionKey.trim().toUpperCase());
-                        break;
-                    }
-                } while (appConfig.getPredefinedSessionKey() == null || appConfig.getPredefinedSessionKey().isEmpty());
-            } else {
-                System.out.println("Current Session Key is " + appConfig.getPredefinedSessionKey());
-            }
-            LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current Session Key is " + appConfig.getPredefinedSessionKey());
-
 
             if (appConfig.isReferInernalJsonRequestFile()) {
                 String option = "";
