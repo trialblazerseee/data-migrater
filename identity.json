@@ -1,0 +1,19 @@
+{
+  "identity" : {
+    "name" : {
+      "value" : "fullName"
+    },
+    "phone" : {
+      "value" : "phone"
+    },
+    "email" : {
+      "value" : "email"
+    },
+    "dob" : {
+      "value" : "dateOfBirth"
+    },
+    "crdt" : {
+      "value" : "createdDt"
+    }
+  }
+}

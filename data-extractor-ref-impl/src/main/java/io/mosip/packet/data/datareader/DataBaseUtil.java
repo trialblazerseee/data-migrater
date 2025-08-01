@@ -331,14 +331,14 @@ public class DataBaseUtil implements DataReader {
 
     @Override
     public void readData(DBImportRequest dbImportRequest, Map<FieldCategory, HashMap<String, Object>> dataHashMap, Map<String, HashMap<String, String>> fieldsCategoryMap, ResultSetter setter) throws Exception {
-        TOTAL_RECORDS_FOR_PROCESS = 0l;
+        TOTAL_RECORDS_FOR_PROCESS.set(0);
 
         try {
             if(conn != null) {
                 IS_DATABASE_READ_OPERATION = true;
                 initializeDocumentMap(dbImportRequest, fieldsCategoryMap);
                 oneTimeCheckForZeroOffset = true;
-                threadPool = new CustomizedThreadPoolExecutor(dbReaderMaxThreadPoolCount, dbReaderMaxRecordsCountPerThreadPool, dbReaderMaxThreadExecCount, activity.getActivity(ActivityName.DATA_CREATOR.name()).getActivityName().getActivityName(), activity.getActivity(ActivityName.DATA_CREATOR.name()).isMonitorRequired());
+                threadPool = new CustomizedThreadPoolExecutor(dbReaderMaxThreadPoolCount, dbReaderMaxThreadExecCount, dbReaderMaxRecordsCountPerThreadPool, activity.getActivity(ActivityName.DATA_CREATOR.name()).getActivityName().getActivityName(), activity.getActivity(ActivityName.DATA_CREATOR.name()).isMonitorRequired());
 
                 Timer dataReader = new Timer("DataBase Reader");
                 dataReader.schedule(new TimerTask() {
@@ -372,7 +372,7 @@ public class DataBaseUtil implements DataReader {
                                     LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current Row Count from result set is " + scrollableResultSet.getRow());
                                     LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current OFFSET Value is " + OFFSET_VALUE);
                                     LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current Fetch Size is " + scrollableResultSet.getFetchSize());
-                                    TOTAL_RECORDS_FOR_PROCESS += Long.valueOf(scrollableResultSet.getRow());
+                                    TOTAL_RECORDS_FOR_PROCESS.addAndGet(scrollableResultSet.getRow());
                                     OFFSET_VALUE += Long.valueOf(scrollableResultSet.getRow());
                                     trackerUtil.updateDatabaseOffset(OFFSET_VALUE);
                                 }

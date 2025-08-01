@@ -164,7 +164,9 @@ public class TrackerUtil {
         }
     }
 
-    public synchronized void addTrackerEntry(TrackerRequestDto trackerRequestDto) throws SQLException {
+    public synchronized void addTrackerEntry(TrackerRequestDto trackerRequestDto) throws SQLException, IOException, InterruptedException {
+        addTrackerLocalEntry(trackerRequestDto.getRefId(), trackerRequestDto.getRegNo(), TrackerStatus.valueOf(trackerRequestDto.getStatus()), trackerRequestDto.getProcess(), trackerRequestDto.getComments(), trackerRequestDto.getSessionKey(), trackerRequestDto.getActivity());
+
         if(appConfig.isTrackerEnabled()) {
             PreparedStatement preparedStatement = null;
             DBTypes dbType = Enum.valueOf(DBTypes.class, env.getProperty("spring.datasource.tracker.dbtype"));
@@ -466,7 +468,7 @@ public class TrackerUtil {
 
     }
 
-    public synchronized void addTrackerLocalEntry(String refId, String regNo, TrackerStatus status, String process, Object request, String sessionKey, String activity) throws SQLException, IOException, InterruptedException {
+    public void addTrackerLocalEntry(String refId, String regNo, TrackerStatus status, String process, Object request, String sessionKey, String activity) throws SQLException, IOException, InterruptedException {
         while(isConnCreation)
             Thread.sleep(10000);
 

@@ -1,0 +1,5567 @@
+{
+  "id": null,
+  "version": null,
+  "responsetime": "2023-08-11T10:53:26.670Z",
+  "metadata": null,
+  "response": {
+    "schema": [
+      {
+        "id": "IDSchemaVersion",
+        "inputRequired": false,
+        "type": "number",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "ID Schema Version",
+        "label": {
+          "eng": "IDSchemaVersion",
+          "hin": "?????????? ???????",
+          "fra": "IDSchemaVersion"
+        },
+        "controlType": null,
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "none",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": null,
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "IdSchemaVersion"
+      },
+      {
+        "id": "UIN",
+        "inputRequired": false,
+        "type": "string",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "UIN",
+        "label": {
+          "eng": "UIN",
+          "hin": "??????",
+          "fra": "UIN"
+        },
+        "controlType": "textbox",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "none",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": null,
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "UIN"
+      },
+      {
+        "id": "fullName",
+        "inputRequired": true,
+        "type": "simpleType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "Full Name",
+        "label": {
+          "eng": "Full Name",
+          "hin": "???? ???",
+          "fra": "Nom et prénom"
+        },
+        "controlType": "textbox",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [
+          {
+            "type": "regex",
+            "validator": "^(?=.{3,50}$).*",
+            "arguments": [],
+            "langCode": null
+          }
+        ],
+        "fieldCategory": "pvt",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": "FullName",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "name"
+      },
+      {
+        "id": "dateOfBirth",
+        "inputRequired": true,
+        "type": "string",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "dateOfBirth",
+        "label": {
+          "eng": "DOB",
+          "hin": "???? ????",
+          "fra": "Date de naissance"
+        },
+        "controlType": "ageDate",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [
+          {
+            "type": "regex",
+            "validator": "^(1869|18[7-9][0-9]|19[0-9][0-9]|20[0-9][0-9])/([0][1-9]|1[0-2])/([0][1-9]|[1-2][0-9]|3[01])$",
+            "arguments": [],
+            "langCode": null
+          }
+        ],
+        "fieldCategory": "pvt",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": "DateOfBirth",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [
+          {
+            "engine": "MVEL",
+            "expr": "identity.isNew || (identity.isUpdate && (identity.updatableFieldGroups contains 'IntroducerDetails' || identity.updatableFieldGroups contains 'DateOfBirth'))"
+          }
+        ],
+        "subType": "dateOfBirth"
+      },
+      {
+        "id": "gender",
+        "inputRequired": true,
+        "type": "simpleType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "gender",
+        "label": {
+          "eng": "Gender",
+          "hin": "????",
+          "fra": "Genre"
+        },
+        "controlType": "dropdown",
+        "fieldType": "dynamic",
+        "format": "",
+        "validators": [],
+        "fieldCategory": "pvt",
+        "alignmentGroup": "group1",
+        "visible": null,
+        "contactType": null,
+        "group": "Gender",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "gender"
+      },
+      {
+        "id": "bloodType",
+        "inputRequired": true,
+        "type": "simpleType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "bloodType",
+        "label": {
+          "eng": "Blood Type",
+          "hin": "???? ??????",
+          "fra": "Groupe sanguin"
+        },
+        "controlType": "dropdown",
+        "fieldType": "dynamic",
+        "format": "",
+        "validators": [],
+        "fieldCategory": "pvt",
+        "alignmentGroup": "group1",
+        "visible": null,
+        "contactType": null,
+        "group": "BloodType",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "bloodType"
+      },
+      {
+        "id": "addressLine1",
+        "inputRequired": true,
+        "type": "simpleType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "addressLine1",
+        "label": {
+          "eng": "Address",
+          "hin": "???",
+          "fra": "Adresse"
+        },
+        "controlType": "textbox",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [
+          {
+            "type": "regex",
+            "validator": "^(?=.{0,50}$).*",
+            "arguments": [],
+            "langCode": null
+          }
+        ],
+        "fieldCategory": "pvt",
+        "alignmentGroup": "address",
+        "visible": null,
+        "contactType": "Postal",
+        "group": "Address",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "addressLine1"
+      },
+      {
+        "id": "addressLine2",
+        "inputRequired": true,
+        "type": "simpleType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "addressLine2",
+        "label": {
+          "eng": "line2",
+          "hin": "???? 2",
+          "fra": "ligne 2"
+        },
+        "controlType": "textbox",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [
+          {
+            "type": "regex",
+            "validator": "^(?=.{3,50}$).*",
+            "arguments": [],
+            "langCode": null
+          }
+        ],
+        "fieldCategory": "pvt",
+        "alignmentGroup": "address",
+        "visible": null,
+        "contactType": "Postal",
+        "group": "Address",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "addressLine2"
+      },
+      {
+        "id": "residenceStatus",
+        "inputRequired": true,
+        "type": "simpleType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "residenceStatus",
+        "label": {
+          "eng": "Residence Status",
+          "hin": "???? ?? ??????",
+          "fra": "Statut de résidence"
+        },
+        "controlType": "dropdown",
+        "fieldType": "dynamic",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "kyc",
+        "alignmentGroup": "group1",
+        "visible": null,
+        "contactType": null,
+        "group": "ResidenceStatus",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "residenceStatus"
+      },
+      {
+        "id": "referenceIdentityNumber",
+        "inputRequired": true,
+        "type": "string",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "referenceIdentityNumber",
+        "label": {
+          "eng": "Reference Identity Number",
+          "hin": "?????? ????? ??????",
+          "fra": "Numéro d'identité de référence"
+        },
+        "controlType": "textbox",
+        "fieldType": "default",
+        "format": "kyc",
+        "validators": [
+          {
+            "type": "regex",
+            "validator": "^([0-9]{10,30})$",
+            "arguments": [],
+            "langCode": null
+          }
+        ],
+        "fieldCategory": "pvt",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": "ReferenceIdentityNumber",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "none"
+      },
+      {
+        "id": "state",
+        "inputRequired": true,
+        "type": "simpleType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "state",
+        "label": {
+          "eng": "State",
+          "hin": "?????",
+          "fra": "État"
+        },
+        "controlType": "dropdown",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [
+          {
+            "type": "regex",
+            "validator": "^(?=.{0,50}$).*",
+            "arguments": [],
+            "langCode": null
+          }
+        ],
+        "fieldCategory": "pvt",
+        "alignmentGroup": "Address",
+        "visible": null,
+        "contactType": "Postal",
+        "group": "Address",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "state"
+      },
+      {
+        "id": "city",
+        "inputRequired": true,
+        "type": "simpleType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "city",
+        "label": {
+          "eng": "City",
+          "hin": "???",
+          "fra": "Ville"
+        },
+        "controlType": "dropdown",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [
+          {
+            "type": "regex",
+            "validator": "^(?=.{0,50}$).*",
+            "arguments": [],
+            "langCode": null
+          }
+        ],
+        "fieldCategory": "pvt",
+        "alignmentGroup": "Address",
+        "visible": null,
+        "contactType": "Postal",
+        "group": "Address",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "city"
+      },
+      {
+        "id": "locality",
+        "inputRequired": true,
+        "type": "simpleType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "locality",
+        "label": {
+          "eng": "Locality",
+          "hin": "?????",
+          "fra": "Localité"
+        },
+        "controlType": "dropdown",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [
+          {
+            "type": "regex",
+            "validator": "^(?=.{0,50}$).*",
+            "arguments": [],
+            "langCode": null
+          }
+        ],
+        "fieldCategory": "pvt",
+        "alignmentGroup": "Address",
+        "visible": null,
+        "contactType": "Postal",
+        "group": "Address",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "locality"
+      },
+      {
+        "id": "postalCode",
+        "inputRequired": true,
+        "type": "string",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "postalCode",
+        "label": {
+          "eng": "Postal Code",
+          "hin": "??? ???",
+          "fra": "Code Postal"
+        },
+        "controlType": "textbox",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [
+          {
+            "type": "regex",
+            "validator": "^(?=.{0,50}$).*",
+            "arguments": [],
+            "langCode": null
+          }
+        ],
+        "fieldCategory": "pvt",
+        "alignmentGroup": "Address",
+        "visible": null,
+        "contactType": "Postal",
+        "group": "Address",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "postalCode"
+      },
+      {
+        "id": "phone",
+        "inputRequired": true,
+        "type": "string",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "phone",
+        "label": {
+          "eng": "Phone",
+          "hin": "???",
+          "fra": "Téléphone"
+        },
+        "controlType": "textbox",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [
+          {
+            "type": "regex",
+            "validator": "^[+]*([0-9]{1})([0-9]{9})$",
+            "arguments": [],
+            "langCode": null
+          }
+        ],
+        "fieldCategory": "pvt",
+        "alignmentGroup": "contact",
+        "visible": null,
+        "contactType": "email",
+        "group": "Phone",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "Phone"
+      },
+      {
+        "id": "email",
+        "inputRequired": true,
+        "type": "string",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "email",
+        "label": {
+          "eng": "Email",
+          "hin": "????",
+          "fra": "E-mail"
+        },
+        "controlType": "textbox",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [
+          {
+            "type": "regex",
+            "validator": "^[A-Za-z0-9_\\-]+(\\.[A-Za-z0-9_]+)*@[A-Za-z0-9_-]+(\\.[A-Za-z0-9_]+)*(\\.[a-zA-Z]{2,})$",
+            "arguments": [],
+            "langCode": null
+          }
+        ],
+        "fieldCategory": "pvt",
+        "alignmentGroup": "contact",
+        "visible": null,
+        "contactType": "email",
+        "group": "Email",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "Email"
+      },
+      {
+        "id": "introducerName",
+        "inputRequired": true,
+        "type": "simpleType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "introducerName",
+        "label": {
+          "eng": "Introducer Name",
+          "hin": "?????????? ?? ???",
+          "fra": "Nom de l'introducteur"
+        },
+        "controlType": "textbox",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "evidence",
+        "alignmentGroup": "introducer",
+        "visible": null,
+        "contactType": null,
+        "group": "IntroducerDetails",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": null,
+        "requiredOn": [
+          {
+            "engine": "MVEL",
+            "expr": "( identity.isNew && identity.isChild ) || ( identity.isUpdate && identity.isChild ) || ( !(identity.get('introducerRID') == nil || identity.get('introducerRID') == empty) || !(identity.get('introducerUIN') == nil || identity.get('introducerUIN') == empty))"
+          }
+        ],
+        "subType": "introducerName"
+      },
+      {
+        "id": "introducerRID",
+        "inputRequired": true,
+        "type": "string",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "introducerRID",
+        "label": {
+          "eng": "Introducer RID",
+          "hin": "?????????? ??????",
+          "fra": "Introducteur RID"
+        },
+        "controlType": "textbox",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [
+          {
+            "type": "regex",
+            "validator": "^([0-9]{10,30})$",
+            "arguments": [],
+            "langCode": null
+          }
+        ],
+        "fieldCategory": "evidence",
+        "alignmentGroup": "introducer",
+        "visible": null,
+        "contactType": null,
+        "group": "IntroducerDetails",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": null,
+        "requiredOn": [
+          {
+            "engine": "MVEL",
+            "expr": "( !(identity.get('introducerName') == nil || identity.get('introducerName') == empty) && (identity.get('introducerUIN') == nil || identity.get('introducerUIN') == empty))"
+          }
+        ],
+        "subType": "RID"
+      },
+      {
+        "id": "introducerUIN",
+        "inputRequired": true,
+        "type": "string",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "introducerUIN",
+        "label": {
+          "eng": "Introducer UIN",
+          "hin": "?????????? ??????",
+          "fra": "Introducteur UIN"
+        },
+        "controlType": "textbox",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [
+          {
+            "type": "regex",
+            "validator": "^([0-9]{10,30})$",
+            "arguments": [],
+            "langCode": null
+          }
+        ],
+        "fieldCategory": "evidence",
+        "alignmentGroup": "introducer",
+        "visible": null,
+        "contactType": null,
+        "group": "IntroducerDetails",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": null,
+        "requiredOn": [
+          {
+            "engine": "MVEL",
+            "expr": "( !(identity.get('introducerName') == nil || identity.get('introducerName') == empty) && (identity.get('introducerRID') == nil || identity.get('introducerRID') == empty))"
+          }
+        ],
+        "subType": "UIN"
+      },
+      {
+        "id": "proofOfAddress",
+        "inputRequired": true,
+        "type": "documentType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "proofOfAddress",
+        "label": {
+          "eng": "Address Proof",
+          "hin": "????? ?????? ????",
+          "fra": "Preuve d'adresse"
+        },
+        "controlType": "fileupload",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "pvt",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": "Documents",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": null,
+        "requiredOn": [
+          {
+            "engine": "MVEL",
+            "expr": "identity.isNew || ( identity.isUpdate && (identity.updatableFields contains 'addressLine1' || identity.updatableFields contains 'addressLine2' || identity.updatableFields contains 'addressLine3'))"
+          }
+        ],
+        "subType": "POA"
+      },
+      {
+        "id": "proofOfIdentity",
+        "inputRequired": true,
+        "type": "documentType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "proofOfIdentity",
+        "label": {
+          "eng": "Identity Proof",
+          "hin": "????? ??????",
+          "fra": "Preuve d'identité"
+        },
+        "controlType": "fileupload",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "pvt",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": "Documents",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": null,
+        "requiredOn": [
+          {
+            "engine": "MVEL",
+            "expr": "identity.isNew || ( identity.isUpdate && identity.updatableFields contains 'fullName')"
+          }
+        ],
+        "subType": "POI"
+      },
+      {
+        "id": "proofOfRelationship",
+        "inputRequired": true,
+        "type": "documentType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "proofOfRelationship",
+        "label": {
+          "eng": "Relationship Proof",
+          "hin": "????? ??????",
+          "fra": "Preuve de relation"
+        },
+        "controlType": "fileupload",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "pvt",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": "Documents",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": null,
+        "requiredOn": [
+          {
+            "engine": "MVEL",
+            "expr": "( identity.isNew && identity.isChild ) || ( identity.isUpdate && (identity.updatableFieldGroups contains 'IntroducerDetails' || identity.isChild))"
+          }
+        ],
+        "subType": "POR"
+      },
+      {
+        "id": "proofOfDateOfBirth",
+        "inputRequired": true,
+        "type": "documentType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "proofOfDateOfBirth",
+        "label": {
+          "eng": "DOB Proof",
+          "hin": "Preuve de date de naissance",
+          "fra": "????? ??????"
+        },
+        "controlType": "fileupload",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "pvt",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": "Documents",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": null,
+        "requiredOn": [
+          {
+            "engine": "MVEL",
+            "expr": "identity.isUpdate && identity.updatableFields contains 'dateOfBirth'"
+          }
+        ],
+        "subType": "POB"
+      },
+      {
+        "id": "proofOfException",
+        "inputRequired": true,
+        "type": "documentType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "proofOfException",
+        "label": {
+          "eng": "Exception Proof",
+          "hin": "????? ??????",
+          "fra": "Preuve d'exception"
+        },
+        "controlType": "fileupload",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "evidence",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": "Documents",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "POE"
+      },
+      {
+        "id": "proofOfException-1",
+        "inputRequired": true,
+        "type": "documentType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "proofOfException",
+        "label": {
+          "eng": "Exception Proof",
+          "hin": "????? ??????",
+          "fra": "Preuve d'exception"
+        },
+        "controlType": "fileupload",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "evidence",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": "Documents",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "POE"
+      },
+      {
+        "id": "proofofPhoto",
+        "inputRequired": true,
+        "type": "documentType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "proofofPhoto",
+        "label": {
+          "eng": "Resident Photo Proof",
+          "hin": "?????? ???? ??????",
+          "fra": "Preuve de photo de résident"
+        },
+        "controlType": "fileupload",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "pvt",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": "Documents",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "POP"
+      },
+      {
+        "id": "individualBiometrics",
+        "inputRequired": true,
+        "type": "biometricsType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "",
+        "label": {
+          "eng": "Applicant Biometrics",
+          "hin": "????? ?????????????",
+          "fra": "Biométrie du candidat"
+        },
+        "controlType": "biometrics",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "pvt",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": "Biometrics",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": [
+          "leftEye",
+          "rightEye",
+          "rightIndex",
+          "rightLittle",
+          "rightRing",
+          "rightMiddle",
+          "leftIndex",
+          "leftLittle",
+          "leftRing",
+          "leftMiddle",
+          "leftThumb",
+          "rightThumb",
+          "face"
+        ],
+        "requiredOn": [
+          {
+            "engine": "MVEL",
+            "expr": "(identity.isNew || identity.isLost || ( identity.isUpdate && identity.updatableFieldGroups contains 'Biometrics'))"
+          }
+        ],
+        "subType": "applicant"
+      },
+      {
+        "id": "individualAuthBiometrics",
+        "inputRequired": true,
+        "type": "biometricsType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "Used to hold biometrics only for authentication",
+        "label": {
+          "eng": "Authentication Biometrics",
+          "hin": "?????????? ?????????????",
+          "fra": "Authentification Biométrie"
+        },
+        "controlType": "biometrics",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "pvt",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": null,
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": [
+          "leftEye",
+          "rightEye",
+          "rightIndex",
+          "rightLittle",
+          "rightRing",
+          "rightMiddle",
+          "leftIndex",
+          "leftLittle",
+          "leftRing",
+          "leftMiddle",
+          "leftThumb",
+          "rightThumb",
+          "face"
+        ],
+        "requiredOn": [
+          {
+            "engine": "MVEL",
+            "expr": "!identity.isChild && identity.isUpdate && !(identity.updatableFieldGroups contains 'Biometrics' || identity.updatableFieldGroups contains 'IntroducerDetails')"
+          }
+        ],
+        "subType": "applicant-auth"
+      },
+      {
+        "id": "introducerBiometrics",
+        "inputRequired": true,
+        "type": "biometricsType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "",
+        "label": {
+          "eng": "Introducer Biometrics",
+          "hin": "?????????? ?????????????",
+          "fra": "Introducteur Biométrie"
+        },
+        "controlType": "biometrics",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "pvt",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": "Biometrics",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": false,
+        "bioAttributes": [
+          "leftEye",
+          "rightEye",
+          "rightIndex",
+          "rightLittle",
+          "rightRing",
+          "rightMiddle",
+          "leftIndex",
+          "leftLittle",
+          "leftRing",
+          "leftMiddle",
+          "leftThumb",
+          "rightThumb",
+          "face"
+        ],
+        "requiredOn": [
+          {
+            "engine": "MVEL",
+            "expr": "(identity.isChild && identity.isNew) || (identity.isUpdate && identity.updatableFieldGroups contains 'IntroducerDetails') || !(identity.get('introducerName') == nil || identity.get('introducerName') == empty)"
+          }
+        ],
+        "subType": "introducer"
+      },
+      {
+        "id": "consentText",
+        "inputRequired": true,
+        "type": "simpleType",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "Consent",
+        "label": {},
+        "controlType": "html",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "evidence",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": "consentText",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": "Registration Consent",
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "consentText"
+      },
+      {
+        "id": "consent",
+        "inputRequired": true,
+        "type": "string",
+        "minimum": 0,
+        "maximum": 0,
+        "description": "consent accepted",
+        "label": {
+          "eng": "I have read and accept terms and conditions to share my PII",
+          "hin": "????? ???? PII ???? ???? ?? ??? ???? ?? ?????? ?? ?? ??? ?? ?????? ??????? ???? ???",
+          "fra": "J'ai lu et j'accepte les termes et conditions pour partager mes PII"
+        },
+        "controlType": "checkbox",
+        "fieldType": "default",
+        "format": "none",
+        "validators": [],
+        "fieldCategory": "evidence",
+        "alignmentGroup": null,
+        "visible": null,
+        "contactType": null,
+        "group": "consent",
+        "groupLabel": null,
+        "changeAction": null,
+        "transliterate": false,
+        "templateName": null,
+        "fieldLayout": null,
+        "locationHierarchy": null,
+        "required": true,
+        "bioAttributes": null,
+        "requiredOn": [],
+        "subType": "consent"
+      }
+    ],
+    "settings": [
+      {
+        "name": "scheduledjobs",
+        "description": {
+          "eng": "Scheduled Jobs Settings",
+          "hin": "???????? ????? ????????",
+          "fra": "Paramètres des tâches planifiées"
+        },
+        "label": {
+          "eng": "Scheduled Jobs Settings",
+          "hin": "???????? ????? ????????",
+          "fra": "Paramètres des tâches planifiées"
+        },
+        "fxml": "ScheduledJobsSettings.fxml",
+        "icon": "scheduledjobs.png",
+        "order": "1",
+        "shortcut-icon": "scheduledjobs-shortcut.png",
+        "access-control": [
+          "REGISTRATION_SUPERVISOR"
+        ]
+      },
+      {
+        "name": "globalconfigs",
+        "description": {
+          "eng": "Global Config Settings",
+          "hin": "??????? ??????? ????????",
+          "fra": "Paramètres de configuration globale"
+        },
+        "label": {
+          "eng": "Global Config Settings",
+          "hin": "??????? ??????? ????????",
+          "fra": "Paramètres de configuration globale"
+        },
+        "fxml": "GlobalConfigSettings.fxml",
+        "icon": "globalconfigs.png",
+        "order": "2",
+        "shortcut-icon": "globalconfigs-shortcut.png",
+        "access-control": [
+          "REGISTRATION_SUPERVISOR",
+          "REGISTRATION_OFFICER"
+        ]
+      },
+      {
+        "name": "devices",
+        "description": {
+          "eng": "Device Settings",
+          "hin": "????? ????????",
+          "fra": "Réglages de l'appareil"
+        },
+        "label": {
+          "eng": "Device Settings",
+          "hin": "????? ????????",
+          "fra": "Réglages de l'appareil"
+        },
+        "fxml": "DeviceSettings.fxml",
+        "icon": "devices.png",
+        "order": "3",
+        "shortcut-icon": "devices-shortcut.png",
+        "access-control": [
+          "REGISTRATION_SUPERVISOR",
+          "REGISTRATION_OFFICER"
+        ]
+      }
+    ],
+    "updatedBy": "trialblazerseee",
+    "updateProcess": {
+      "id": "UPDATE",
+      "order": 2,
+      "flow": "UPDATE",
+      "label": {
+        "eng": "Update UIN",
+        "hin": "?????? ????? ????",
+        "ara": "????? UIN",
+        "fra": "Mettre à jour l'UIN"
+      },
+      "screens": [
+        {
+          "order": 1,
+          "name": "consent",
+          "label": {
+            "eng": "Consent",
+            "hin": "??????",
+            "ara": "??????",
+            "fra": "Consentement"
+          },
+          "caption": {
+            "eng": "Consent",
+            "hin": "??????",
+            "ara": "??????",
+            "fra": "Consentement"
+          },
+          "fields": [
+            {
+              "id": "consentText",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "Consent",
+              "label": {},
+              "controlType": "html",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Consent",
+              "groupLabel": {
+                "eng": "Consent",
+                "hin": "??????",
+                "ara": "??????",
+                "fra": "Consentement"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": "Registration Consent",
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "consentText",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "consent",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "consent accepted",
+              "label": {
+                "eng": "I have read and accept terms and conditions to share my PII",
+                "ara": "??? ???? ????? ?????? ???????? ??????? ??????? ????? ?????? ??????? ?????? ??",
+                "fra": "J'ai lu et j'accepte les termes et conditions pour partager mes PII",
+                "hin": "????? ???? PII ???? ???? ?? ??? ???? ?? ?????? ?? ?? ??? ?? ?????? ??????? ???? ???"
+              },
+              "controlType": "checkbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Consent",
+              "groupLabel": {
+                "eng": "Consent",
+                "hin": "??????",
+                "ara": "??????",
+                "fra": "Consentement"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "consent",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "preferredLang",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "user preferred Language",
+              "label": {
+                "eng": "Notification Language",
+                "ara": "??? ???????",
+                "fra": "Langue de notification",
+                "hin": "???????? ????"
+              },
+              "controlType": "button",
+              "fieldType": "dynamic",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "group1",
+              "visible": null,
+              "contactType": null,
+              "group": "PreferredLanguage",
+              "groupLabel": {
+                "eng": "Notification Language",
+                "ara": "??? ???????",
+                "fra": "Langue de notification",
+                "hin": "???????? ????"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "preferredLang",
+              "exceptionPhotoRequired": false
+            }
+          ],
+          "layoutTemplate": null,
+          "preRegFetchRequired": false,
+          "additionalInfoRequestIdRequired": false,
+          "active": false
+        },
+        {
+          "order": 2,
+          "name": "DemographicDetails",
+          "label": {
+            "eng": "Demographic Details",
+            "ara": "???????? ????????????",
+            "fra": "Détails démographiques",
+            "hin": "???????????? ?????"
+          },
+          "caption": {
+            "eng": "Demographic Details",
+            "ara": "???????? ????????????",
+            "fra": "Détails démographiques",
+            "hin": "???????????? ?????"
+          },
+          "fields": [
+            {
+              "id": "fullName",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "Full Name",
+              "label": {
+                "eng": "Full Name",
+                "ara": "????? ??????",
+                "fra": "Nom complet",
+                "hin": "???? ???"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{3,50}$).*",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "visible": null,
+              "contactType": null,
+              "group": "FullName",
+              "groupLabel": {
+                "eng": "Full Name",
+                "ara": "????? ??????",
+                "fra": "Nom complet",
+                "hin": "???? ???"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "name",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "dateOfBirth",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "dateOfBirth",
+              "label": {
+                "eng": "DOB",
+                "ara": "DOB",
+                "fra": "DOB",
+                "hin": "???? ????"
+              },
+              "controlType": "ageDate",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(1869|18[7-9][0-9]|19[0-9][0-9]|20[0-9][0-9])/([0][1-9]|1[0-2])/([0][1-9]|[1-2][0-9]|3[01])$",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "visible": null,
+              "contactType": null,
+              "group": "DateOfBirth",
+              "groupLabel": {
+                "eng": "Date Of Birth",
+                "ara": "????? ???????",
+                "fra": "Date de naissance"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "dateOfBirth",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "gender",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "gender",
+              "label": {
+                "eng": "Gender",
+                "ara": "??? ????? ?? ?????",
+                "fra": "Le genre",
+                "hin": "????"
+              },
+              "controlType": "dropdown",
+              "fieldType": "dynamic",
+              "format": "",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "visible": null,
+              "contactType": null,
+              "group": "Gender",
+              "groupLabel": {
+                "eng": "Gender",
+                "ara": "??? ????? ?? ?????",
+                "fra": "Le genre",
+                "hin": "????"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "gender",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "homeless",
+              "inputRequired": false,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "Homeless Description",
+              "label": {
+                "eng": "Do you have a home?",
+                "ara": "?? ???? ?????",
+                "fra": "Avez-vous une maison?",
+                "hin": "???? ???? ??? ?? ???"
+              },
+              "controlType": "dropdown",
+              "fieldType": "dynamic",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": null,
+              "contactType": null,
+              "group": "Address",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "homeless",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "landmark",
+              "inputRequired": false,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "landmark",
+              "label": {
+                "eng": "Landmark",
+                "ara": "???? ?????",
+                "fra": "Repère",
+                "hin": "?????????"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": null,
+              "contactType": "landmark",
+              "group": "Address",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": true,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "landmark",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "addressLine1",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "addressLine1",
+              "label": {
+                "eng": "Address",
+                "ara": "??????? ???",
+                "fra": "Adresse",
+                "hin": "???"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{0,50}$).*",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": null,
+              "contactType": "Postal",
+              "group": "Address",
+              "groupLabel": {
+                "eng": "Address",
+                "ara": "????",
+                "fra": "Adresse",
+                "hin": "???"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "(identity['homeless'] != null && identity['homeless'].get(0).value.equalsIgnoreCase('yes'))"
+                }
+              ],
+              "subType": "addressLine1",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "addressLine2",
+              "inputRequired": false,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "addressLine2",
+              "label": {
+                "eng": "Address Line 2",
+                "ara": "??? ??????? 2",
+                "fra": "Adresse 2",
+                "hin": "??? ?????? ?? 2"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{3,50}$).*",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": {
+                "engine": "MVEL",
+                "expr": "(identity['homeless'] != null && identity['homeless'].get(0).value.equalsIgnoreCase('yes'))"
+              },
+              "contactType": "Postal",
+              "group": "Address",
+              "groupLabel": {
+                "eng": "Address",
+                "ara": "????",
+                "fra": "Adresse",
+                "hin": "???"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "addressLine2",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "referenceIdentityNumber",
+              "inputRequired": false,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "referenceIdentityNumber",
+              "label": {
+                "eng": "Reference Identity Number",
+                "hin": "?????? ????? ??????",
+                "ara": "??? ?????? ????????",
+                "fra": "Numéro d'identité de référence"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "kyc",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^([0-9]{10,30})$",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "visible": null,
+              "contactType": null,
+              "group": "ReferenceIdentityNumber",
+              "groupLabel": {
+                "eng": "Reference Identity Number",
+                "hin": "Reference Identity Number",
+                "ara": "??? ?????? ????????",
+                "fra": "Numéro d'identité de référence"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "none",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "state",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "state",
+              "label": {
+                "eng": "State",
+                "hin": "?????",
+                "ara": "?????",
+                "fra": "État"
+              },
+              "controlType": "dropdown",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{0,50}$).*",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": null,
+              "contactType": "Postal",
+              "group": "Address",
+              "groupLabel": {
+                "eng": "Address",
+                "hin": "???",
+                "ara": "????",
+                "fra": "Adresse"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "state",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "city",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "city",
+              "label": {
+                "eng": "City",
+                "ara": "?????",
+                "fra": "Ville",
+                "hin": "???"
+              },
+              "controlType": "dropdown",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": null,
+              "contactType": null,
+              "group": "Address",
+              "groupLabel": {
+                "eng": "Address",
+                "hin": "???",
+                "ara": "????",
+                "fra": "Adresse"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "city",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "postalCode",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "postalCode",
+              "label": {
+                "ara": "??? ?????",
+                "fra": "Code Postal",
+                "eng": "Postal Code",
+                "hin": "??? ???"
+              },
+              "controlType": "dropdown",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{0,6}$).*",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": "UI_100001"
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": null,
+              "contactType": "Postal",
+              "group": "Address",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "postalCode",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "locality",
+              "inputRequired": false,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "locality",
+              "label": {
+                "eng": "Locality",
+                "hin": "?????",
+                "ara": "???????",
+                "fra": "Localité"
+              },
+              "controlType": "dropdown",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{0,50}$).*",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": null,
+              "contactType": "Postal",
+              "group": "Address",
+              "groupLabel": {
+                "eng": "Address",
+                "ara": "????",
+                "fra": "Adresse",
+                "hin": "???"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "locality",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "phone",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "phone",
+              "label": {
+                "eng": "Phone",
+                "ara": "????",
+                "fra": "Téléphone",
+                "hin": "???"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^[+]*([0-9]{1})([0-9]{9})$",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "visible": null,
+              "contactType": "email",
+              "group": "Phone",
+              "groupLabel": {
+                "eng": "Phone",
+                "ara": "????",
+                "fra": "Téléphone",
+                "hin": "???"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "Phone",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "email",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "email",
+              "label": {
+                "eng": "Email",
+                "ara": "???? ????????",
+                "fra": "E-mail",
+                "hin": "????"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^[A-Za-z0-9_\\-]+(\\.[A-Za-z0-9_]+)*@[A-Za-z0-9_-]+(\\.[A-Za-z0-9_]+)*(\\.[a-zA-Z]{2,})$",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "visible": null,
+              "contactType": "email",
+              "group": "Email",
+              "groupLabel": {
+                "eng": "Email",
+                "ara": "???? ????????",
+                "fra": "E-mail",
+                "hin": "????"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "Email",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "introducerName",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "introducerName",
+              "label": {
+                "eng": "Introducer Name",
+                "ara": "??? ????????",
+                "fra": "Nom de l'introducteur",
+                "hin": "?????????? ?? ???"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": "Introducer",
+              "visible": null,
+              "contactType": null,
+              "group": "IntroducerDetails",
+              "groupLabel": {
+                "eng": "Introducer Details",
+                "ara": "?????? ??????",
+                "fra": "Détails de l'introducteur",
+                "hin": "?????????? ?? ???"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "introducerName",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "introducerRID",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "introducerRID",
+              "label": {
+                "eng": "Introducer AID",
+                "ara": "????? AID",
+                "fra": "Introducteur AID",
+                "hin": "?????????? ??????"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^([0-9]{10,30})$",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": null
+                }
+              ],
+              "fieldCategory": "evidence",
+              "alignmentGroup": "Introducer",
+              "visible": {
+                "engine": "MVEL",
+                "expr": "identity.get('introducerUIN') == nil || identity.get('introducerUIN') == empty"
+              },
+              "contactType": null,
+              "group": "IntroducerDetails",
+              "groupLabel": {
+                "eng": "Introducer Details",
+                "hin": "?????????? ?????",
+                "ara": "?????? ??????",
+                "fra": "Détails de l'introducteur"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.get('introducerUIN') == nil || identity.get('introducerUIN') == empty"
+                }
+              ],
+              "subType": "RID",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "introducerUIN",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "IntroducerUIN",
+              "label": {
+                "eng": "Introducer UIN",
+                "ara": "???????? UIN",
+                "fra": "Introducteur UIN",
+                "hin": "?????????? ??????"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^([0-9]{10,30})$",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": null
+                }
+              ],
+              "fieldCategory": "evidence",
+              "alignmentGroup": "introducer",
+              "visible": {
+                "engine": "MVEL",
+                "expr": "identity.get('introducerRID') == nil || identity.get('introducerRID') == empty"
+              },
+              "contactType": null,
+              "group": "IntroducerDetails",
+              "groupLabel": {
+                "eng": "Introducer Details",
+                "hin": "?????????? ?????",
+                "ara": "?????? ??????",
+                "fra": "Détails de l'introducteur"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.get('introducerRID') == nil || identity.get('introducerRID') == empty"
+                }
+              ],
+              "subType": "UIN",
+              "exceptionPhotoRequired": false
+            }
+          ],
+          "layoutTemplate": null,
+          "preRegFetchRequired": false,
+          "additionalInfoRequestIdRequired": false,
+          "active": false
+        },
+        {
+          "order": 3,
+          "name": "Documents",
+          "label": {
+            "eng": "Document Upload",
+            "ara": "????? ???????",
+            "fra": "Téléchargement de documents",
+            "hin": "???????? ?????"
+          },
+          "caption": {
+            "eng": "Documents",
+            "ara": "????? ???????",
+            "fra": "Téléchargement de documents",
+            "hin": "????????"
+          },
+          "fields": [
+            {
+              "id": "proofOfConsent",
+              "inputRequired": true,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfConsent",
+              "label": {
+                "eng": "Consent Proof",
+                "ara": "????? ????????",
+                "fra": "Preuve de consentement",
+                "hin": "????? ??????"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": {
+                "eng": "Documents",
+                "ara": "????? ???????",
+                "fra": "Téléchargement de documents",
+                "hin": "????????"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "POC",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "proofOfAddress",
+              "inputRequired": true,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfAddress",
+              "label": {
+                "eng": "Address Proof",
+                "ara": "????? ???????",
+                "fra": "Preuve d'adresse",
+                "hin": "????? ?????? ????"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": {
+                "eng": "Documents",
+                "ara": "????? ???????",
+                "fra": "Téléchargement de documents",
+                "hin": "????????"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.updatableFieldGroups contains 'Address' || identity.updatableFieldGroups contains 'Address'"
+                }
+              ],
+              "subType": "POA",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "proofOfIdentity",
+              "inputRequired": true,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfIdentity",
+              "label": {
+                "eng": "Identity Proof",
+                "ara": "????? ??????",
+                "fra": "Preuve d'identité",
+                "hin": "????? ??????"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": {
+                "eng": "Documents",
+                "ara": "????? ???????",
+                "fra": "Téléchargement de documents",
+                "hin": "????????"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.updatableFieldGroups contains 'FullName' || identity.updatableFieldGroups contains 'DateOfBirth'"
+                }
+              ],
+              "subType": "POI",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "proofOfRelationship",
+              "inputRequired": true,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfRelationship",
+              "label": {
+                "eng": "Relationship Proof",
+                "ara": "????? ???????",
+                "fra": "Preuve de relation",
+                "hin": "????? ??????"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": {
+                "eng": "Documents",
+                "ara": "????? ???????",
+                "fra": "Téléchargement de documents",
+                "hin": "????????"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.get('ageGroup') == 'INFANT' || identity.updatableFieldGroups contains 'IntroducerDetails'"
+                }
+              ],
+              "subType": "POR",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "proofOfDateOfBirth",
+              "inputRequired": true,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfDateOfBirth",
+              "label": {
+                "eng": "DOB Proof",
+                "ara": "????? DOB",
+                "fra": "Preuve de DOB",
+                "hin": "????? ??????"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": {
+                "eng": "Documents",
+                "ara": "????? ???????",
+                "fra": "Téléchargement de documents",
+                "hin": "????????"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.updatableFieldGroups contains 'DateOfBirth'"
+                }
+              ],
+              "subType": "POB",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "proofOfException",
+              "inputRequired": true,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfException",
+              "label": {
+                "eng": "Exception Proof",
+                "ara": "????? ?????????",
+                "fra": "Preuve d'exception",
+                "hin": "????? ??????"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": null,
+              "visible": {
+                "engine": "MVEL",
+                "expr": "identity.get('isBioException') == 'true' || identity.get('isBioException') == true"
+              },
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": {
+                "eng": "Documents",
+                "ara": "????? ???????",
+                "fra": "Téléchargement de documents",
+                "hin": "????????"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "POE",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "proofOfPhoto",
+              "inputRequired": true,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfPhoto",
+              "label": {
+                "eng": "Resident Photo Proof",
+                "ara": "????? ??? ??????",
+                "fra": "Preuve de photo de résident",
+                "hin": "?????? ???? ??????"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": {
+                "eng": "Documents",
+                "ara": "????? ???????",
+                "fra": "Téléchargement de documents",
+                "hin": "????????"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "POP",
+              "exceptionPhotoRequired": false
+            }
+          ],
+          "layoutTemplate": null,
+          "preRegFetchRequired": false,
+          "additionalInfoRequestIdRequired": false,
+          "active": false
+        },
+        {
+          "order": 4,
+          "name": "BiometricDetails",
+          "label": {
+            "eng": "Biometric Details",
+            "ara": "???????? ??????????",
+            "fra": "Détails biométriques",
+            "hin": "??????????? ?????"
+          },
+          "caption": {
+            "eng": "Biometric Details",
+            "ara": "???????? ??????????",
+            "fra": "Détails biométriques",
+            "hin": "??????????? ?????"
+          },
+          "fields": [
+            {
+              "id": "individualBiometrics",
+              "inputRequired": true,
+              "type": "biometricsType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "",
+              "label": {
+                "eng": "Applicant Biometrics",
+                "ara": "???????? ??????? ????? ?????",
+                "fra": "Biométrie du candidat",
+                "hin": "????? ?????????????"
+              },
+              "controlType": "biometrics",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Biometrics",
+              "groupLabel": {
+                "eng": "Biometrics",
+                "hin": "?????????????",
+                "ara": "???????? ???????",
+                "fra": "Biométrie"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": [
+                {
+                  "ageGroup": "INFANT",
+                  "process": "ALL",
+                  "validationExpr": "face",
+                  "bioAttributes": [
+                    "face"
+                  ]
+                }
+              ],
+              "required": true,
+              "bioAttributes": [
+                "leftEye",
+                "rightEye",
+                "rightIndex",
+                "rightLittle",
+                "rightRing",
+                "rightMiddle",
+                "leftIndex",
+                "leftLittle",
+                "leftRing",
+                "leftMiddle",
+                "leftThumb",
+                "rightThumb",
+                "face"
+              ],
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.updatableFieldGroups contains 'Biometrics'"
+                }
+              ],
+              "subType": "applicant",
+              "exceptionPhotoRequired": true
+            },
+            {
+              "id": "individualAuthBiometrics",
+              "inputRequired": true,
+              "type": "biometricsType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "Used to hold biometrics only for authentication",
+              "label": {
+                "eng": "Authentication Biometrics",
+                "hin": "?????????? ?????????????",
+                "ara": "???????? ??????? ????????",
+                "fra": "Authentification Biométrie"
+              },
+              "controlType": "biometrics",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Biometrics",
+              "groupLabel": {
+                "eng": "Biometrics",
+                "hin": "?????????????",
+                "ara": "???????? ???????",
+                "fra": "Biométrie"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": [
+                {
+                  "ageGroup": "ALL",
+                  "process": "ALL",
+                  "validationExpr": "leftEye || rightEye || rightIndex || rightLittle || rightRing || rightMiddle || leftIndex || leftLittle || leftRing || leftMiddle || leftThumb || rightThumb || face",
+                  "bioAttributes": [
+                    "leftEye",
+                    "rightEye",
+                    "rightIndex",
+                    "rightLittle",
+                    "rightRing",
+                    "rightMiddle",
+                    "leftIndex",
+                    "leftLittle",
+                    "leftRing",
+                    "leftMiddle",
+                    "leftThumb",
+                    "rightThumb",
+                    "face"
+                  ]
+                }
+              ],
+              "required": false,
+              "bioAttributes": [
+                "leftEye",
+                "rightEye",
+                "rightIndex",
+                "rightLittle",
+                "rightRing",
+                "rightMiddle",
+                "leftIndex",
+                "leftLittle",
+                "leftRing",
+                "leftMiddle",
+                "leftThumb",
+                "rightThumb",
+                "face"
+              ],
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "!(identity.get('ageGroup') == 'INFANT') && !(identity.updatableFieldGroups contains 'Biometrics')"
+                }
+              ],
+              "subType": "applicant-auth",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "introducerBiometrics",
+              "inputRequired": true,
+              "type": "biometricsType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "",
+              "label": {
+                "eng": "Introducer Biometrics",
+                "hin": "?????????? ?????????????",
+                "ara": "???? ???????? ???????",
+                "fra": "Introducteur Biométrie"
+              },
+              "controlType": "biometrics",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Biometrics",
+              "groupLabel": {
+                "eng": "Biometrics",
+                "hin": "?????????????",
+                "ara": "???????? ???????",
+                "fra": "Biométrie"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": [
+                {
+                  "ageGroup": "ALL",
+                  "process": "ALL",
+                  "validationExpr": "leftEye || rightEye || rightIndex || rightLittle || rightRing || rightMiddle || leftIndex || leftLittle || leftRing || leftMiddle || leftThumb || rightThumb || face",
+                  "bioAttributes": [
+                    "leftEye",
+                    "rightEye",
+                    "rightIndex",
+                    "rightLittle",
+                    "rightRing",
+                    "rightMiddle",
+                    "leftIndex",
+                    "leftLittle",
+                    "leftRing",
+                    "leftMiddle",
+                    "leftThumb",
+                    "rightThumb",
+                    "face"
+                  ]
+                }
+              ],
+              "required": false,
+              "bioAttributes": [
+                "leftEye",
+                "rightEye",
+                "rightIndex",
+                "rightLittle",
+                "rightRing",
+                "rightMiddle",
+                "leftIndex",
+                "leftLittle",
+                "leftRing",
+                "leftMiddle",
+                "leftThumb",
+                "rightThumb",
+                "face"
+              ],
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.get('ageGroup') == 'INFANT' || identity.updatableFieldGroups contains 'IntroducerDetails'"
+                }
+              ],
+              "subType": "introducer",
+              "exceptionPhotoRequired": false
+            }
+          ],
+          "layoutTemplate": null,
+          "preRegFetchRequired": false,
+          "additionalInfoRequestIdRequired": false,
+          "active": false
+        }
+      ],
+      "caption": {
+        "eng": "Update UIN",
+        "hin": "?????? ????? ????",
+        "ara": "????? UIN",
+        "fra": "Mettre à jour l'UIN"
+      },
+      "icon": "UINUpdate.png",
+      "autoSelectedGroups": [
+        "Consent",
+        "PreferredLanguage",
+        "Documents",
+        "Biometrics"
+      ],
+      "isActive": true
+    },
+    "idVersion": 0.8,
+    "description": "ID Schema for IIITB",
+    "updatedOn": "2022-10-03T10:55:57.930Z",
+    "title": "ID Schema for IIITB",
+    "createdOn": "2022-10-03T10:55:22.663Z",
+    "newProcess": {
+      "id": "NEW",
+      "order": 1,
+      "flow": "NEW",
+      "label": {
+        "ara": "????? ????",
+        "fra": "Nouvelle inscription",
+        "hin": "??? ???????",
+        "eng": "New Registration"
+      },
+      "screens": [
+        {
+          "order": 1,
+          "name": "consent",
+          "label": {
+            "ara": "??????",
+            "fra": "Consentement",
+            "hin": "??????",
+            "eng": "Consent"
+          },
+          "caption": {
+            "ara": "??????",
+            "fra": "Consentement",
+            "hin": "??????",
+            "eng": "Consent"
+          },
+          "fields": [
+            {
+              "id": "IDSchemaVersion",
+              "inputRequired": false,
+              "type": "number",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "ID Schema Version",
+              "label": {
+                "eng": "IDSchemaVersion"
+              },
+              "controlType": null,
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "none",
+              "alignmentGroup": null,
+              "alignmentGroupLabel": null,
+              "visible": null,
+              "contactType": null,
+              "group": null,
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "IdSchemaVersion",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "consentText",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "Consent",
+              "label": {},
+              "controlType": "html",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": null,
+              "alignmentGroupLabel": null,
+              "visible": null,
+              "contactType": null,
+              "group": "consentText",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": "Registration Consent",
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "consentText",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "consent",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "consent accepted",
+              "label": {
+                "ara": "??? ???? ????? ?????? ???????? ??????? ??????? ????? ?????? ??????? ?????? ??",
+                "fra": "J'ai lu et j'accepte les termes et conditions pour partager mes PII",
+                "hin": "????? ???? PII ???? ???? ?? ??? ???? ?? ?????? ?? ?? ??? ?? ?????? ??????? ???? ???",
+                "eng": "I have read and accept terms and conditions to share my PII"
+              },
+              "controlType": "checkbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": null,
+              "alignmentGroupLabel": null,
+              "visible": null,
+              "contactType": null,
+              "group": "consent",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "consent",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "preferredLang",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "user preferred Language",
+              "label": {
+                "ara": "??? ???????",
+                "fra": "Langue de notification",
+                "hin": "???????? ????",
+                "eng": "Notification Language"
+              },
+              "controlType": "button",
+              "fieldType": "dynamic",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "group1",
+              "alignmentGroupLabel": {
+                "eng": "group1"
+              },
+              "visible": null,
+              "contactType": null,
+              "group": "PreferredLanguage",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "preferredLang",
+              "exceptionPhotoRequired": false
+            }
+          ],
+          "layoutTemplate": null,
+          "preRegFetchRequired": false,
+          "additionalInfoRequestIdRequired": false,
+          "active": false
+        },
+        {
+          "order": 2,
+          "name": "DemographicDetails",
+          "label": {
+            "ara": "???????? ????????????",
+            "fra": "Détails démographiques",
+            "hin": "???????????? ?????",
+            "eng": "Demographic Details"
+          },
+          "caption": {
+            "ara": "???????? ????????????",
+            "fra": "Détails démographiques",
+            "hin": "???????????? ?????",
+            "eng": "Demographic Details"
+          },
+          "fields": [
+            {
+              "id": "fullName",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "Full Name",
+              "label": {
+                "ara": "????? ??????",
+                "fra": "Nom complet",
+                "hin": "???? ???",
+                "eng": "Full Name"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{3,50}$).*",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": "UI_100001"
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "alignmentGroupLabel": {
+                "ara": "???????? ????????",
+                "fra": "Démographie",
+                "hin": "???????????",
+                "eng": "Demographics"
+              },
+              "visible": null,
+              "contactType": null,
+              "group": "FullName",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": true,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "name",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "dateOfBirth",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "dateOfBirth",
+              "label": {
+                "ara": "DOB",
+                "fra": "DOB",
+                "hin": "???? ????",
+                "eng": "DOB"
+              },
+              "controlType": "ageDate",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(1869|18[7-9][0-9]|19[0-9][0-9]|20[0-9][0-9])/([0][1-9]|1[0-2])/([0][1-9]|[1-2][0-9]|3[01])$",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": "UI_100001"
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "alignmentGroupLabel": {
+                "ara": "???????? ????????",
+                "fra": "Démographie",
+                "hin": "???????????",
+                "eng": "Demographics"
+              },
+              "visible": null,
+              "contactType": null,
+              "group": "DateOfBirth",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": true,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "dateOfBirth",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "gender",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "gender",
+              "label": {
+                "ara": "??? ????? ?? ?????",
+                "fra": "Le genre",
+                "hin": "????",
+                "eng": "Gender"
+              },
+              "controlType": "dropdown",
+              "fieldType": "dynamic",
+              "format": "",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "alignmentGroupLabel": {
+                "ara": "???????? ????????",
+                "fra": "Démographie",
+                "hin": "???????????",
+                "eng": "Demographics"
+              },
+              "visible": null,
+              "contactType": null,
+              "group": "Gender",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": true,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "gender",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "homeless",
+              "inputRequired": false,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "Homeless Description",
+              "label": {
+                "ara": "?? ???? ?????",
+                "fra": "Avez-vous une maison?",
+                "hin": "???? ???? ??? ?? ???",
+                "eng": "Do you have a home?"
+              },
+              "controlType": "dropdown",
+              "fieldType": "dynamic",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "alignmentGroupLabel": {
+                "ara": "?????",
+                "fra": "Adresse",
+                "hin": "???",
+                "eng": "Address"
+              },
+              "visible": null,
+              "contactType": null,
+              "group": "homedetails",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": true,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "homeless",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "landmark",
+              "inputRequired": false,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "landmark",
+              "label": {
+                "ara": "???? ?????",
+                "fra": "Repère",
+                "hin": "?????????",
+                "eng": "Landmark"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "alignmentGroupLabel": {
+                "ara": "?????",
+                "fra": "Adresse",
+                "hin": "???",
+                "eng": "Address"
+              },
+              "visible": {
+                "engine": "MVEL",
+                "expr": "(identity['homeless'] != null && (identity['homeless'].get(0).value.equalsIgnoreCase('no') || identity['homeless'].get(0).value.equalsIgnoreCase('Non')))"
+              },
+              "contactType": "landmark",
+              "group": "Address",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": true,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "(identity['homeless'] != null && (identity['homeless'].get(0).value.equalsIgnoreCase('no') || identity['homeless'].get(0).value.equalsIgnoreCase('no')))"
+                }
+              ],
+              "subType": "landmark",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "addressLine1",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "addressLine1",
+              "label": {
+                "ara": "???????",
+                "fra": "Adresse",
+                "hin": "???",
+                "eng": "Address"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{0,50}$).*",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": "UI_100001"
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "alignmentGroupLabel": {
+                "ara": "?????",
+                "fra": "Adresse",
+                "hin": "???",
+                "eng": "Address"
+              },
+              "visible": null,
+              "contactType": "Postal",
+              "group": "Address",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": true,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "addressLine1",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "addressLine2",
+              "inputRequired": false,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "addressLine2",
+              "label": {
+                "ara": "??? ??????? 2",
+                "fra": "Adresse 2",
+                "hin": "??? ?????? ?? 2",
+                "eng": "Address Line 2"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{3,50}$).*",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": "UI_100001"
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "alignmentGroupLabel": {
+                "ara": "?????",
+                "fra": "Adresse",
+                "hin": "???",
+                "eng": "Address"
+              },
+              "visible": {
+                "engine": "MVEL",
+                "expr": "(identity['homeless'] != null && (identity['homeless'].get(0).value.equalsIgnoreCase('yes') || identity['homeless'].get(0).value.equalsIgnoreCase('Oui')))"
+              },
+              "contactType": "Postal",
+              "group": "Address",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": true,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "addressLine2",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "referenceIdentityNumber",
+              "inputRequired": false,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "referenceIdentityNumber",
+              "label": {
+                "ara": "??? ?????? ????????",
+                "fra": "Numéro d'identité de référence",
+                "hin": "?????? ????? ??????",
+                "eng": "Reference Identity Number"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "kyc",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^([0-9]{10,30})$",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": "UI_100001"
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "alignmentGroupLabel": {
+                "ara": "???????? ????????",
+                "fra": "Démographie",
+                "hin": "???????????",
+                "eng": "Demographics"
+              },
+              "visible": null,
+              "contactType": null,
+              "group": "ReferenceIdentityNumber",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "none",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "state",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "state",
+              "label": {
+                "ara": "?????",
+                "fra": "État",
+                "hin": "?????",
+                "eng": "State"
+              },
+              "controlType": "dropdown",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{0,50}$).*",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": "UI_100001"
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "alignmentGroupLabel": {
+                "ara": "?????",
+                "fra": "Adresse",
+                "hin": "???",
+                "eng": "Address"
+              },
+              "visible": null,
+              "contactType": "Postal",
+              "group": "Address",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": true,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "state",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "city",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "city",
+              "label": {
+                "ara": "?????",
+                "fra": "Ville",
+                "hin": "???",
+                "eng": "City"
+              },
+              "controlType": "dropdown",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{0,50}$).*",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": "UI_100001"
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "alignmentGroupLabel": {
+                "ara": "?????",
+                "fra": "Adresse",
+                "hin": "???",
+                "eng": "Address"
+              },
+              "visible": null,
+              "contactType": "Postal",
+              "group": "Address",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": true,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "city",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "postalCode",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "postalCode",
+              "label": {
+                "ara": "??? ?????",
+                "fra": "Code Postal",
+                "hin": "??? ???",
+                "eng": "Postal Code"
+              },
+              "controlType": "dropdown",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{0,6}$).*",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": "UI_100001"
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "alignmentGroupLabel": {
+                "ara": "?????",
+                "fra": "Adresse",
+                "hin": "???",
+                "eng": "Address"
+              },
+              "visible": null,
+              "contactType": "Postal",
+              "group": "Address",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "postalCode",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "phone",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "phone",
+              "label": {
+                "ara": "????",
+                "fra": "Téléphone",
+                "hin": "???",
+                "eng": "Phone"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^[+]*([0-9]{1})([0-9]{9})$",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": "UI_100001"
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "alignmentGroupLabel": {
+                "ara": "???????? ????????",
+                "fra": "Démographie",
+                "hin": "???????????",
+                "eng": "Demographics"
+              },
+              "visible": null,
+              "contactType": "email",
+              "group": "Phone",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "Phone",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "email",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "email",
+              "label": {
+                "ara": "???? ????????",
+                "fra": "E-mail",
+                "hin": "????",
+                "eng": "Email"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^[A-Za-z0-9_\\-]+(\\.[A-Za-z0-9_]+)*@[A-Za-z0-9_-]+(\\.[A-Za-z0-9_]+)*(\\.[a-zA-Z]{2,})$",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": "UI_100001"
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "alignmentGroupLabel": {
+                "ara": "???????? ????????",
+                "fra": "Démographie",
+                "hin": "???????????",
+                "eng": "Demographics"
+              },
+              "visible": null,
+              "contactType": "email",
+              "group": "Email",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "Email",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "introducerName",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "introducerName",
+              "label": {
+                "ara": "??? ????????",
+                "fra": "Nom de l'introducteur",
+                "hin": "?????????? ?? ???",
+                "eng": "Introducer Name"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": "Introducer",
+              "alignmentGroupLabel": {
+                "ara": "????",
+                "fra": "Introducteur",
+                "hin": "??????????",
+                "eng": "Introducer"
+              },
+              "visible": {
+                "engine": "MVEL",
+                "expr": "identity.get('ageGroup') == 'INFANT'"
+              },
+              "contactType": null,
+              "group": "IntroducerDetails",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": true,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.get('ageGroup') == 'INFANT'"
+                }
+              ],
+              "subType": "introducerName",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "introducerRID",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "introducerRID",
+              "label": {
+                "ara": "????? RID",
+                "fra": "Introducteur RID",
+                "hin": "?????????? ??????",
+                "eng": "Introducer RID"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^([0-9]{10,30})$",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": "UI_100001"
+                }
+              ],
+              "fieldCategory": "evidence",
+              "alignmentGroup": "Introducer",
+              "alignmentGroupLabel": {
+                "ara": "????",
+                "fra": "Introducteur",
+                "hin": "??????????",
+                "eng": "Introducer"
+              },
+              "visible": {
+                "engine": "MVEL",
+                "expr": "identity.get('ageGroup') == 'INFANT' && (identity.get('introducerUIN') == nil || identity.get('introducerUIN') == empty)"
+              },
+              "contactType": null,
+              "group": "IntroducerDetails",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.get('ageGroup') == 'INFANT' && (identity.get('introducerUIN') == nil || identity.get('introducerUIN') == empty)"
+                }
+              ],
+              "subType": "RID",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "introducerUIN",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "introducerUIN",
+              "label": {
+                "ara": "???????? UIN",
+                "fra": "Introducteur UIN",
+                "hin": "?????????? ??????",
+                "eng": "Introducer UIN"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^([0-9]{10,30})$",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": "UI_100001"
+                }
+              ],
+              "fieldCategory": "evidence",
+              "alignmentGroup": "Introducer",
+              "alignmentGroupLabel": {
+                "ara": "????",
+                "fra": "Introducteur",
+                "hin": "??????????",
+                "eng": "Introducer"
+              },
+              "visible": {
+                "engine": "MVEL",
+                "expr": "identity.get('ageGroup') == 'INFANT' && (identity.get('introducerRID') == nil || identity.get('introducerRID') == empty)"
+              },
+              "contactType": null,
+              "group": "IntroducerDetails",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.get('ageGroup') == 'INFANT' && (identity.get('introducerRID') == nil || identity.get('introducerRID') == empty)"
+                }
+              ],
+              "subType": "UIN",
+              "exceptionPhotoRequired": false
+            }
+          ],
+          "layoutTemplate": null,
+          "preRegFetchRequired": true,
+          "additionalInfoRequestIdRequired": false,
+          "active": false
+        },
+        {
+          "order": 3,
+          "name": "Documents",
+          "label": {
+            "ara": "????? ???????",
+            "fra": "Téléchargement de documents",
+            "hin": "???????? ?????",
+            "eng": "Document Upload"
+          },
+          "caption": {
+            "ara": "?????",
+            "fra": "Des documents",
+            "hin": "????????",
+            "eng": "Documents"
+          },
+          "fields": [
+            {
+              "id": "proofOfConsent",
+              "inputRequired": true,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfConsent",
+              "label": {
+                "ara": "????? ????????",
+                "fra": "Preuve de consentement",
+                "hin": "????? ??????",
+                "eng": "Consent Proof"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "alignmentGroupLabel": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "POC",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "proofOfAddress",
+              "inputRequired": true,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfAddress",
+              "label": {
+                "ara": "????? ???????",
+                "fra": "Preuve d'adresse",
+                "hin": "????? ?????? ????",
+                "eng": "Address Proof"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "alignmentGroupLabel": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "POA",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "proofOfIdentity",
+              "inputRequired": true,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfIdentity",
+              "label": {
+                "ara": "????? ??????",
+                "fra": "Preuve d'identité",
+                "hin": "????? ??????",
+                "eng": "Identity Proof"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "alignmentGroupLabel": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "POI",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "proofOfRelationship",
+              "inputRequired": true,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfRelationship",
+              "label": {
+                "ara": "????? ???????",
+                "fra": "Preuve de relation",
+                "hin": "????? ??????",
+                "eng": "Relationship Proof"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "alignmentGroupLabel": null,
+              "visible": {
+                "engine": "MVEL",
+                "expr": "identity.get('ageGroup') == 'INFANT'"
+              },
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.get('ageGroup') == 'INFANT'"
+                }
+              ],
+              "subType": "POR",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "proofOfDateOfBirth",
+              "inputRequired": true,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfDateOfBirth",
+              "label": {
+                "ara": "????? DOB",
+                "fra": "Preuve de DOB",
+                "hin": "????? ??????",
+                "eng": "DOB Proof"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "alignmentGroupLabel": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "POB",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "proofOfException",
+              "inputRequired": true,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfException",
+              "label": {
+                "ara": "????? ?????????",
+                "fra": "Preuve d'exception",
+                "hin": "????? ??????",
+                "eng": "Exception Proof"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": null,
+              "alignmentGroupLabel": null,
+              "visible": {
+                "engine": "MVEL",
+                "expr": "identity.get('isBioException') == 'true' || identity.get('isBioException') == true"
+              },
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "POE",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "proofOfPhoto",
+              "inputRequired": true,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfPhoto",
+              "label": {
+                "ara": "????? ??? ??????",
+                "fra": "Preuve de photo de résident",
+                "hin": "?????? ???? ??????",
+                "eng": "Resident Photo Proof"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "alignmentGroupLabel": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "POP",
+              "exceptionPhotoRequired": false
+            }
+          ],
+          "layoutTemplate": null,
+          "preRegFetchRequired": false,
+          "additionalInfoRequestIdRequired": false,
+          "active": false
+        },
+        {
+          "order": 4,
+          "name": "BiometricDetails",
+          "label": {
+            "ara": "???????? ??????????",
+            "fra": "Détails biométriques",
+            "hin": "??????????? ?????",
+            "eng": "Biometric Details"
+          },
+          "caption": {
+            "ara": "???????? ??????????",
+            "fra": "Détails biométriques",
+            "hin": "??????????? ?????",
+            "eng": "Biometric Details"
+          },
+          "fields": [
+            {
+              "id": "individualBiometrics",
+              "inputRequired": true,
+              "type": "biometricsType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "",
+              "label": {
+                "ara": "???????? ??????? ????? ?????",
+                "fra": "Biométrie du candidat",
+                "hin": "????? ?????????????",
+                "eng": "Applicant Biometrics"
+              },
+              "controlType": "biometrics",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "alignmentGroupLabel": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Biometrics",
+              "groupLabel": {
+                "ara": "????? ??????",
+                "fra": "Nom et prénom",
+                "hin": "???? ???",
+                "eng": "Full Name"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": [
+                {
+                  "ageGroup": "INFANT",
+                  "process": "ALL",
+                  "validationExpr": "face",
+                  "bioAttributes": [
+                    "face"
+                  ]
+                }
+              ],
+              "required": true,
+              "bioAttributes": [
+                "leftEye",
+                "rightEye",
+                "rightIndex",
+                "rightLittle",
+                "rightRing",
+                "rightMiddle",
+                "leftIndex",
+                "leftLittle",
+                "leftRing",
+                "leftMiddle",
+                "leftThumb",
+                "rightThumb",
+                "face"
+              ],
+              "requiredOn": [],
+              "subType": "applicant",
+              "exceptionPhotoRequired": true
+            }
+          ],
+          "layoutTemplate": null,
+          "preRegFetchRequired": false,
+          "additionalInfoRequestIdRequired": false,
+          "active": false
+        },
+        {
+          "order": 5,
+          "name": "IntroducerBiometricDetails",
+          "label": {
+            "ara": "???? ???????? ??????????",
+            "fra": "Détails biométriques de l'introducteur",
+            "hin": "?????????? ??????????? ?????",
+            "eng": "Introducer Biometric Details"
+          },
+          "caption": {
+            "ara": "???? ???????? ??????????",
+            "fra": "Détails biométriques de l'introducteur",
+            "hin": "?????????? ??????????? ?????",
+            "eng": "Introducer Biometric Details"
+          },
+          "fields": [
+            {
+              "id": "introducerBiometrics",
+              "inputRequired": true,
+              "type": "biometricsType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "",
+              "label": {
+                "ara": "???? ???????? ???????",
+                "fra": "Introducteur Biométrie",
+                "hin": "?????????? ?????????????",
+                "eng": "Introducer Biometrics"
+              },
+              "controlType": "biometrics",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "alignmentGroupLabel": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Biometrics",
+              "groupLabel": {
+                "ara": "????? ??????",
+                "fra": "Nom et prénom",
+                "hin": "???? ???",
+                "eng": "Full Name"
+              },
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": [
+                {
+                  "ageGroup": "INFANT",
+                  "process": "ALL",
+                  "validationExpr": "leftEye || rightEye || rightIndex || rightLittle || rightRing || rightMiddle || leftIndex || leftLittle || leftRing || leftMiddle || leftThumb || rightThumb || face",
+                  "bioAttributes": [
+                    "leftEye",
+                    "rightEye",
+                    "rightIndex",
+                    "rightLittle",
+                    "rightRing",
+                    "rightMiddle",
+                    "leftIndex",
+                    "leftLittle",
+                    "leftRing",
+                    "leftMiddle",
+                    "leftThumb",
+                    "rightThumb",
+                    "face"
+                  ]
+                }
+              ],
+              "required": false,
+              "bioAttributes": [
+                "leftEye",
+                "rightEye",
+                "rightIndex",
+                "rightLittle",
+                "rightRing",
+                "rightMiddle",
+                "leftIndex",
+                "leftLittle",
+                "leftRing",
+                "leftMiddle",
+                "leftThumb",
+                "rightThumb",
+                "face"
+              ],
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.get('ageGroup') == 'INFANT'"
+                }
+              ],
+              "subType": "introducer",
+              "exceptionPhotoRequired": false
+            }
+          ],
+          "layoutTemplate": null,
+          "preRegFetchRequired": false,
+          "additionalInfoRequestIdRequired": false,
+          "active": false
+        }
+      ],
+      "caption": {
+        "ara": "ØªØ³Ø¬ÙŠÙ„ Ø¬Ø¯ÙŠØ¯",
+        "fra": "Nouvelle inscription",
+        "hin": "??? ???????",
+        "eng": "New Registration"
+      },
+      "icon": "NewReg.png",
+      "autoSelectedGroups": null,
+      "isActive": true
+    },
+    "lostProcess": {
+      "id": "LOST",
+      "order": 3,
+      "flow": "LOST",
+      "label": {
+        "eng": "Lost UIN",
+        "hin": "?????? ?? ???",
+        "ara": "???? UIN",
+        "fra": "PERDU UIN"
+      },
+      "screens": [
+        {
+          "order": 1,
+          "name": "consent",
+          "label": {
+            "eng": "Consent",
+            "hin": "??????",
+            "ara": "??????",
+            "fra": "Consentement"
+          },
+          "caption": {
+            "eng": "Consent",
+            "hin": "??????",
+            "ara": "??????",
+            "fra": "Consentement"
+          },
+          "fields": [
+            {
+              "id": "IDSchemaVersion",
+              "inputRequired": false,
+              "type": "number",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "ID Schema Version",
+              "label": {
+                "eng": "IDSchemaVersion"
+              },
+              "controlType": null,
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "none",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": null,
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "IdSchemaVersion"
+            },
+            {
+              "id": "consentText",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "Consent",
+              "label": {},
+              "controlType": "html",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "consentText",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": "Registration Consent",
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "consentText"
+            },
+            {
+              "id": "consent",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "consent accepted",
+              "label": {
+                "eng": "I have read and accept terms and conditions to share my PII",
+                "ara": "??? ???? ????? ?????? ???????? ??????? ??????? ????? ?????? ??????? ?????? ??",
+                "fra": "J'ai lu et j'accepte les termes et conditions pour partager mes PII",
+                "hin": "????? ???? PII ???? ???? ?? ??? ???? ?? ?????? ?? ?? ??? ?? ?????? ??????? ???? ???"
+              },
+              "controlType": "checkbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "consent",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "consent"
+            },
+            {
+              "id": "preferredLang",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "user preferred Language",
+              "label": {
+                "eng": "Notification Language",
+                "ara": "??? ???????",
+                "fra": "Langue de notification",
+                "hin": "???????? ????"
+              },
+              "controlType": "button",
+              "fieldType": "dynamic",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "group1",
+              "visible": null,
+              "contactType": null,
+              "group": "PreferredLanguage",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "preferredLang"
+            }
+          ],
+          "layoutTemplate": null,
+          "preRegFetchRequired": false,
+          "active": false
+        },
+        {
+          "order": 2,
+          "name": "DemographicDetails",
+          "label": {
+            "eng": "Demographic Details",
+            "ara": "???????? ????????????",
+            "fra": "Détails démographiques",
+            "hin": "???????????? ?????"
+          },
+          "caption": {
+            "eng": "Demographic Details",
+            "ara": "???????? ????????????",
+            "fra": "Détails démographiques",
+            "hin": "???????????? ?????"
+          },
+          "fields": [
+            {
+              "id": "fullName",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "Full Name",
+              "label": {
+                "eng": "Full Name",
+                "ara": "????? ??????",
+                "fra": "Nom complet",
+                "hin": "???? ???"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{3,50}$).*",
+                  "arguments": [],
+                  "langCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "visible": null,
+              "contactType": null,
+              "group": "FullName",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "name"
+            },
+            {
+              "id": "dateOfBirth",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "dateOfBirth",
+              "label": {
+                "eng": "DOB",
+                "ara": "DOB",
+                "fra": "DOB",
+                "hin": "???? ????"
+              },
+              "controlType": "ageDate",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(1869|18[7-9][0-9]|19[0-9][0-9]|20[0-9][0-9])/([0][1-9]|1[0-2])/([0][1-9]|[1-2][0-9]|3[01])$",
+                  "arguments": [],
+                  "langCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "visible": null,
+              "contactType": null,
+              "group": "DateOfBirth",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "dateOfBirth"
+            },
+            {
+              "id": "gender",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "gender",
+              "label": {
+                "eng": "Gender",
+                "ara": "??? ????? ?? ?????",
+                "fra": "Le genre",
+                "hin": "????"
+              },
+              "controlType": "dropdown",
+              "fieldType": "dynamic",
+              "format": "",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "visible": null,
+              "contactType": null,
+              "group": "Gender",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "gender"
+            },
+            {
+              "id": "homeless",
+              "inputRequired": false,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "Homeless Description",
+              "label": {
+                "eng": "Do you have a home?",
+                "ara": "?? ???? ?????",
+                "fra": "Avez-vous une maison?",
+                "hin": "???? ???? ??? ?? ???"
+              },
+              "controlType": "dropdown",
+              "fieldType": "dynamic",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": null,
+              "contactType": null,
+              "group": "homedetails",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "homeless",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "landmark",
+              "inputRequired": false,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "landmark",
+              "label": {
+                "eng": "Landmark",
+                "ara": "???? ?????",
+                "fra": "Repère",
+                "hin": "?????????"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": {
+                "engine": "MVEL",
+                "expr": "(identity['homeless'] != null && identity['homeless'].get(0).value.equalsIgnoreCase('no'))"
+              },
+              "contactType": "landmark",
+              "group": "Address",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": true,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "landmark",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "addressLine1",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "addressLine1",
+              "label": {
+                "eng": "Address",
+                "ara": "??????? ???",
+                "fra": "Adresse",
+                "hin": "???"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{0,50}$).*",
+                  "arguments": [],
+                  "langCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": null,
+              "contactType": "Postal",
+              "group": "Address",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "addressLine1"
+            },
+            {
+              "id": "addressLine2",
+              "inputRequired": false,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "addressLine2",
+              "label": {
+                "eng": "Address Line 2",
+                "ara": "??? ??????? 2",
+                "fra": "Adresse 2",
+                "hin": "??? ?????? ?? 2"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{3,50}$).*",
+                  "arguments": [],
+                  "langCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": null,
+              "contactType": "Postal",
+              "group": "Address",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "addressLine2"
+            },
+            {
+              "id": "referenceIdentityNumber",
+              "inputRequired": false,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "referenceIdentityNumber",
+              "label": {
+                "eng": "Reference Identity Number",
+                "ara": "??? ?????? ????????",
+                "fra": "Numéro d'identité de référence",
+                "hin": "?????? ????? ??????"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "kyc",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^([0-9]{10,30})$",
+                  "arguments": [],
+                  "langCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "visible": null,
+              "contactType": null,
+              "group": "ReferenceIdentityNumber",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "none"
+            },
+            {
+              "id": "state",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "state",
+              "label": {
+                "eng": "State",
+                "ara": "?????",
+                "fra": "État",
+                "hin": "?????"
+              },
+              "controlType": "dropdown",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{0,50}$).*",
+                  "arguments": [],
+                  "langCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": null,
+              "contactType": "Postal",
+              "group": "Location",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "state"
+            },
+            {
+              "id": "city",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "city",
+              "label": {
+                "eng": "City",
+                "ara": "?????",
+                "fra": "Ville",
+                "hin": "???"
+              },
+              "controlType": "dropdown",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": null,
+              "contactType": null,
+              "group": "Location",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "city"
+            },
+            {
+              "id": "postalCode",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "postalCode",
+              "label": {
+                "ara": "??? ?????",
+                "fra": "Code Postal",
+                "eng": "Postal Code",
+                "hin": "??? ???"
+              },
+              "controlType": "dropdown",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^(?=.{0,6}$).*",
+                  "arguments": [],
+                  "langCode": null,
+                  "errorCode": "UI_100001"
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Address",
+              "visible": null,
+              "contactType": "Postal",
+              "group": "Address",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "postalCode",
+              "exceptionPhotoRequired": false
+            },
+            {
+              "id": "phone",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "phone",
+              "label": {
+                "eng": "Phone",
+                "ara": "????",
+                "fra": "Téléphone",
+                "hin": "???"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^[+]*([0-9]{1})([0-9]{9})$",
+                  "arguments": [],
+                  "langCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "visible": null,
+              "contactType": "email",
+              "group": "Phone",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "Phone"
+            },
+            {
+              "id": "email",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "email",
+              "label": {
+                "eng": "Email",
+                "ara": "???? ????????",
+                "fra": "E-mail",
+                "hin": "????"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^[A-Za-z0-9_\\-]+(\\.[A-Za-z0-9_]+)*@[A-Za-z0-9_-]+(\\.[A-Za-z0-9_]+)*(\\.[a-zA-Z]{2,})$",
+                  "arguments": [],
+                  "langCode": null
+                }
+              ],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "Demographics",
+              "visible": null,
+              "contactType": "email",
+              "group": "Email",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "Email"
+            },
+            {
+              "id": "introducerName",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "introducerName",
+              "label": {
+                "eng": "Introducer Name",
+                "ara": "??? ????????",
+                "fra": "Nom de l'introducteur",
+                "hin": "?????????? ?? ???"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": "Introducer",
+              "visible": {
+                "engine": "MVEL",
+                "expr": "identity.get('ageGroup') == 'INFANT'"
+              },
+              "contactType": null,
+              "group": "IntroducerDetails",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.get('ageGroup') == 'INFANT'"
+                }
+              ],
+              "subType": "introducerName"
+            },
+            {
+              "id": "introducerRID",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "introducerRID",
+              "label": {
+                "eng": "Introducer AID",
+                "ara": "????? AID",
+                "fra": "Introducteur AID",
+                "hin": "?????????? ??????"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^([0-9]{10,30})$",
+                  "arguments": [],
+                  "langCode": null
+                }
+              ],
+              "fieldCategory": "evidence",
+              "alignmentGroup": "Introducer",
+              "visible": {
+                "engine": "MVEL",
+                "expr": "identity.get('ageGroup') == 'INFANT' && (identity.get('introducerUIN') == nil || identity.get('introducerUIN') == empty)"
+              },
+              "contactType": null,
+              "group": "IntroducerDetails",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.get('ageGroup') == 'INFANT' && (identity.get('introducerUIN') == nil || identity.get('introducerUIN') == empty)"
+                }
+              ],
+              "subType": "RID"
+            },
+            {
+              "id": "introducerUIN",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "introducerUIN",
+              "label": {
+                "eng": "Introducer UIN",
+                "ara": "???????? UIN",
+                "fra": "Introducteur UIN",
+                "hin": "?????????? ??????"
+              },
+              "controlType": "textbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [
+                {
+                  "type": "regex",
+                  "validator": "^([0-9]{10,30})$",
+                  "arguments": [],
+                  "langCode": null
+                }
+              ],
+              "fieldCategory": "evidence",
+              "alignmentGroup": "Introducer",
+              "visible": {
+                "engine": "MVEL",
+                "expr": "identity.get('ageGroup') == 'INFANT' && (identity.get('introducerRID') == nil || identity.get('introducerRID') == empty)"
+              },
+              "contactType": null,
+              "group": "IntroducerDetails",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [
+                {
+                  "engine": "MVEL",
+                  "expr": "identity.get('ageGroup') == 'INFANT' && (identity.get('introducerRID') == nil || identity.get('introducerRID') == empty)"
+                }
+              ],
+              "subType": "UIN"
+            }
+          ],
+          "layoutTemplate": null,
+          "preRegFetchRequired": false,
+          "active": false
+        },
+        {
+          "order": 3,
+          "name": "BiometricDetails",
+          "label": {
+            "eng": "Biometric Details",
+            "ara": "???????? ??????????",
+            "fra": "Détails biométriques",
+            "hin": "??????????? ?????"
+          },
+          "caption": {
+            "eng": "Biometric Details",
+            "ara": "???????? ??????????",
+            "fra": "Détails biométriques",
+            "hin": "??????????? ?????"
+          },
+          "fields": [
+            {
+              "id": "individualBiometrics",
+              "inputRequired": true,
+              "type": "biometricsType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "",
+              "label": {
+                "eng": "Applicant Biometrics",
+                "ara": "???????? ??????? ????? ?????",
+                "fra": "Biométrie du candidat",
+                "hin": "????? ?????????????"
+              },
+              "controlType": "biometrics",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Biometrics",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": [
+                {
+                  "ageGroup": "INFANT",
+                  "process": "ALL",
+                  "validationExpr": "face",
+                  "bioAttributes": [
+                    "face"
+                  ]
+                }
+              ],
+              "required": true,
+              "bioAttributes": [
+                "leftEye",
+                "rightEye",
+                "rightIndex",
+                "rightLittle",
+                "rightRing",
+                "rightMiddle",
+                "leftIndex",
+                "leftLittle",
+                "leftRing",
+                "leftMiddle",
+                "leftThumb",
+                "rightThumb",
+                "face"
+              ],
+              "requiredOn": [],
+              "subType": "applicant"
+            },
+            {
+              "id": "proofOfException",
+              "inputRequired": false,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfException",
+              "label": {
+                "eng": "Exception Proof",
+                "ara": "????? ?????????",
+                "fra": "Preuve d'exception",
+                "hin": "????? ??????"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "POE"
+            }
+          ],
+          "layoutTemplate": null,
+          "preRegFetchRequired": false,
+          "active": false
+        }
+      ],
+      "caption": {
+        "eng": "Lost UIN",
+        "ara": "???? UIN",
+        "fra": "PERDU UIN",
+        "hin": "?????? ?? ???"
+      },
+      "icon": "LostUIN.png",
+      "isActive": true,
+      "autoSelectedGroups": null
+    },
+    "bioCorrectionProcess": {
+      "id": "BIOMETRIC_CORRECTION",
+      "order": 4,
+      "flow": "CORRECTION",
+      "label": {
+        "eng": "Biometric correction"
+      },
+      "screens": [
+        {
+          "order": 1,
+          "name": "consentdet",
+          "label": {
+            "eng": "Consent"
+          },
+          "caption": {
+            "eng": "Consent"
+          },
+          "fields": [
+            {
+              "id": "consentText",
+              "inputRequired": true,
+              "type": "simpleType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "Consent",
+              "label": {},
+              "controlType": "html",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "consentText",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": "Registration Consent",
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "consentText"
+            },
+            {
+              "id": "consent",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "consent accepted",
+              "label": {
+                "eng": "I have read and accept terms and conditions to share my PII"
+              },
+              "controlType": "checkbox",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "consent",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "consent"
+            },
+            {
+              "id": "preferredLang",
+              "inputRequired": true,
+              "type": "string",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "user preferred Language",
+              "label": {
+                "eng": "Notification Langauge"
+              },
+              "controlType": "button",
+              "fieldType": "dynamic",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": "group1",
+              "visible": null,
+              "contactType": null,
+              "group": "PreferredLanguage",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": true,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "preferredLang"
+            }
+          ],
+          "layoutTemplate": null,
+          "preRegFetchRequired": false,
+          "additionalInfoRequestIdRequired": false,
+          "active": false
+        },
+        {
+          "order": 2,
+          "name": "BiometricDetails",
+          "label": {
+            "eng": "Biometric Details"
+          },
+          "caption": {
+            "eng": "Biometric Details"
+          },
+          "fields": [
+            {
+              "id": "individualBiometrics",
+              "inputRequired": true,
+              "type": "biometricsType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "",
+              "label": {
+                "eng": "Applicant Biometrics"
+              },
+              "controlType": "biometrics",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "pvt",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Biometrics",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": [
+                {
+                  "ageGroup": "INFANT",
+                  "process": "ALL",
+                  "validationExpr": "face",
+                  "bioAttributes": [
+                    "face"
+                  ]
+                }
+              ],
+              "required": true,
+              "bioAttributes": [
+                "leftEye",
+                "rightEye",
+                "rightIndex",
+                "rightLittle",
+                "rightRing",
+                "rightMiddle",
+                "leftIndex",
+                "leftLittle",
+                "leftRing",
+                "leftMiddle",
+                "leftThumb",
+                "rightThumb",
+                "face"
+              ],
+              "requiredOn": [],
+              "subType": "applicant"
+            },
+            {
+              "id": "proofOfException",
+              "inputRequired": false,
+              "type": "documentType",
+              "minimum": 0,
+              "maximum": 0,
+              "description": "proofOfException",
+              "label": {
+                "eng": "Exception Proof"
+              },
+              "controlType": "fileupload",
+              "fieldType": "default",
+              "format": "none",
+              "validators": [],
+              "fieldCategory": "evidence",
+              "alignmentGroup": null,
+              "visible": null,
+              "contactType": null,
+              "group": "Documents",
+              "groupLabel": null,
+              "changeAction": null,
+              "transliterate": false,
+              "templateName": null,
+              "fieldLayout": null,
+              "locationHierarchy": null,
+              "conditionalBioAttributes": null,
+              "required": false,
+              "bioAttributes": null,
+              "requiredOn": [],
+              "subType": "POE"
+            }
+          ],
+          "layoutTemplate": null,
+          "preRegFetchRequired": false,
+          "additionalInfoRequestIdRequired": true,
+          "active": false
+        }
+      ],
+      "caption": {
+        "eng": "Biometric correction"
+      },
+      "icon": "UINUpdate.png",
+      "isActive": true,
+      "autoSelectedGroups": null
+    },
+    "screens": [
+      {
+        "order": 1,
+        "name": "ConsentDetails",
+        "label": {
+          "eng": "Consent",
+          "hin": "??????",
+          "ara": "??????",
+          "fra": "Consentement"
+        },
+        "caption": {
+          "eng": "Consent",
+          "hin": "??????",
+          "ara": "??????",
+          "fra": "Consentement"
+        },
+        "fields": [
+          "consentText",
+          "consent"
+        ],
+        "layoutTemplate": null,
+        "preRegFetchRequired": false,
+        "active": false
+      },
+      {
+        "order": 2,
+        "name": "DemographicDetails",
+        "label": {
+          "eng": "Demographic Details",
+          "ara": "???????? ????????????",
+          "fra": "Détails démographiques",
+          "hin": "???????????? ?????"
+        },
+        "caption": {
+          "eng": "Demographic Details",
+          "ara": "???????? ????????????",
+          "fra": "Détails démographiques",
+          "hin": "???????????? ?????"
+        },
+        "fields": [
+          "fullName",
+          "dateOfBirth",
+          "gender",
+          "homeless",
+          "landmark",
+          "addressLine1",
+          "addressLine2",
+          "referenceIdentityNumber",
+          "state",
+          "city",
+          "locality",
+          "postalCode",
+          "phone",
+          "email",
+          "introducerName",
+          "introducerRID",
+          "introducerUIN"
+        ],
+        "layoutTemplate": null,
+        "preRegFetchRequired": true,
+        "active": false
+      },
+      {
+        "order": 3,
+        "name": "DocumentsDetails",
+        "label": {
+          "ara": "????? ???????",
+          "fra": "Téléchargement de documents",
+          "hin": "???????? ?????",
+          "eng": "Document Upload"
+        },
+        "caption": {
+          "ara": "?????",
+          "fra": "Des documents",
+          "hin": "????????",
+          "eng": "Documents"
+        },
+        "fields": [
+          "proofOfAddress",
+          "proofOfIdentity",
+          "proofOfRelationship",
+          "proofOfDateOfBirth",
+          "proofOfException",
+          "proofOfException-1",
+          "proofOfPhoto"
+        ],
+        "layoutTemplate": null,
+        "preRegFetchRequired": false,
+        "active": false
+      },
+      {
+        "order": 4,
+        "name": "BiometricDetails",
+        "label": {
+          "ara": "???????? ??????????",
+          "fra": "Détails biométriques",
+          "hin": "??????????? ?????",
+          "eng": "Biometric Details"
+        },
+        "caption": {
+          "ara": "???????? ??????????",
+          "fra": "Détails biométriques",
+          "hin": "??????????? ?????",
+          "eng": "Biometric Details"
+        },
+        "fields": [
+          "individualBiometrics",
+          "individualAuthBiometrics",
+          "introducerBiometrics"
+        ],
+        "layoutTemplate": null,
+        "preRegFetchRequired": false,
+        "active": false
+      }
+    ],
+    "createdBy": "trialblazerseee",
+    "schemaJson": "{\n\t\"$schema\": \"http://json-schema.org/draft-07/schema#\",\n\t\"description\": \"MOSIP Sample identity\",\n\t\"additionalProperties\": false,\n\t\"title\": \"MOSIP identity\",\n\t\"type\": \"object\",\n\t\"definitions\": {\n\t\t\"simpleType\": {\n\t\t\t\"uniqueItems\": true,\n\t\t\t\"additionalItems\": false,\n\t\t\t\"type\": \"array\",\n\t\t\t\"items\": {\n\t\t\t\t\"additionalProperties\": false,\n\t\t\t\t\"type\": \"object\",\n\t\t\t\t\"required\": [\n\t\t\t\t\t\"language\",\n\t\t\t\t\t\"value\"\n\t\t\t\t],\n\t\t\t\t\"properties\": {\n\t\t\t\t\t\"language\": {\n\t\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t\t},\n\t\t\t\t\t\"value\": {\n\t\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t\t}\n\t\t\t\t}\n\t\t\t}\n\t\t},\n\t\t\"documentType\": {\n\t\t\t\"additionalProperties\": false,\n\t\t\t\"type\": \"object\",\n\t\t\t\"properties\": {\n\t\t\t\t\"format\": {\n\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t},\n\t\t\t\t\"type\": {\n\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t},\n\t\t\t\t\"value\": {\n\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t},\n\t\t\t\t\"refNumber\": {\n\t\t\t\t\t\"type\": [\n\t\t\t\t\t\t\"string\",\n\t\t\t\t\t\t\"null\"\n\t\t\t\t\t]\n\t\t\t\t}\n\t\t\t}\n\t\t},\n\t\t\"biometricsType\": {\n\t\t\t\"additionalProperties\": false,\n\t\t\t\"type\": \"object\",\n\t\t\t\"properties\": {\n\t\t\t\t\"format\": {\n\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t},\n\t\t\t\t\"version\": {\n\t\t\t\t\t\"type\": \"number\",\n\t\t\t\t\t\"minimum\": 0\n\t\t\t\t},\n\t\t\t\t\"value\": {\n\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t},\n\t\"properties\": {\n\t\t\"identity\": {\n\t\t\t\"additionalProperties\": false,\n\t\t\t\"type\": \"object\",\n\t\t\t\"required\": [\n\t\t\t\t\"IDSchemaVersion\",\n\t\t\t\t\"fullName\",\n\t\t\t\t\"dateOfBirth\",\n\t\t\t\t\"gender\",\n\t\t\t\t\"addressLine1\",\n\t\t\t\t\"state\",\n\t\t\t\t\"city\",\n\t\t\t\t\"postalCode\",\n\t\t\t\t\"individualBiometrics\"\n\t\t\t],\n\t\t\t\"properties\": {\n\t\t\t\t\"IDSchemaVersion\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"none\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"type\": \"number\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"minimum\": 0\n\t\t\t\t},\n\t\t\t\t\"fullName\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"validators\": [{\n\t\t\t\t\t\t\"validator\": \"^(?=.{3,50}$).*\",\n\t\t\t\t\t\t\"arguments\": [],\n\t\t\t\t\t\t\"type\": \"regex\"\n\t\t\t\t\t}],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/simpleType\"\n\t\t\t\t},\n\t\t\t\t\"dateOfBirth\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"validators\": [{\n\t\t\t\t\t\t\"validator\": \"^(1869|18[7-9][0-9]|19[0-9][0-9]|20[0-9][0-9])/([0][1-9]|1[0-2])/([0][1-9]|[1-2][0-9]|3[01])$\",\n\t\t\t\t\t\t\"arguments\": [],\n\t\t\t\t\t\t\"type\": \"regex\"\n\t\t\t\t\t}],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"type\": \"string\",\n\t\t\t\t\t\"fieldType\": \"default\"\n\t\t\t\t},\n\t\t\t\t\"gender\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/simpleType\"\n\t\t\t\t},\n\t\t\t\t\"referenceIdentityNumber\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"validators\": [{\n\t\t\t\t\t\t\"validator\": \"^([0-9]{10,30})$\",\n\t\t\t\t\t\t\"arguments\": [],\n\t\t\t\t\t\t\"type\": \"regex\"\n\t\t\t\t\t}],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"kyc\",\n\t\t\t\t\t\"type\": \"string\",\n\t\t\t\t\t\"fieldType\": \"default\"\n\t\t\t\t},\n\t\t\t\t\"homeless\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/simpleType\"\n\t\t\t\t},\n\t\t\t\t\"landmark\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/simpleType\"\n\t\t\t\t},\n\t\t\t\t\"addressLine1\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"validators\": [{\n\t\t\t\t\t\t\"validator\": \"^(?=.{0,50}$).*\",\n\t\t\t\t\t\t\"arguments\": [],\n\t\t\t\t\t\t\"type\": \"regex\"\n\t\t\t\t\t}],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/simpleType\"\n\t\t\t\t},\n\t\t\t\t\"addressLine2\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"validators\": [{\n\t\t\t\t\t\t\"validator\": \"^(?=.{3,50}$).*\",\n\t\t\t\t\t\t\"arguments\": [],\n\t\t\t\t\t\t\"type\": \"regex\"\n\t\t\t\t\t}],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/simpleType\"\n\t\t\t\t},\n\t\t\t\t\"state\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"validators\": [{\n\t\t\t\t\t\t\"validator\": \"^(?=.{0,50}$).*\",\n\t\t\t\t\t\t\"arguments\": [],\n\t\t\t\t\t\t\"type\": \"regex\"\n\t\t\t\t\t}],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/simpleType\"\n\t\t\t\t},\n\t\t\t\t\"city\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"validators\": [{\n\t\t\t\t\t\t\"validator\": \"^(?=.{0,50}$).*\",\n\t\t\t\t\t\t\"arguments\": [],\n\t\t\t\t\t\t\"type\": \"regex\"\n\t\t\t\t\t}],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/simpleType\"\n\t\t\t\t},\n\t\t\t\t\"postalCode\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"validators\": [{\n\t\t\t\t\t\t\"validator\": \"^(?=.{0,6}$).*\",\n\t\t\t\t\t\t\"arguments\": [],\n\t\t\t\t\t\t\"type\": \"regex\"\n\t\t\t\t\t}],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"type\": \"string\"\n\t\t\t\t},\n\t\t\t\t\"email\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"validators\": [{\n\t\t\t\t\t\t\"validator\": \"^[A-Za-z0-9_\\\\-]+(\\\\.[A-Za-z0-9_]+)*@[A-Za-z0-9_-]+(\\\\.[A-Za-z0-9_]+)*(\\\\.[a-zA-Z]{2,})$\",\n\t\t\t\t\t\t\"arguments\": [],\n\t\t\t\t\t\t\"type\": \"regex\"\n\t\t\t\t\t}],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"type\": \"string\",\n\t\t\t\t\t\"fieldType\": \"default\"\n\t\t\t\t},\n\t\t\t\t\"phone\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"validators\": [{\n\t\t\t\t\t\t\"validator\": \"^[+]*([0-9]{1})([0-9]{9})$\",\n\t\t\t\t\t\t\"arguments\": [],\n\t\t\t\t\t\t\"type\": \"regex\"\n\t\t\t\t\t}],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"type\": \"string\",\n\t\t\t\t\t\"fieldType\": \"default\"\n\t\t\t\t},\n\t\t\t\t\"introducerRID\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"evidence\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"type\": \"string\",\n\t\t\t\t\t\"fieldType\": \"default\"\n\t\t\t\t},\n\t\t\t\t\"introducerUIN\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"evidence\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"type\": \"string\",\n\t\t\t\t\t\"fieldType\": \"default\"\n\t\t\t\t},\n\t\t\t\t\"introducerName\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"evidence\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/simpleType\"\n\t\t\t\t},\n\t\t\t\t\"proofOfDateOfBirth\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/documentType\"\n\t\t\t\t},\n\t\t\t\t\"proofOfIdentity\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/documentType\"\n\t\t\t\t},\n\t\t\t\t\"proofOfAddress\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/documentType\"\n\t\t\t\t},\n\t\t\t\t\"proofOfException\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"evidence\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/documentType\"\n\t\t\t\t},\n\t\t\t\t\"proofOfRelationship\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/documentType\"\n\t\t\t\t},\n\t\t\t\t\"proofOfException-1\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"evidence\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/documentType\"\n\t\t\t\t},\n\t\t\t\t\"proofOfPhoto\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/documentType\"\n\t\t\t\t},\n\t\t\t\t\"proofOfConsent\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/documentType\"\n\t\t\t\t},\n\t\t\t\t\"individualBiometrics\": {\n\t\t\t\t\t\"bioAttributes\": [\n\t\t\t\t\t\t\"leftEye\",\n\t\t\t\t\t\t\"rightEye\",\n\t\t\t\t\t\t\"rightIndex\",\n\t\t\t\t\t\t\"rightLittle\",\n\t\t\t\t\t\t\"rightRing\",\n\t\t\t\t\t\t\"rightMiddle\",\n\t\t\t\t\t\t\"leftIndex\",\n\t\t\t\t\t\t\"leftLittle\",\n\t\t\t\t\t\t\"leftRing\",\n\t\t\t\t\t\t\"leftMiddle\",\n\t\t\t\t\t\t\"leftThumb\",\n\t\t\t\t\t\t\"rightThumb\",\n\t\t\t\t\t\t\"face\"\n\t\t\t\t\t],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/biometricsType\"\n\t\t\t\t},\n\t\t\t\t\"introducerBiometrics\": {\n\t\t\t\t\t\"bioAttributes\": [\n\t\t\t\t\t\t\"leftEye\",\n\t\t\t\t\t\t\"rightEye\",\n\t\t\t\t\t\t\"rightIndex\",\n\t\t\t\t\t\t\"rightLittle\",\n\t\t\t\t\t\t\"rightRing\",\n\t\t\t\t\t\t\"rightMiddle\",\n\t\t\t\t\t\t\"leftIndex\",\n\t\t\t\t\t\t\"leftLittle\",\n\t\t\t\t\t\t\"leftRing\",\n\t\t\t\t\t\t\"leftMiddle\",\n\t\t\t\t\t\t\"leftThumb\",\n\t\t\t\t\t\t\"rightThumb\",\n\t\t\t\t\t\t\"face\"\n\t\t\t\t\t],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/biometricsType\"\n\t\t\t\t},\n\t\t\t\t\"individualAuthBiometrics\": {\n\t\t\t\t\t\"bioAttributes\": [\n\t\t\t\t\t\t\"leftEye\",\n\t\t\t\t\t\t\"rightEye\",\n\t\t\t\t\t\t\"rightIndex\",\n\t\t\t\t\t\t\"rightLittle\",\n\t\t\t\t\t\t\"rightRing\",\n\t\t\t\t\t\t\"rightMiddle\",\n\t\t\t\t\t\t\"leftIndex\",\n\t\t\t\t\t\t\"leftLittle\",\n\t\t\t\t\t\t\"leftRing\",\n\t\t\t\t\t\t\"leftMiddle\",\n\t\t\t\t\t\t\"leftThumb\",\n\t\t\t\t\t\t\"rightThumb\",\n\t\t\t\t\t\t\"face\"\n\t\t\t\t\t],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"fieldType\": \"default\",\n\t\t\t\t\t\"$ref\": \"#/definitions/biometricsType\"\n\t\t\t\t},\n\t\t\t\t\"UIN\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"none\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"type\": \"string\",\n\t\t\t\t\t\"fieldType\": \"default\"\n\t\t\t\t},\n\t\t\t\t\"preferredLang\": {\n\t\t\t\t\t\"bioAttributes\": [],\n\t\t\t\t\t\"fieldCategory\": \"pvt\",\n\t\t\t\t\t\"format\": \"none\",\n\t\t\t\t\t\"type\": \"string\",\n\t\t\t\t\t\"fieldType\": \"dynamic\"\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t}\n}",
+    "id": "6212c945-161d-40cd-aeeb-6d4d8ff97444",
+    "effectiveFrom": "2022-10-03T10:57:40.623Z",
+    "status": "PUBLISHED"
+  },
+  "errors": null
+}

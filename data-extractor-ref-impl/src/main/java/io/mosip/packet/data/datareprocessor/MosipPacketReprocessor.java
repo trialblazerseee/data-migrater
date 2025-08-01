@@ -78,6 +78,9 @@ public class MosipPacketReprocessor implements DataReProcessor {
 
     @Override
     public void reProcess() throws Exception {
+        System.out.println("Process : RE-PROCESSOR started");
+        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Process : RE-PROCESSOR started");
+
         PacketCreatorResponse packetCreatorResponse = new PacketCreatorResponse();
         packetCreatorResponse.setRID(new ArrayList<>());
 
@@ -96,15 +99,17 @@ public class MosipPacketReprocessor implements DataReProcessor {
                     trackerRequestDto.setStatus(TrackerStatus.PROCESSED_WITHOUT_UPLOAD.toString());
                 }
                 trackerUtil.addTrackerEntry(trackerRequestDto);
-                trackerUtil.addTrackerLocalEntry(resultDto.getRefId(), null, (GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_EXPORTER) ? TrackerStatus.PROCESSED : TrackerStatus.PROCESSED_WITHOUT_UPLOAD), null, null, null, null);
             }
         };
 
-        CustomizedThreadPoolExecutor threadPool = new CustomizedThreadPoolExecutor(maxThreadPoolCount, maxRecordsCountPerThreadPool, maxThreadExecCount, "RE-PROCESSOR");
+        CustomizedThreadPoolExecutor threadPool = new CustomizedThreadPoolExecutor(maxThreadPoolCount, maxThreadExecCount, maxRecordsCountPerThreadPool, "RE-PROCESSOR");
 
         List<String> statusList = Arrays.asList(reprocessStatusList.split(","));
 
         List<PacketTracker> trackerList =  packetTrackerRepository.findByStatusIn(statusList);
+
+        System.out.println("Process : RE-PROCESSOR : Found " + trackerList.size() + " Records for Process");
+        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Process : RE-PROCESSOR : Found " + trackerList.size() + " Records for Process");
 
         for(PacketTracker packetTracker : trackerList) {
             ThreadReprocessorController controller = new ThreadReprocessorController();
@@ -203,6 +208,8 @@ public class MosipPacketReprocessor implements DataReProcessor {
         do {
             Thread.sleep(15000);
         } while(!GlobalConfig.isThreadPoolCompleted("RE-PROCESSOR"));
+        System.out.println("Process : RE-PROCESSOR : Completed");
+        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Process : RE-PROCESSOR : Completed");
     }
 
     @Override

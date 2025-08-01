@@ -1,0 +1,18 @@
+import java.util.List;
+
+def getNationality() {
+        String nationality = (String) identity.get('nationality');
+		Object val;
+		
+		if(identity.containsKey('nationalList')) {
+			val = identity.get('nationalList');
+		}
+
+        if(nationality == "SLE") {
+            return "SLE";
+        } if(val != null && ((List)val).contains(nationality.toLowerCase())) {
+            return "ECOWAS";
+        } else {
+            return "NFR";
+        }
+}

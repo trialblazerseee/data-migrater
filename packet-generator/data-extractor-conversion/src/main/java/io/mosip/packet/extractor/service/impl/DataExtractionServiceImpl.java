@@ -186,7 +186,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
         PacketCreatorResponse packetCreatorResponse = new PacketCreatorResponse();
         packetCreatorResponse.setRID(new ArrayList<>());
         PacketDto packetDto = null;
-        TOTAL_RECORDS_FOR_PROCESS=0L;
+        TOTAL_RECORDS_FOR_PROCESS.set(0);
 
         try {
             Date startTime = new Date();
@@ -221,7 +221,6 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                     trackerRequestDto.setComments(resultDto.getComments());
                     trackerRequestDto.setAdditionalMaps(resultDto.getAdditionalMaps());
                     trackerUtil.addTrackerEntry(trackerRequestDto);
-                    trackerUtil.addTrackerLocalEntry(resultDto.getRefId(), null, resultDto.getStatus(), dbImportRequest.getProcess(), resultDto.getComments(), appConfig.getPredefinedSessionKey(), GlobalConfig.getActivityName());
                 }
             };
 
@@ -265,7 +264,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
 
             if(GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_EXPORTER)) {
                 Activity exportActivity = activity.getActivity(ActivityName.DATA_EXPORTER.name());
-                CustomizedThreadPoolExecutor uploadExector = new CustomizedThreadPoolExecutor(uploadMaxThreadPoolCount, uploadMaxRecordsCountPerThreadPool,uploadMaxThreadExecCount, exportActivity.getActivityName().getActivityName(), exportActivity.isMonitorRequired());
+                CustomizedThreadPoolExecutor uploadExector = new CustomizedThreadPoolExecutor(uploadMaxThreadPoolCount, uploadMaxThreadExecCount, uploadMaxRecordsCountPerThreadPool, exportActivity.getActivityName().getActivityName(), exportActivity.isMonitorRequired());
                 Timer uploaderTimer = new Timer("Uploading Packet");
                 uploaderTimer.schedule(new TimerTask() {
                     @SneakyThrows
