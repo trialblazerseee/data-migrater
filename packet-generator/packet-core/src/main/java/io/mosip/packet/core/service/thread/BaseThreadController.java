@@ -23,7 +23,6 @@ public abstract class BaseThreadController implements Runnable {
         public void onFailure();
     }
 
-    @SneakyThrows
     @Override
     public void run() {
         try {
@@ -34,7 +33,6 @@ public abstract class BaseThreadController implements Runnable {
                 failedRecordCount.increment();
             response.onFailure();
             LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, " Error While Processing Data  : " + ExceptionUtils.getStackTrace(e));
-            throw e;
         }
     }
 

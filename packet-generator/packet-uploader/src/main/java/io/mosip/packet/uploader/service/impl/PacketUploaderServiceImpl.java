@@ -235,7 +235,6 @@ public class PacketUploaderServiceImpl  implements PacketUploaderService {
             pushPacketWithRetryWrapper(packet, startTime, trackerRefid);
             LOGGER.debug("SESSION_ID", "PACKET_UPLOAD", "uploadPacket()", "Time Taken to complete packet upload. Reference Id : " + trackerRefid + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
         } catch (ConnectionException e) {
-            LOGGER.error("SESSION_ID", "PACKET_UPLOAD", "uploadPacket()", "Error Occured While Uploading Packet. Reference Id : " + trackerRefid + ExceptionUtils.getStackTrace(e));
             throw e;
         }
     }

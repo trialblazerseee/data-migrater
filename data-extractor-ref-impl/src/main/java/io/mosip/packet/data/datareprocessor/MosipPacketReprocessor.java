@@ -30,10 +30,12 @@ import org.springframework.stereotype.Component;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.util.*;
 
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
@@ -85,9 +87,8 @@ public class MosipPacketReprocessor implements DataReProcessor {
         packetCreatorResponse.setRID(new ArrayList<>());
 
         ResultSetter setter = new ResultSetter() {
-            @SneakyThrows
             @Override
-            public void setResult(Object obj) {
+            public void setResult(Object obj) throws SQLException, IOException, InterruptedException {
                 ResultDto resultDto = (ResultDto) obj;
                 packetCreatorResponse.getRID().add(resultDto.getRegNo());
                 TrackerRequestDto trackerRequestDto = new TrackerRequestDto();

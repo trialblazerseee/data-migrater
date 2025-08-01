@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -128,7 +129,7 @@ public class IdrepoUploader implements DataPostProcessor {
         return responseDto;
     }
 
-    private void trackerStatusUpdate(String refId, PacketDto packetDto, ResultSetter setter, TrackerStatus status, String comment) {
+    private void trackerStatusUpdate(String refId, PacketDto packetDto, ResultSetter setter, TrackerStatus status, String comment) throws SQLException, IOException, InterruptedException {
         ResultDto resultDto = new ResultDto();
         resultDto.setRegNo(packetDto.getId());
         resultDto.setRefId(refId);
