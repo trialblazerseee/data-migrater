@@ -228,7 +228,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                 @SneakyThrows
                 @Override
                 public void setResult(Object obj) {
-                    Long startTime = System.nanoTime();
+                    Long startTime = System.currentTimeMillis();
                     Map<FieldCategory, HashMap<String, Object>> dataHashMap = (Map<FieldCategory, HashMap<String, Object>>) obj;
                     TrackerRequestDto trackerRequestDto = new TrackerRequestDto();
                     trackerRequestDto.setRegNo(null);
@@ -255,8 +255,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                         setter.setResult(resultDto);
                     }
                     LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Thread - " + processObject.getRefId()+ " Process Ended");
-                    Long endTime = System.nanoTime();
-                    Long timeDifference = endTime-startTime;
+                    long timeDifference = System.currentTimeMillis()-startTime;
                     LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Thread - " + processObject.getRefId() + " Time taken to complete " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
                     TIMECONSUPTIONQUEUE.add(timeDifference);
                 }

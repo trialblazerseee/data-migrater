@@ -128,18 +128,12 @@ public class GlobalConfig {
                                 LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pool : " + executor.getNAME() + " executor.getCurrentCompletedTask() " + executor.getCurrentCompletedTask());
                                 LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pool : " + executor.getNAME() + " executor.getCountOfZeroActiveCount() " + executor.getCountOfZeroActiveCount());
                                 if(TOTAL_RECORDS_FOR_PROCESS.get() - TOTAL_FAILED_RECORDS.get() - executor.getCurrentCompletedTask() <= 0 || executor.getCountOfZeroActiveCount() > 10) {
-                                    if(executor.getWatch() != null)
-                                        executor.getWatch().cancel();
-                                    if(executor.getEstimateTimer() != null)
-                                        executor.getEstimateTimer().cancel();
+                                    executor.stopWatch();;
                                 } else {
                                     isCompleted = false;
                                 }
                             } else {
-                                if(executor.getWatch() != null)
-                                    executor.getWatch().cancel();
-                                if(executor.getEstimateTimer() != null)
-                                    executor.getEstimateTimer().cancel();
+                                executor.stopWatch();
                             }
                         } else {
                             isCompleted = false;
