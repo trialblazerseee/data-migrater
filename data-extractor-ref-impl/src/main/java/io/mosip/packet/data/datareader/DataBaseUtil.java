@@ -126,7 +126,7 @@ public class DataBaseUtil implements DataReader {
             }
     }
 
-    private String generateQuery(TableRequestDto tableRequestDto, Map<FieldCategory, HashMap<String, Object>> dataMap, Map<String, HashMap<String, String>> fieldsCategoryMap) throws Exception {
+    private String generateQuery(TableRequestDto tableRequestDto, Map<FieldCategory, HashMap<String, Object>> dataMap, Map<String, HashMap<String, String>> fieldsCategoryMap, boolean fetchCount) throws Exception {
         if (tableRequestDto.getQueryType().equals(QuerySelection.TABLE)) {
             String tableName = tableRequestDto.getTableNameWithOutSchema();
             List<String> ignoreFields = commonUtil.getNonIdSchemaNonTableFieldsMap();
@@ -164,7 +164,7 @@ public class DataBaseUtil implements DataReader {
             String filterCondition = null;
             boolean whereCondition= false;
 
-            String selectSql = "SELECT " + columnNames + "  from " + tableRequestDto.getTableName();
+            String selectSql = "SELECT <COLUMNS> from " + tableRequestDto.getTableName();
 
             if(tableRequestDto.getFilters() != null) {
                 for (QueryFilter queryFilter : tableRequestDto.getFilters()) {
@@ -202,14 +202,20 @@ public class DataBaseUtil implements DataReader {
                     selectSql += filterCondition;
                 }
 
-                selectSql += " ORDER BY  " + (applicationIdColumn != null && !applicationIdColumn.isEmpty() ? applicationIdColumn : trackColumn);
+                if(fetchCount) {
+                    selectSql = selectSql.replace("<COLUMNS>", "COUNT(*)");
+                } else {
+                    assert columnNames != null;
+                    selectSql = selectSql.replace("<COLUMNS>", columnNames);
+                    selectSql += " ORDER BY  " + (applicationIdColumn != null && !applicationIdColumn.isEmpty() ? applicationIdColumn : trackColumn);
 
-                if(tableRequestDto.getExecutionOrderSequence() == 1) {
-                if(!isPackerTrackerFilterRequired || !isTrackerSameHost)
-                    selectSql += " " + QueryOffsetLimitSetter.valueOf(dbType.toString()).getValue(OFFSET_VALUE, Long.valueOf(dbReaderMaxThreadPoolCount*dbReaderMaxRecordsCountPerThreadPool));
-                else
-                    selectSql += " " + QueryLimitSetter.valueOf(dbType.toString()).getValue(dbReaderMaxThreadPoolCount*dbReaderMaxRecordsCountPerThreadPool);
-            }
+                    if(tableRequestDto.getExecutionOrderSequence() == 1) {
+                        if(!isPackerTrackerFilterRequired || !isTrackerSameHost)
+                            selectSql += " " + QueryOffsetLimitSetter.valueOf(dbType.toString()).getValue(OFFSET_VALUE, Long.valueOf(dbReaderMaxThreadPoolCount*dbReaderMaxRecordsCountPerThreadPool));
+                        else
+                            selectSql += " " + QueryLimitSetter.valueOf(dbType.toString()).getValue(dbReaderMaxThreadPoolCount*dbReaderMaxRecordsCountPerThreadPool);
+                    }
+                }
             }
             String sqlQuery =  formatter.replaceColumntoDataIfAny(selectSql, dataMap);
             LOGGER.debug("SESSION_ID", "DATA_READER", "generateQuery()", "SQL Query Generated : " + sqlQuery);
@@ -332,13 +338,14 @@ public class DataBaseUtil implements DataReader {
     @Override
     public void readData(DBImportRequest dbImportRequest, Map<FieldCategory, HashMap<String, Object>> dataHashMap, Map<String, HashMap<String, String>> fieldsCategoryMap, ResultSetter setter) throws Exception {
         TOTAL_RECORDS_FOR_PROCESS.set(0);
+        TOTAL_FAILED_RECORDS.set(0);
 
         try {
             if(conn != null) {
                 IS_DATABASE_READ_OPERATION = true;
                 initializeDocumentMap(dbImportRequest, fieldsCategoryMap);
                 oneTimeCheckForZeroOffset = true;
-                threadPool = new CustomizedThreadPoolExecutor(dbReaderMaxThreadPoolCount, dbReaderMaxThreadExecCount, dbReaderMaxRecordsCountPerThreadPool, activity.getActivity(ActivityName.DATA_CREATOR.name()).getActivityName().getActivityName(), activity.getActivity(ActivityName.DATA_CREATOR.name()).isMonitorRequired());
+                threadPool = new CustomizedThreadPoolExecutor(dbReaderMaxThreadPoolCount, dbReaderMaxThreadExecCount, dbReaderMaxRecordsCountPerThreadPool, activity.getActivity(ActivityName.DATA_CREATOR.name()).getActivityName().getActivityName(), activity.getActivity(ActivityName.DATA_CREATOR.name()).isMonitorRequired(), ActivityName.DATA_EXPORTER);
 
                 Timer dataReader = new Timer("DataBase Reader");
                 dataReader.schedule(new TimerTask() {
@@ -364,7 +371,13 @@ public class DataBaseUtil implements DataReader {
                                 List<TableRequestDto> tableRequestDtoList = dbImportRequest.getTableDetails();
                                 Collections.sort(tableRequestDtoList);
                                 TableRequestDto tableRequestDto = tableRequestDtoList.get(0);
-                                statement1 = conn.prepareStatement(generateQuery(tableRequestDto, dataHashMap, fieldsCategoryMap), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                                statement1 = conn.prepareStatement(generateQuery(tableRequestDto, dataHashMap, fieldsCategoryMap, true));
+                                ResultSet resultSetCount = statement1.executeQuery();
+                                if(resultSetCount.next()) {
+                                    TOTAL_RECORDS_FOR_PROCESS.set(resultSetCount.getInt(1) - OFFSET_VALUE.intValue());
+                                }
+
+                                statement1 = conn.prepareStatement(generateQuery(tableRequestDto, dataHashMap, fieldsCategoryMap, false), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                                 scrollableResultSet = statement1.executeQuery();
 
                                 if(scrollableResultSet.last()) {
@@ -372,7 +385,7 @@ public class DataBaseUtil implements DataReader {
                                     LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current Row Count from result set is " + scrollableResultSet.getRow());
                                     LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current OFFSET Value is " + OFFSET_VALUE);
                                     LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current Fetch Size is " + scrollableResultSet.getFetchSize());
-                                    TOTAL_RECORDS_FOR_PROCESS.addAndGet(scrollableResultSet.getRow());
+                               //     TOTAL_RECORDS_FOR_PROCESS.addAndGet(scrollableResultSet.getRow());
                                     OFFSET_VALUE += Long.valueOf(scrollableResultSet.getRow());
                                     trackerUtil.updateDatabaseOffset(OFFSET_VALUE);
                                 }
@@ -406,7 +419,7 @@ public class DataBaseUtil implements DataReader {
                                                             ResultSet resultSet1 = null;
                                                             try {
                                                                 TableRequestDto tableRequestDto1 = tableRequestDtoList.get(i);
-                                                                statement2 = conn.prepareStatement(generateQuery(tableRequestDto1, dataHashMap, fieldsCategoryMap), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                                                                statement2 = conn.prepareStatement(generateQuery(tableRequestDto1, dataHashMap, fieldsCategoryMap, false), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
                                                                 resultSet1 = statement2.executeQuery();
 
                                                                 Map<String, Object> resultData1 = new HashMap<>();

@@ -7,6 +7,10 @@ import io.mosip.packet.core.util.FixedListQueue;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -107,14 +111,14 @@ public class CustomizedThreadPoolExecutor {
                 @Override
                 public void run() {
                     try {
-                        if (TIMECONSUPTIONQUEUE != null && TIMECONSUPTIONQUEUE.size() > 0) {
-                            FixedListQueue<Long> listQueue = (FixedListQueue<Long>) TIMECONSUPTIONQUEUE.clone();
+                        if (TIMECONSUPTIONQUEUE != null && !TIMECONSUPTIONQUEUE.isEmpty()) {
+                            ConcurrentLinkedQueue<Long> listQueue = new ConcurrentLinkedQueue<>(TIMECONSUPTIONQUEUE);
                             TIMECONSUPTIONQUEUE.clear();
 
-                            Long avgTime = 0l;
+                            long avgTime = 0l;
                             Long[] consumedTimeList = listQueue.toArray(new Long[listQueue.size()]);
 
-                            Long TotalSum = Arrays.stream(consumedTimeList).mapToLong(Long::longValue).sum();
+                            long TotalSum = Arrays.stream(consumedTimeList).mapToLong(Long::longValue).sum();
                             int noOfRecords = consumedTimeList.length;
                             if(noOfRecords > 0)
                                 avgTime = TotalSum / noOfRecords;
@@ -141,11 +145,14 @@ public class CustomizedThreadPoolExecutor {
     }
 
     private void printProcessingStatus(boolean monitorRequired) {
+        int totalYears = 0;
+        int totalMonths = 0;
         int totalDays = 0;
-        int totalHours = 0;
-        int remainingMinutes =0;
+        long totalHours = 0;
+        long remainingMinutes =0;
         long avgTime = 0l;
         int avgCount = 0;
+        float percentageCompleted=0f;
 
         try {
             if(threadPoolExecutor.getActiveCount() <= 0)
@@ -173,14 +180,28 @@ public class CustomizedThreadPoolExecutor {
                     avgTime = TotalSum / noOfRecords;
                     long totalTimeRequired = (remainingRecords / avgCount);
 
-                    totalHours = (int) (totalTimeRequired / 60);
-                    totalDays = (int) totalHours / 24;
-                    totalHours = (int) (totalHours % 24);
-                    remainingMinutes = (int) (totalTimeRequired % 60);
+                    percentageCompleted = (float) (totalCompletedTaskCount.get() + failedRecordCount.get()) / totalRecords;
+
+                    LocalDateTime start = LocalDateTime.now();
+                    LocalDateTime end = start.plusMinutes(totalTimeRequired);
+                    Period dateDiff = Period.between(start.toLocalDate(), end.toLocalDate());
+                    LocalDateTime intermediate = start.plus(dateDiff);
+
+                    if(intermediate.isAfter(end)) {
+                        dateDiff = dateDiff.minusDays(1);
+                        intermediate = start.plus(dateDiff);
+                    }
+
+                    Duration timeDiff = Duration.between(intermediate, end);
+                    totalYears = dateDiff.getYears();
+                    totalMonths = dateDiff.getMonths();
+                    totalDays = dateDiff.getDays();
+                    totalHours = timeDiff.toHours();
+                    remainingMinutes = timeDiff.minusHours(totalHours).toMinutes();
                 }
 
-                System.out.println("Pool Name : " + NAME + " Avg Count per Min.: " + avgCount + " Avg Time per Record : " + TimeUnit.SECONDS.convert(avgTime, TimeUnit.MILLISECONDS) + " S  Estimate Time of Completion : " + totalDays + "D " + totalHours + "H " + remainingMinutes + "M" +"  Total Records for Process : " + TOTAL_RECORDS_FOR_PROCESS + ", Failed in Previous Batch : " + TOTAL_FAILED_RECORDS + ", Total Task : " + totalTaskCount  + ", Active Task : " + threadPoolExecutor.getActiveCount() + ", Completed Task : " + totalCompletedTaskCount + ", Failed Task : " + failedRecordCount + (isCompletionCountRequired ? ", No of "+ trackActivityForCompletion + ", Completed : " +  COMPLETION_COUNT_MAP.get(trackActivityForCompletion) : "."));
-                LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pool Name : " + NAME + " Avg Count per Min.: " + avgCount + " Avg Time per Record : " + TimeUnit.SECONDS.convert(avgTime, TimeUnit.MILLISECONDS) + " S  Estimate Time of Completion : " + totalDays + "D " + totalHours + "H " + remainingMinutes + "M" +"  Total Records for Process : " + TOTAL_RECORDS_FOR_PROCESS + ", Failed in Previous Batch : " + TOTAL_FAILED_RECORDS + ", Total Task : " + (totalTaskCount)  + ", Active Task : " + threadPoolExecutor.getActiveCount() + ", Completed Task : " + totalCompletedTaskCount + ", Failed Task : " + failedRecordCount + (isCompletionCountRequired ? ", No of "+ trackActivityForCompletion + ", Completed : " + COMPLETION_COUNT_MAP.get(trackActivityForCompletion) : "."));
+                System.out.println("Pool Name : " + NAME + " Avg Count per Min.: " + avgCount + " Avg Time per Record : " + TimeUnit.SECONDS.convert(avgTime, TimeUnit.MILLISECONDS) + " S," +  " Percentage Completed : " +  String.format("%.4f", percentageCompleted) +  " %,  Estimate Time of Completion : " + totalYears + "Y " + totalMonths + "M " + totalDays + "D " + totalHours + "H " + remainingMinutes + "M" +"  Total Records for Process : " + TOTAL_RECORDS_FOR_PROCESS + ", Failed in Previous Batch : " + TOTAL_FAILED_RECORDS + ", Total Task : " + totalTaskCount  + ", Active Task : " + threadPoolExecutor.getActiveCount() + ", Completed Task : " + totalCompletedTaskCount + ", Failed Task : " + failedRecordCount + (isCompletionCountRequired ? ", No of "+ trackActivityForCompletion + ", Completed : " +  COMPLETION_COUNT_MAP.get(trackActivityForCompletion) : "."));
+                LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pool Name : " + NAME + " Avg Count per Min.: " + avgCount + " Avg Time per Record : " + TimeUnit.SECONDS.convert(avgTime, TimeUnit.MILLISECONDS) + " S," +  " Percentage Completed : " +  String.format("%.4f", percentageCompleted) +" %,  Estimate Time of Completion : " + totalYears + "Y " + totalMonths + "M "  + totalDays + "D " + totalHours + "H " + remainingMinutes + "M" +"  Total Records for Process : " + TOTAL_RECORDS_FOR_PROCESS + ", Failed in Previous Batch : " + TOTAL_FAILED_RECORDS + ", Total Task : " + (totalTaskCount)  + ", Active Task : " + threadPoolExecutor.getActiveCount() + ", Completed Task : " + totalCompletedTaskCount + ", Failed Task : " + failedRecordCount + (isCompletionCountRequired ? ", No of "+ trackActivityForCompletion + ", Completed : " + COMPLETION_COUNT_MAP.get(trackActivityForCompletion) : "."));
             }
         } catch (Exception e) {}
     }

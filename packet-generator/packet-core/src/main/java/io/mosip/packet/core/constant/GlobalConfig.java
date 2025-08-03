@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -28,7 +29,7 @@ public class GlobalConfig {
 
     public static Boolean IS_NETWORK_AVAILABLE = true;
 
-    public static FixedListQueue<Long> TIMECONSUPTIONQUEUE;
+    public static ConcurrentLinkedQueue<Long> TIMECONSUPTIONQUEUE;
 
     public static AtomicInteger TOTAL_RECORDS_FOR_PROCESS = new AtomicInteger();
 

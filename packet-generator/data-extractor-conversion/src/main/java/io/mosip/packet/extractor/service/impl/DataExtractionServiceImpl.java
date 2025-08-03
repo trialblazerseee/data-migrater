@@ -47,6 +47,7 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -182,7 +183,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
     @Override
     public PacketCreatorResponse createPacketFromDataBase(DBImportRequest dbImportRequest) throws Exception {
         LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "DataExtractionServiceImpl :: createPacketFromDataBase():: entry");
-        TIMECONSUPTIONQUEUE = new FixedListQueue<Long>(100);
+        TIMECONSUPTIONQUEUE = new ConcurrentLinkedQueue<>();
         PacketCreatorResponse packetCreatorResponse = new PacketCreatorResponse();
         packetCreatorResponse.setRID(new ArrayList<>());
         PacketDto packetDto = null;
