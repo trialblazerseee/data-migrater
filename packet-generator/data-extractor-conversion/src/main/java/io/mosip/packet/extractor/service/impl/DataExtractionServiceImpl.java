@@ -129,7 +129,6 @@ public class DataExtractionServiceImpl implements DataExtractionService {
     @Autowired
     private ApplicationConfig appConfig;
 
-
     @Override
     public HashMap<String, Object> extractBioDataFromDBAsBytes(DBImportRequest dbImportRequest, Boolean localStoreRequired) throws Exception {
         HashMap<String, Object> biodata = new HashMap<>();
@@ -197,6 +196,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
             enumList.add(ValidatorEnum.FILTER_VALIDATOR);
             enumList.add(ValidatorEnum.BIOMETRIC_FORMAT_VALIDATOR);
             enumList.add(ValidatorEnum.IDENTITY_JSON_VALIDATOR);
+            enumList.add(ValidatorEnum.REQUEST_HASH_VALIDATOR);
 
             mockDeviceUtil.resetDevices();
             mockDeviceUtil.initDeviceHelpers();

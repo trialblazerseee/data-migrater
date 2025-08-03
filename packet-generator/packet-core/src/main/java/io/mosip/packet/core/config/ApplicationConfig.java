@@ -25,6 +25,7 @@ public class ApplicationConfig {
     private boolean trackerEnabled = true;
     private boolean runningAsBatch = false;
     private String predefinedSessionKey = UUID.randomUUID().toString();
+    private String hashValue;
     private boolean referInernalJsonRequestFile = false;
 
     @PostConstruct

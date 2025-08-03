@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ import static io.mosip.packet.core.constant.RegistrationConstants.DEFAULT_TABLE;
 @Getter
 @Setter
 
-public class FieldFormatRequest {
+public class FieldFormatRequest implements Serializable {
     private String fieldName;
     private FieldCategory fieldCategory;
     private String primaryField;

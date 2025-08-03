@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,6 +31,9 @@ public class ValidationUtil {
     @Autowired
     private IdentityObjectValidator identityObjectValidator;
 
+    @Autowired
+    private RequestHashValidator requestHashValidator;
+
     private HashMap<ValidatorEnum, Validator> validatorList = null;
 
     public HashMap<ValidatorEnum, Validator> getValidatorMap() {
@@ -40,13 +44,30 @@ public class ValidationUtil {
             validatorList.put(ValidatorEnum.ORDERBY_VALIDATOR, orderByValidator);
             validatorList.put(ValidatorEnum.BIOMETRIC_FORMAT_VALIDATOR, biometricFormatValidator);
             validatorList.put(ValidatorEnum.IDENTITY_JSON_VALIDATOR, identityObjectValidator);
+            validatorList.put(ValidatorEnum.REQUEST_HASH_VALIDATOR, requestHashValidator);
         }
         return validatorList;
     }
 
 
     public void validateRequest(DBImportRequest dbImportRequest, List<ValidatorEnum> validationList) throws Exception {
-        for (ValidatorEnum validatorEnum : validationList)
-            getValidatorMap().get(validatorEnum).validate(dbImportRequest);
+        boolean isValid = true;
+        List<String> errorValidation = new ArrayList<>();
+        for (ValidatorEnum validatorEnum : validationList) {
+            boolean valid = true;
+            try {
+                valid = getValidatorMap().get(validatorEnum).validate(dbImportRequest);
+            } catch (Exception e) {
+                valid = false;
+                errorValidation.add(validatorEnum.name() + " : " + e.getMessage());
+            }
+
+            if(isValid)
+                isValid = valid;
+        }
+
+        if(!isValid) {
+            throw new Exception("Error while Validating Request" + String.join("\n", errorValidation));
+        }
     }
 }

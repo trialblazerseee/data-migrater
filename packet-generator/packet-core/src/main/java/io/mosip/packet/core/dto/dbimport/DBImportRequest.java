@@ -6,12 +6,13 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @Getter
 @Setter
-public class DBImportRequest {
+public class DBImportRequest implements Serializable {
     private DBTypes dbType;
     private String url;
     private String port;

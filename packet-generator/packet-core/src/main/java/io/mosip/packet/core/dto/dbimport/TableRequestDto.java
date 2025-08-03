@@ -6,12 +6,13 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @Getter
 @Setter
-public class TableRequestDto implements Comparable<TableRequestDto> {
+public class TableRequestDto implements Comparable<TableRequestDto>, Serializable {
     private QuerySelection queryType;
     private Integer executionOrderSequence;
     private String tableName;

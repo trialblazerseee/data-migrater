@@ -261,6 +261,7 @@ public class TrackerUtil {
                 Map<String, String> valueMap = new HashMap<>();
                 valueMap.put("TABLE_NAME", OFFSET_TRACKER_TABLE_NAME);
                 valueMap.put("SESSION_ID", appConfig.getPredefinedSessionKey());
+                valueMap.put("HASH_VALUE", appConfig.getHashValue());
                 valueMap.put("VALUE", offset.toString());
                 valueMap.put("IN_USE", "N");
 
@@ -287,13 +288,13 @@ public class TrackerUtil {
                     Thread.sleep(2000);
 
                 statement = conn.createStatement();
-                resultSet = statement.executeQuery("SELECT OFFSET_VALUE, IN_USE FROM " + OFFSET_TRACKER_TABLE_NAME + " WHERE SESSION_KEY = '" + appConfig.getPredefinedSessionKey() + "'");
+                resultSet = statement.executeQuery("SELECT OFFSET_VALUE, IN_USE FROM " + OFFSET_TRACKER_TABLE_NAME + " WHERE SESSION_KEY = '" + appConfig.getPredefinedSessionKey() + "' AND HASH_VALUE = '" + appConfig.getHashValue() + "'");
                 if(resultSet.next()) {
                     Long value = resultSet.getLong(1);
                     String inUse = resultSet.getString(2);
 
                     if(inUse == null || inUse.equals("N") || inUse.isEmpty()) {
-                        statement.executeUpdate("UPDATE " + OFFSET_TRACKER_TABLE_NAME + " SET IN_USE = 'Y' WHERE SESSION_KEY = '" + appConfig.getPredefinedSessionKey() + "'");
+                        statement.executeUpdate("UPDATE " + OFFSET_TRACKER_TABLE_NAME + " SET IN_USE = 'Y' WHERE SESSION_KEY = '" + appConfig.getPredefinedSessionKey() + "' AND HASH_VALUE = '" + appConfig.getHashValue() + "'");
                         return value;
                     } else {
                         LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "OffSet Tracker Table in Use retry after 5 seconds");
@@ -305,6 +306,7 @@ public class TrackerUtil {
                     Map<String, String> valueMap = new HashMap<>();
                     valueMap.put("TABLE_NAME", OFFSET_TRACKER_TABLE_NAME);
                     valueMap.put("SESSION_ID", appConfig.getPredefinedSessionKey());
+                    valueMap.put("HASH_VALUE", appConfig.getHashValue());
                     valueMap.put("VALUE", "0");
                     valueMap.put("IN_USE", "Y");
                     statement.execute(queryFormatter.queryFormatter(query, valueMap));
@@ -319,6 +321,36 @@ public class TrackerUtil {
             }
         } else {
             return 0L;
+        }
+    }
+
+    public List<String> getOffsetHash() throws SQLException, InterruptedException {
+        List<String> hashValList = new ArrayList<>();
+        if(appConfig.isTrackerEnabled()) {
+            Statement statement = null;
+            ResultSet resultSet = null;
+
+            try {
+                while(isConnCreation)
+                    Thread.sleep(2000);
+
+                statement = conn.createStatement();
+                resultSet = statement.executeQuery("SELECT HASH_VALUE FROM " + OFFSET_TRACKER_TABLE_NAME + " WHERE SESSION_KEY = '" + appConfig.getPredefinedSessionKey() + "'");
+                while(resultSet.next()) {
+                    String hashVal = resultSet.getString(1);
+                    assert(hashVal != null);
+                    hashValList.add(hashVal);
+                }
+                return hashValList;
+            } finally {
+                if(resultSet != null)
+                    resultSet.close();
+
+                if(statement != null)
+                    statement.close();
+            }
+        } else {
+            return hashValList;
         }
     }
 
@@ -430,11 +462,12 @@ public class TrackerUtil {
             } else {
                 sb.append(String.format("CREATE TABLE %s (", OFFSET_TRACKER_TABLE_NAME));
                 sb.append(addColumn("SESSION_KEY", String.class, 100, true, dbTypes) + ",");
+                sb.append(addColumn("HASH_VALUE", String.class, 100, true, dbTypes) + ",");
                 sb.append(addColumn("OFFSET_VALUE", Number.class, 12, false, dbTypes) + ",");
                 sb.append(addColumn("IN_USE", Character.class, 1, false, dbTypes));
                 sb.append(");");
 
-                sb.append(String.format("ALTER TABLE %s ADD PRIMARY KEY (SESSION_KEY);", OFFSET_TRACKER_TABLE_NAME));
+                sb.append(String.format("ALTER TABLE %s ADD PRIMARY KEY (SESSION_KEY, HASH_VALUE);", OFFSET_TRACKER_TABLE_NAME));
             }
         }
 

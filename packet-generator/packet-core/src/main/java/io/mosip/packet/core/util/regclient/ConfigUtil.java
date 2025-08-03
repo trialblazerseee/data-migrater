@@ -102,9 +102,6 @@ public class ConfigUtil {
                 IS_TPM_AVAILABLE = clientCryptoFacade.getClientSecurity().isTPMInstance();
 
                 if(!IS_TPM_AVAILABLE) {
-                    LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "TPM Not Available. Creating Key Pair for Machine " + configUtil.machineName);
-                    System.out.println("TPM Not Available. Creating Key Pair for Machine " + configUtil.machineName);
-
                     String machineName = configUtil.machineName;
 
                     if (machineName == null || machineName.isEmpty())
@@ -239,7 +236,7 @@ public class ConfigUtil {
         }
     }
 
-    private RequestWrapper prepareMachineSearchDto(String machineId) {
+    private RequestWrapper<MachineSearchDto> prepareMachineSearchDto(String machineId) {
         MachineSearchDto machineSearchDto = new MachineSearchDto();
         List<MachineFilter> filterList = new ArrayList<>();
         List<MachineSort> sortList = new ArrayList<>();
