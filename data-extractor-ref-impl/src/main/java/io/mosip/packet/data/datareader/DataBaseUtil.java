@@ -345,7 +345,12 @@ public class DataBaseUtil implements DataReader {
                 IS_DATABASE_READ_OPERATION = true;
                 initializeDocumentMap(dbImportRequest, fieldsCategoryMap);
                 oneTimeCheckForZeroOffset = true;
-                threadPool = new CustomizedThreadPoolExecutor(dbReaderMaxThreadPoolCount, dbReaderMaxThreadExecCount, dbReaderMaxRecordsCountPerThreadPool, activity.getActivity(ActivityName.DATA_CREATOR.name()).getActivityName().getActivityName(), activity.getActivity(ActivityName.DATA_CREATOR.name()).isMonitorRequired(), ActivityName.DATA_EXPORTER);
+                threadPool = new CustomizedThreadPoolExecutor(dbReaderMaxThreadPoolCount, dbReaderMaxThreadExecCount, dbReaderMaxRecordsCountPerThreadPool, activity.getActivity(ActivityName.DATA_CREATOR.name()).getActivityName().getActivityName(), activity.getActivity(ActivityName.DATA_CREATOR.name()).isMonitorRequired(), ActivityName.DATA_EXPORTER) {
+                    @Override
+                    public Long getOffSetValue() {
+                        return OFFSET_VALUE;
+                    }
+                };
 
                 Timer dataReader = new Timer("DataBase Reader");
                 dataReader.schedule(new TimerTask() {
