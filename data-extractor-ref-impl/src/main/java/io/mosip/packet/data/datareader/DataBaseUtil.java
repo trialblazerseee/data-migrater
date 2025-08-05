@@ -17,6 +17,7 @@ import io.mosip.packet.core.service.thread.ResultSetter;
 import io.mosip.packet.core.service.thread.ThreadDBController;
 import io.mosip.packet.core.service.thread.ThreadDBProcessor;
 import io.mosip.packet.core.spi.datareader.DataReader;
+import io.mosip.packet.core.spi.datareader.DataReaderImpl;
 import io.mosip.packet.core.util.CommonUtil;
 import io.mosip.packet.core.util.DataMapperUtil;
 import io.mosip.packet.core.util.QueryFormatter;
@@ -35,7 +36,7 @@ import static io.mosip.packet.core.constant.GlobalConfig.*;
 import static io.mosip.packet.core.constant.RegistrationConstants.*;
 
 @Component
-public class DataBaseUtil implements DataReader {
+public class DataBaseUtil extends DataReaderImpl {
     private static final Logger LOGGER = DataProcessLogger.getLogger(DataBaseUtil.class);
     private Connection conn = null;
     private boolean isTrackerSameHost = false;
@@ -102,7 +103,6 @@ public class DataBaseUtil implements DataReader {
             LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, " Error While Connecting Database " + ExceptionUtils.getStackTrace(e));
             System.exit(1);
         }
-
     }
 
     private void initializeDocumentMap(DBImportRequest dbImportRequest, Map<String, HashMap<String, String>> fieldsCategoryMap) {

@@ -51,6 +51,8 @@ public class GlobalConfig {
 
     public static Map<String , String> PACKET_TRACKER_ADDITIONAL_FIELDS = new HashMap<>();
 
+    public static final String DATA_EXPORTER_JOB_DELAY = "data.migrator.batch.packet.upload.job.delay";
+
     public static String getActivityName() {
         return activity.getActivityName().getActivityName();
     }

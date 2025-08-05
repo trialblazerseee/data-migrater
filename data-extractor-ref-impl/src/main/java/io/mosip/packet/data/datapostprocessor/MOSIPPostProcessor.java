@@ -55,7 +55,7 @@ public class MOSIPPostProcessor implements DataPostProcessor {
     @Value("${mosip.selected.languages}")
     private String primaryLanguage;
 
-    @Value("${mosip.packet.uploader.enable:true}")
+    @Value("${data.migrator.data.exporter.enable:true}")
     private boolean enablePacketUpload;
 
     @Autowired
