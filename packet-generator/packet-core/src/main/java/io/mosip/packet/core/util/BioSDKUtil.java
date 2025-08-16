@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static io.mosip.packet.core.constant.GlobalConfig.IS_ONLY_FOR_QUALITY_CHECK;
+import static io.mosip.packet.core.constant.GlobalConfig.SESSION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
@@ -50,7 +51,7 @@ public class BioSDKUtil {
                     }
                     csvMap.put(key,  currentVal.toString());
                     calculatedScore = score.toString();
-                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "After Update the Score into CSVMAP" + trackerColumn + " - " + key + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
+                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "After Update the Score into CSVMAP" + trackerColumn + " - " + key + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
                 }
             } else {
                 requestWrapper.setBiometricField(key);
@@ -60,7 +61,7 @@ public class BioSDKUtil {
             }
 
             Long timeDifference = System.nanoTime()-startTime;
-            LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "After Calculation of Quality from BIOSDK " + trackerColumn + " - " + key + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
+            LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "After Calculation of Quality from BIOSDK " + trackerColumn + " - " + key + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
             return calculatedScore;
         } catch (Exception e) {
             csvMap.put(key + "_" + biosdkVendor, e.getMessage());

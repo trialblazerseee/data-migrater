@@ -181,7 +181,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
 
     @Override
     public PacketCreatorResponse createPacketFromDataBase(DBImportRequest dbImportRequest) throws Exception {
-        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "DataExtractionServiceImpl :: createPacketFromDataBase():: entry");
+        LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "DataExtractionServiceImpl :: createPacketFromDataBase():: entry");
         TIMECONSUPTIONQUEUE = new ConcurrentLinkedQueue<>();
         PacketCreatorResponse packetCreatorResponse = new PacketCreatorResponse();
         packetCreatorResponse.setRID(new ArrayList<>());
@@ -217,7 +217,8 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                     trackerRequestDto.setRefId(resultDto.getRefId());
                     trackerRequestDto.setProcess(dbImportRequest.getProcess());
                     trackerRequestDto.setActivity(GlobalConfig.getActivityName());
-                    trackerRequestDto.setSessionKey(appConfig.getPredefinedSessionKey());
+                    trackerRequestDto.setRunInstanceId(appConfig.getPredefinedRunInstanceId());
+                    trackerRequestDto.setSessionId(GlobalConfig.getSessionId());
                     trackerRequestDto.setStatus(resultDto.getStatus().toString());
                     trackerRequestDto.setComments(resultDto.getComments());
                     trackerRequestDto.setAdditionalMaps(resultDto.getAdditionalMaps());
@@ -236,11 +237,12 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                     trackerRequestDto.setRefId(dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()).toString());
                     trackerRequestDto.setProcess(dbImportRequest.getProcess());
                     trackerRequestDto.setActivity(GlobalConfig.getActivityName());
-                    trackerRequestDto.setSessionKey(appConfig.getPredefinedSessionKey());
+                    trackerRequestDto.setRunInstanceId(appConfig.getPredefinedRunInstanceId());
+                    trackerRequestDto.setSessionId(GlobalConfig.getSessionId());
                     trackerRequestDto.setStatus(TrackerStatus.STARTED.toString());
                     trackerRequestDto.setComments("Object Ready For Processing");
                     trackerUtil.addTrackerEntry(trackerRequestDto);
-                    LOGGER.debug("SESSION_ID", "QUALITY_CHECK", "DataProcessor", "Request for Data Processor : " + trackerRequestDto.getRefId() + " : " + mapper.writeValueAsString(dataHashMap));
+                    LOGGER.debug(SESSION_ID, "QUALITY_CHECK", "DataProcessor", "Request for Data Processor : " + trackerRequestDto.getRefId() + " : " + mapper.writeValueAsString(dataHashMap));
                     DataProcessorResponseDto processObject = dataProcessorApiFactory.process(dbImportRequest, dataHashMap, setter);
 
                     if(!IS_ONLY_FOR_QUALITY_CHECK) {
@@ -255,9 +257,9 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                         resultDto.setStatus(TrackerStatus.PROCESSED_WITHOUT_UPLOAD);
                         setter.setResult(resultDto);
                     }
-                    LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Thread - " + processObject.getRefId()+ " Process Ended");
+                    LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread - " + processObject.getRefId()+ " Process Ended");
                     long timeDifference = System.currentTimeMillis()-startTime;
-                    LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Thread - " + processObject.getRefId() + " Time taken to complete " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
+                    LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread - " + processObject.getRefId() + " Time taken to complete " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
                     TIMECONSUPTIONQUEUE.add(timeDifference);
                 }
             };
@@ -292,7 +294,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                                     is.close();
                                     bis.close();
                                     packetId = responseDto.getRefId();
-                                    LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Data Export for " + (new Gson()).toJson(responseDto));
+                                    LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Data Export for " + (new Gson()).toJson(responseDto));
 
                                     ThreadUploadController controller = new ThreadUploadController();
                                     controller.setResult(responseDto);
@@ -308,14 +310,14 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                                 isUploadInProgress = false;
                             }
 
-                            LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Upload Batch Current Pending Count " + uploadExector.getCurrentPendingCount());
-                            LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Upload Batch Is-Upload-Inprogress " + isUploadInProgress);
+                            LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Upload Batch Current Pending Count " + uploadExector.getCurrentPendingCount());
+                            LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Upload Batch Is-Upload-Inprogress " + isUploadInProgress);
                             if(uploadExector.getCurrentPendingCount() <= 0 && !isUploadInProgress)
                                 uploadProcessStarted = false;
                         } catch (Exception e) {
                             if(uploadExector.getCurrentPendingCount() <= 0)
                                 uploadProcessStarted = false;
-                            LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Packet Upload Error for Packet Id : " + packetId + " - " + e.getMessage() + ExceptionUtils.getStackTrace(e));
+                            LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Packet Upload Error for Packet Id : " + packetId + " - " + e.getMessage() + ExceptionUtils.getStackTrace(e));
                         }
                     }
                 }, 0, 5000L);
@@ -336,7 +338,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
             System.out.println("End Time Time " + new Date());
         } catch (Exception e) {
           e.printStackTrace();
-          LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Error " + e.getMessage() + "\n" + ExceptionUtils.getStackTrace(e));
+          LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Error " + e.getMessage() + "\n" + ExceptionUtils.getStackTrace(e));
         } finally {
             dataReaderApiFactory.disconnectDataReader();
             if(!IS_ONLY_FOR_QUALITY_CHECK)
@@ -344,8 +346,8 @@ public class DataExtractionServiceImpl implements DataExtractionService {
 
             qualityWriterFactory.preDestroyProcess();
         }
-        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Packet Uploaded List : " + (new Gson()).toJson(packetCreatorResponse));
-        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "DataExtractionServiceImpl :: createPacketFromDataBase():: exit");
+        LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Packet Uploaded List : " + (new Gson()).toJson(packetCreatorResponse));
+        LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "DataExtractionServiceImpl :: createPacketFromDataBase():: exit");
 
         return packetCreatorResponse;
     }
@@ -384,7 +386,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
             requestWrapper.setRequest(packetRequest);
             requestWrapper.setVersion("1.0");
             requestWrapper.setRequesttime(DateUtils.getUTCCurrentDateTimeString());
-            LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Fetching Biometrics from Packet Manager for RID " + rid);
+            LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Fetching Biometrics from Packet Manager for RID " + rid);
             ResponseWrapper<HashMap<String, List<HashMap<String, Object>>>> responseWrapper = (ResponseWrapper) dataRestClientService.postApi(ApiName.PACKET_BIOMETRIC_READER, null, null, requestWrapper, ResponseWrapper.class, MediaType.APPLICATION_JSON, rid);
             capturedBiometrics = responseWrapper.getResponse();
             List<HashMap<String, Object>> birList = capturedBiometrics.get("segments");
@@ -400,7 +402,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                 String subType = bir.getBdbInfo().getSubtype().stream().map(String::valueOf).collect(Collectors.joining(" "));
                 String type = bir.getBdbInfo().getType().stream().map(String::valueOf).collect(Collectors.joining(" "));
                 String key = type + (subType != null && !subType.isEmpty() ? "-" + subType : "");
-                LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Processing BIR Type " + type + " And Sub Type " + subType + " for RID " + rid);
+                LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Processing BIR Type " + type + " And Sub Type " + subType + " for RID " + rid);
 
                 if(bir.getBdb() != null && bir.getBdb().length > 0) {
                     FieldFormatRequest fieldFormatRequest = new FieldFormatRequest();
@@ -409,7 +411,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                     fieldFormatRequest.getDestFormat().add(DataFormat.JPEG);
                     byte[] convertedImage = convertBiometric(rid, fieldFormatRequest, bir.getBdb(), true, BioSubType.getBioAttribute(subType).getBioAttribute());
                     bir.setBdb(convertedImage);
-                    LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Image Convertion Completed for BIR Type " + type + " And Sub Type " + subType + " for RID " + rid);
+                    LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Image Convertion Completed for BIR Type " + type + " And Sub Type " + subType + " for RID " + rid);
 
                     BioSDKRequestWrapper bioSDKrequestWrapper = new BioSDKRequestWrapper();
                     bioSDKrequestWrapper.setSegments(new ArrayList<>());
@@ -422,9 +424,9 @@ public class DataExtractionServiceImpl implements DataExtractionService {
 
                     try {
                         Double score = Double.parseDouble(bioSDKUtil.calculateQualityScore(bioSDKrequestWrapper, key, rid, startTime));
-                        LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Quality Score is " + score + " for BIR Type " + type + " And Sub Type " + subType + " for RID " + rid);
+                        LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Quality Score is " + score + " for BIR Type " + type + " And Sub Type " + subType + " for RID " + rid);
                     } catch (Exception e) {
-                        LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Exception for RID : " + rid +  " for BIR Type " + type + " And Sub Type " + subType + " Exception : " +  e.getMessage() + ExceptionUtils.getStackTrace(e));
+                        LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Exception for RID : " + rid +  " for BIR Type " + type + " And Sub Type " + subType + " Exception : " +  e.getMessage() + ExceptionUtils.getStackTrace(e));
                     }
                 } else {
                     csvMap.put(key, "");

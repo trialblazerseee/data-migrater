@@ -6,6 +6,7 @@ import io.mosip.packet.core.logger.DataProcessLogger;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
+import static io.mosip.packet.core.constant.GlobalConfig.SESSION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
@@ -32,7 +33,7 @@ public abstract class BaseThreadController implements Runnable {
             if(failedCountIncrement)
                 failedRecordCount.increment();
             response.onFailure();
-            LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, " Error While Processing Data  : " + ExceptionUtils.getStackTrace(e));
+            LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, " Error While Processing Data  : " + ExceptionUtils.getStackTrace(e));
         }
     }
 

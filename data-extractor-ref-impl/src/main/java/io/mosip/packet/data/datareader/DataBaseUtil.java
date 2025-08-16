@@ -96,11 +96,11 @@ public class DataBaseUtil extends DataReaderImpl {
                 isTrackerSameHost = trackerUtil.isTrackerHostSame(connectionHost, dbImportRequest.getDatabaseName());
                 trackColumn = dbImportRequest.getTrackerInfo().getTrackerColumn();
 
-                LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "External DataBase" + dbImportRequest.getUrl() +  "Database Successfully connected");
+                LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "External DataBase" + dbImportRequest.getUrl() +  "Database Successfully connected");
                 System.out.println("External DataBase " + dbImportRequest.getUrl() + " Successfully connected");
             }
         } catch (Exception e) {
-            LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, " Error While Connecting Database " + ExceptionUtils.getStackTrace(e));
+            LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, " Error While Connecting Database " + ExceptionUtils.getStackTrace(e));
             System.exit(1);
         }
     }
@@ -198,7 +198,7 @@ public class DataBaseUtil extends DataReaderImpl {
                         filterCondition += " AND ";
                     }
 
-                    filterCondition += trackColumn + String.format(" NOT IN (SELECT REF_ID FROM %s WHERE SESSION_KEY = '%s') ", TRACKER_TABLE_NAME, appConfig.getPredefinedSessionKey());
+                    filterCondition += trackColumn + String.format(" NOT IN (SELECT REF_ID FROM %s WHERE RUN_INSTANCE_ID = '%s') ", TRACKER_TABLE_NAME, appConfig.getPredefinedRunInstanceId());
                     selectSql += filterCondition;
                 }
 
@@ -218,7 +218,7 @@ public class DataBaseUtil extends DataReaderImpl {
                 }
             }
             String sqlQuery =  formatter.replaceColumntoDataIfAny(selectSql, dataMap);
-            LOGGER.debug("SESSION_ID", "DATA_READER", "generateQuery()", "SQL Query Generated : " + sqlQuery);
+            LOGGER.debug(SESSION_ID, "DATA_READER", "generateQuery()", "SQL Query Generated : " + sqlQuery);
             return sqlQuery;
         } else if (tableRequestDto.getQueryType().equals(QuerySelection.SQL_QUERY)) {
             String sqlQuery = tableRequestDto.getSqlQuery().toUpperCase();
@@ -236,7 +236,7 @@ public class DataBaseUtil extends DataReaderImpl {
             modifiedQuery += " " + QueryOffsetLimitSetter.valueOf(dbType.toString()).getValue(OFFSET_VALUE, Long.valueOf(dbReaderMaxThreadPoolCount*dbReaderMaxRecordsCountPerThreadPool));
             }
             String sqlQuery1 =  formatter.replaceColumntoDataIfAny(modifiedQuery, dataMap);
-            LOGGER.debug("SESSION_ID", "DATA_READER", "generateQuery()", "SQL Query Generated : " + sqlQuery1);
+            LOGGER.debug(SESSION_ID, "DATA_READER", "generateQuery()", "SQL Query Generated : " + sqlQuery1);
             return sqlQuery1;
         } else
             return null;
@@ -248,7 +248,7 @@ public class DataBaseUtil extends DataReaderImpl {
                 conn.close();
                 conn = null;
             } catch (SQLException e) {
-                LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, " Error While Closing Database Connection " + e.getMessage());
+                LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, " Error While Closing Database Connection " + e.getMessage());
             }
         }
     }
@@ -361,7 +361,7 @@ public class DataBaseUtil extends DataReaderImpl {
                         ResultSet scrollableResultSet = null;
                         try {
                             Float processPercentage = Float.valueOf((getPendingCountForProcess().floatValue() / Float.valueOf(dbReaderMaxThreadPoolCount * dbReaderMaxRecordsCountPerThreadPool)));
-                            LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, " Database Reader Initial Condition for DB Read  ProcessPercentage, OFFSET_VALUE, OneTimeCheckForZeroOffset, CurrentPendingCount, PendingCountForProcess" +
+                            LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, " Database Reader Initial Condition for DB Read  ProcessPercentage, OFFSET_VALUE, OneTimeCheckForZeroOffset, CurrentPendingCount, PendingCountForProcess" +
                                     processPercentage, OFFSET_VALUE, oneTimeCheckForZeroOffset, threadPool.getCurrentPendingCount(), getPendingCountForProcess());
 
                             if ((processPercentage > 0.05 && processPercentage != 0) || (processPercentage == 0 && OFFSET_VALUE > 0 && oneTimeCheckForZeroOffset) || threadPool.getCurrentPendingCount() > 0) {
@@ -386,17 +386,17 @@ public class DataBaseUtil extends DataReaderImpl {
                                 scrollableResultSet = statement1.executeQuery();
 
                                 if(scrollableResultSet.last()) {
-                                    LOGGER.warn("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "OFFSET Tracker auto disabled if Tracker Table belongs to same Database");
-                                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current Row Count from result set is " + scrollableResultSet.getRow());
-                                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current OFFSET Value is " + OFFSET_VALUE);
-                                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current Fetch Size is " + scrollableResultSet.getFetchSize());
+                                    LOGGER.warn(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "OFFSET Tracker auto disabled if Tracker Table belongs to same Database");
+                                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Current Row Count from result set is " + scrollableResultSet.getRow());
+                                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Current OFFSET Value is " + OFFSET_VALUE);
+                                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Current Fetch Size is " + scrollableResultSet.getFetchSize());
                                //     TOTAL_RECORDS_FOR_PROCESS.addAndGet(scrollableResultSet.getRow());
                                     OFFSET_VALUE += Long.valueOf(scrollableResultSet.getRow());
                                     trackerUtil.updateDatabaseOffset(OFFSET_VALUE);
                                 }
 
                                 if (scrollableResultSet.getRow() <= 0) {
-                                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Cancelling Database Reader since No Data" + scrollableResultSet.getFetchSize());
+                                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Cancelling Database Reader since No Data" + scrollableResultSet.getFetchSize());
                                     dataReader.cancel();
                                     threadPool.setInputProcessCompleted(true);
                                     trackerUtil.updateDatabaseOffset(OFFSET_VALUE);
@@ -444,21 +444,21 @@ public class DataBaseUtil extends DataReaderImpl {
                                                         }
                                                         setter.setResult(dataHashMap);
                                                     } else {
-                                                        LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, " Record Already Processed for ref_id" + dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()));
+                                                        LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, " Record Already Processed for ref_id" + dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()));
                                                     }
                                                 }
                                             });
                                             threadPool.ExecuteTask(baseDbThreadController);
                                         } catch (Exception e) {
                                             threadPool.increaseFailedRecordCount();
-                                            LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, " Error While Extracting Data " + (new Gson()).toJson(dataHashMap) + " Stack Trace : " + ExceptionUtils.getStackTrace(e));
+                                            LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, " Error While Extracting Data " + (new Gson()).toJson(dataHashMap) + " Stack Trace : " + ExceptionUtils.getStackTrace(e));
                                         }
                                     }
                                 }
                                 oneTimeCheckForZeroOffset = false;
                             }
                         } catch (Exception e) {
-                            LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, " Error While Extracting Data " + (new Gson()).toJson(dataHashMap) + " Stack Trace : " + ExceptionUtils.getStackTrace(e));
+                            LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, " Error While Extracting Data " + (new Gson()).toJson(dataHashMap) + " Stack Trace : " + ExceptionUtils.getStackTrace(e));
                             throw e;
                         } finally {
                             if(scrollableResultSet != null)

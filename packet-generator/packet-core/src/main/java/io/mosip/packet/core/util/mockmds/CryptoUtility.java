@@ -104,7 +104,7 @@ public class CryptoUtility {
 			final byte[] encryptedData = symmetricEncrypt(secretKey, dataBytes, ivBytes, aadBytes);			
 			final byte[] encryptedSymmetricKey =  asymmetricEncrypt(publicKey, secretKey.getEncoded());
 					
-			result.put("ENC_SESSION_KEY", StringHelper.base64UrlEncode(encryptedSymmetricKey));
+			result.put("ENC_RUN_INSTANCE_ID", StringHelper.base64UrlEncode(encryptedSymmetricKey));
 			result.put("ENC_DATA", StringHelper.base64UrlEncode(encryptedData));
 			result.put("TIMESTAMP", timestamp);
 			

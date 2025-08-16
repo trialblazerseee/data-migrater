@@ -27,6 +27,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Scanner;
 
+import static io.mosip.packet.core.constant.GlobalConfig.SESSION_ID;
 import static io.mosip.packet.core.constant.GlobalConfig.getActivityName;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
@@ -89,12 +90,12 @@ public class TableWriter implements QualityWriterFactory {
                             String option ="";
                             if(!appConfig.isRunningAsBatch()) {
                                 System.out.println("Table : " + WRITER_TABLE_NAME +  " Do you want to clear Table ? Y-Yes, N-No");
-                                LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Table : " + WRITER_TABLE_NAME +  " Do you want to clear Table ? Y-Yes, N-No");
+                                LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Table : " + WRITER_TABLE_NAME +  " Do you want to clear Table ? Y-Yes, N-No");
                                 Scanner scanner = new Scanner(System.in);
                                 option = scanner.next();
                             } else if(tableClearRequired) {
                                 System.out.println("Table : " + WRITER_TABLE_NAME +  " truncating now.");
-                                LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Table : " + WRITER_TABLE_NAME +  " Clearing now.");
+                                LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Table : " + WRITER_TABLE_NAME +  " Clearing now.");
                                 option = "Y";
                             }
 
@@ -121,7 +122,7 @@ public class TableWriter implements QualityWriterFactory {
 
 
                             } catch (Exception e1) {
-                                LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID,
+                                LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID,
                                         "Exception encountered during Table Creation - TableWriter  "
                                                 + ExceptionUtils.getStackTrace(e1));
                                 System.exit(1);
@@ -146,7 +147,7 @@ public class TableWriter implements QualityWriterFactory {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID,
+            LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID,
                     "Exception encountered during context initialization - TrackerUtil "
                             + ExceptionUtils.getStackTrace(e));
         }

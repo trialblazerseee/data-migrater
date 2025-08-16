@@ -29,6 +29,8 @@ import java.sql.Clob;
 import java.sql.SQLException;
 import java.util.*;
 
+import static io.mosip.packet.core.constant.GlobalConfig.SESSION_ID;
+
 @Component
 public class TableDataMapperUtil implements DataMapperUtil {
     private static final Logger LOGGER = DataProcessLogger.getLogger(TableDataMapperUtil.class);
@@ -173,7 +175,7 @@ public class TableDataMapperUtil implements DataMapperUtil {
                 }
             } else if (fieldFormatRequest.getFieldCategory().equals(FieldCategory.BIO)) {
                 String fieldName = fieldFormatRequest.getFieldList().get(0).getOriginalFieldName();
-                LOGGER.debug("SESSION_ID", "DATA_READER", "dataMapper()", "FieldName for Biometric Read " + fieldName);
+                LOGGER.debug(SESSION_ID, "DATA_READER", "dataMapper()", "FieldName for Biometric Read " + fieldName);
 
                 Map<String, byte[]> map = new HashMap<>();
 
@@ -187,7 +189,7 @@ public class TableDataMapperUtil implements DataMapperUtil {
                         }
                     }
 
-                    LOGGER.debug("SESSION_ID", "DATA_READER", "dataMapper()", "Value for Biometric Read for Field : " + fieldName + " is : " + String.valueOf(byteVal));
+                    LOGGER.debug(SESSION_ID, "DATA_READER", "dataMapper()", "Value for Biometric Read for Field : " + fieldName + " is : " + String.valueOf(byteVal));
                     if(byteVal != null) {
                         if(objectStoreFetchEnabled)
                             byteVal = objectStoreHelper.getBiometricObject(new String(byteVal, StandardCharsets.UTF_8));

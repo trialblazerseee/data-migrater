@@ -6,12 +6,11 @@ import io.mosip.packet.core.constant.activity.ActivityName;
 import io.mosip.packet.core.logger.DataProcessLogger;
 import io.mosip.packet.core.service.thread.CustomizedThreadPoolExecutor;
 import io.mosip.packet.core.util.FixedListQueue;
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.PostConstruct;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -52,6 +51,18 @@ public class GlobalConfig {
     public static Map<String , String> PACKET_TRACKER_ADDITIONAL_FIELDS = new HashMap<>();
 
     public static final String DATA_EXPORTER_JOB_DELAY = "data.migrator.batch.packet.upload.job.delay";
+
+    public static final String DATA_EXPORTER_JOB_INITIAL_DELAY = "data.migrator.batch.packet.upload.job.initial.delay";
+
+    public static String PROCESS;
+
+    public static String SESSION_ID = UUID.randomUUID().toString();
+
+    @PostConstruct
+    public void init() {
+        System.out.println("Current Session ID is " + SESSION_ID);
+        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current Session ID is " + SESSION_ID);
+    }
 
     public static String getActivityName() {
         return activity.getActivityName().getActivityName();
@@ -99,29 +110,29 @@ public class GlobalConfig {
 
         for(CustomizedThreadPoolExecutor executor : THREAD_POOL_EXECUTOR_LIST) {
             pendingTaskCount +=executor.getActiveCount();
-            LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pending Task Count in Pool " + executor.getNAME() + " is " + pendingTaskCount);
+            LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Pending Task Count in Pool " + executor.getNAME() + " is " + pendingTaskCount);
 
-            LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Is Input Process Completed for Pool " + executor.getNAME() + " is "  + executor.getInputProcessCompleted());
+            LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Is Input Process Completed for Pool " + executor.getNAME() + " is "  + executor.getInputProcessCompleted());
             if(!executor.getInputProcessCompleted())
                 isAllProcessCompleted = false;
         }
 
-        LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pending Task Count " + pendingTaskCount);
+        LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Pending Task Count " + pendingTaskCount);
         if(pendingTaskCount > 0 || !isAllProcessCompleted)
             return false;
 
-        LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Is Database Read Operation ? " + IS_DATABASE_READ_OPERATION);
-        LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Is Packet Creator Operation ? " + IS_PACKET_CREATOR_OPERATION);
+        LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Is Database Read Operation ? " + IS_DATABASE_READ_OPERATION);
+        LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Is Packet Creator Operation ? " + IS_PACKET_CREATOR_OPERATION);
         if(!IS_DATABASE_READ_OPERATION && !IS_PACKET_CREATOR_OPERATION)
             for(CustomizedThreadPoolExecutor executor : THREAD_POOL_EXECUTOR_LIST) {
                 if(eventName == null || eventName.equals(executor.getNAME())) {
                     if(executor.getActiveCount() > 0) {
-                        LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pool : " + executor.getNAME() + " No of Active Task " + executor.getActiveCount());
+                        LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Pool : " + executor.getNAME() + " No of Active Task " + executor.getActiveCount());
                         isCompleted = false;
                         break;
                     } else {
-                        LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pool : " + executor.getNAME() + " Input Process Completed " + executor.getInputProcessCompleted());
-                        LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pool : " + executor.getNAME() + " Pending Task Count " + (executor.getTotalTaskCount() - executor.getCurrentCompletedTask()));
+                        LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Pool : " + executor.getNAME() + " Input Process Completed " + executor.getInputProcessCompleted());
+                        LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Pool : " + executor.getNAME() + " Pending Task Count " + (executor.getTotalTaskCount() - executor.getCurrentCompletedTask()));
                         LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pool : " + executor.getNAME() + " Is Batch Accept Request " + executor.isBatchAcceptRequest());
                         LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pool : " + executor.getNAME() + " Current Pending Task Count " + executor.getCurrentPendingCount());
                         if(executor.getInputProcessCompleted() && (executor.getTotalTaskCount() - executor.getTotalCompletedTaskCount() - executor.getFailedRecordCount() <= 0) && executor.getCurrentPendingCount() <= 0) {
@@ -150,5 +161,9 @@ public class GlobalConfig {
             isCompleted = false;
 
         return isCompleted;
+    }
+
+    public static String getSessionId() {
+        return SESSION_ID;
     }
 }

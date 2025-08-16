@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import io.mosip.kernel.clientcrypto.service.impl.ClientCryptoFacade;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.constant.GlobalConfig;
 import io.mosip.packet.core.constant.activity.ActivityName;
 import io.mosip.packet.core.constant.tracker.TrackerStatus;
@@ -72,6 +73,9 @@ public class MosipPacketReprocessor implements DataReProcessor {
     TrackerUtil trackerUtil;
 
     @Autowired
+    ApplicationConfig appConfig;
+
+    @Autowired
     private ClientCryptoFacade clientCryptoFacade;
 
     private ObjectMapper objectMapper = new ObjectMapper();
@@ -94,6 +98,8 @@ public class MosipPacketReprocessor implements DataReProcessor {
                 TrackerRequestDto trackerRequestDto = new TrackerRequestDto();
                 trackerRequestDto.setRegNo(resultDto.getRegNo());
                 trackerRequestDto.setRefId(resultDto.getRefId());
+                trackerRequestDto.setSessionId(GlobalConfig.getSessionId());
+                trackerRequestDto.setRunInstanceId(appConfig.getPredefinedRunInstanceId());
                 if (GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_EXPORTER)) {
                     trackerRequestDto.setStatus(TrackerStatus.PROCESSED.toString());
                 } else {
@@ -168,7 +174,7 @@ public class MosipPacketReprocessor implements DataReProcessor {
 
                             if(GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_EXPORTER)) {
                                 packetUploaderService.syncPacket(uploadList, ConfigUtil.getConfigUtil().getCenterId(), ConfigUtil.getConfigUtil().getMachineId(), response);
-                                trackerUtil.addTrackerLocalEntry(packetTracker.getRefId(), packetTracker.getRegNo(), TrackerStatus.SYNCED, null, objectMapper.writeValueAsBytes(uploadList), null, null);
+                                trackerUtil.addTrackerLocalEntry(packetTracker.getRefId(), packetTracker.getRegNo(), TrackerStatus.SYNCED, null, objectMapper.writeValueAsBytes(uploadList), null, null, GlobalConfig.getSessionId());
                                 packetUploaderService.uploadSyncedPacket(uploadList, response);
                             } else {
                                 LOGGER.warn("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Packet Uploader Disabled : "+ (new Gson()).toJson(response));

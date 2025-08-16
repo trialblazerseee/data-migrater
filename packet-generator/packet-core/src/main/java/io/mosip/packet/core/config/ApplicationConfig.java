@@ -12,7 +12,6 @@ import javax.annotation.PostConstruct;
 import java.util.Scanner;
 import java.util.UUID;
 
-import static io.mosip.packet.core.constant.GlobalConfig.getActivityName;
 import static io.mosip.packet.core.constant.RegistrationConstants.*;
 
 @ConfigurationProperties(prefix = "mosip.data-extractor.application.config")
@@ -24,14 +23,14 @@ public class ApplicationConfig {
     private boolean writeBiosdkResponseEnabled = false;
     private boolean trackerEnabled = true;
     private boolean runningAsBatch = false;
-    private String predefinedSessionKey = UUID.randomUUID().toString();
+    private String predefinedRunInstanceId;
     private String hashValue;
     private boolean referInernalJsonRequestFile = false;
 
     @PostConstruct
     public void init() {
-        if(predefinedSessionKey == null || predefinedSessionKey.isEmpty())
-            predefinedSessionKey = UUID.randomUUID().toString();
+        if(predefinedRunInstanceId == null || predefinedRunInstanceId.isEmpty())
+            predefinedRunInstanceId = UUID.randomUUID().toString();
 
         if(runningAsBatch) {
             System.out.println("This environment running as a 'BATCH' mode");
@@ -43,17 +42,17 @@ public class ApplicationConfig {
 
         if (!runningAsBatch) {
             do {
-                System.out.println("Current Session Key is " + predefinedSessionKey + ". Please Enter New Session Key in-case Change.");
+                System.out.println("Current Run Instance ID is " + predefinedRunInstanceId + ". Please Enter New Run Instance ID in-case Change.");
                 Scanner scanner = new Scanner(System.in);
                 String sessionKey = scanner.next();
                 if (sessionKey != null && !sessionKey.isEmpty()) {
-                    predefinedSessionKey = sessionKey.trim().toUpperCase();
+                    predefinedRunInstanceId = sessionKey.trim().toUpperCase();
                     break;
                 }
-            } while (predefinedSessionKey == null || predefinedSessionKey.isEmpty());
+            } while (predefinedRunInstanceId == null || predefinedRunInstanceId.isEmpty());
         } else {
-            System.out.println("Current Session Key is " + predefinedSessionKey);
+            System.out.println("Current Run Instance ID is " + predefinedRunInstanceId);
         }
-        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current Session Key is " + predefinedSessionKey);
+        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current Run Instance ID is " + predefinedRunInstanceId);
     }
 }

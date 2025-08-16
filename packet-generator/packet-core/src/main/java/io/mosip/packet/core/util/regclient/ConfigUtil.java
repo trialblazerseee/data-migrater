@@ -92,7 +92,7 @@ public class ConfigUtil {
     private static ConfigUtil configUtil;
 
     public void loadConfigDetails() throws Exception {
-        LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Loading Configuration");
+        LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Loading Configuration");
         if (configUtil == null) {
             synchronized (ConfigUtil.class) {
                 configUtil = new ConfigUtil();

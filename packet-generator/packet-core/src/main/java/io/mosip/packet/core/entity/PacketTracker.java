@@ -17,8 +17,11 @@ public class PacketTracker implements Serializable {
     @Column(name = "ref_id")
     private String refId;
 
-    @Column(name = "SESSION_KEY")
-    private String sessionKey;
+    @Column(name = "RUN_INSTANCE_ID")
+    private String runInstanceId;
+
+    @Column(name = "SESSION_ID")
+    private String sessionId;
 
     @Column(name = "reg_no")
     private String regNo;
@@ -115,12 +118,12 @@ public class PacketTracker implements Serializable {
         return request;
     }
 
-    public String getSessionKey() {
-        return sessionKey;
+    public String getRunInstanceId() {
+        return runInstanceId;
     }
 
-    public void setSessionKey(String sessionKey) {
-        this.sessionKey = sessionKey;
+    public void setRunInstanceId(String sessionKey) {
+        this.runInstanceId = sessionKey;
     }
 
     public String getActivity() {
@@ -133,5 +136,13 @@ public class PacketTracker implements Serializable {
 
     public void setRequest(String request) {
         this.request = request;
+    }
+
+    public String getSessionId() {
+        return sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
     }
 }

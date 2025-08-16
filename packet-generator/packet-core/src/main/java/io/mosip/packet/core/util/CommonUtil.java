@@ -23,6 +23,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import static io.mosip.packet.core.constant.GlobalConfig.PROCESS;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -87,6 +88,11 @@ public class CommonUtil {
         updateBioDestFormat(dbImportRequest);
         updateNonIdSchemaNonTableFields(dbImportRequest);
         setColumnConfiguration(dbImportRequest);
+        setProcess(dbImportRequest);
+    }
+
+    private void setProcess(DBImportRequest dbImportRequest) {
+        PROCESS = dbImportRequest.getProcess();
     }
 
     private void setColumnConfiguration(DBImportRequest dbImportRequest) {

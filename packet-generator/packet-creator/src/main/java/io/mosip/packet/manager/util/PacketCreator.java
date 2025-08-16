@@ -52,6 +52,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static io.mosip.packet.core.constant.GlobalConfig.IS_ONLY_FOR_QUALITY_CHECK;
+import static io.mosip.packet.core.constant.GlobalConfig.SESSION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
@@ -300,7 +301,7 @@ public class PacketCreator {
 
                                 BiometricsDto biometricDTO = null;
                                 if(isDigitalSignatureRequired) {
-                                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Di " + trackerColumn + " - " + entry.getKey() + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
+                                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Di " + trackerColumn + " - " + entry.getKey() + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
                                     CaptureRequestDto captureRequestDto = new CaptureRequestDto();
                                     CaptureRequestDeviceDetailDto captureRequestDeviceDetailDto = new CaptureRequestDeviceDetailDto();
                                     captureRequestDeviceDetailDto.setType(bioType);
@@ -312,10 +313,10 @@ public class PacketCreator {
                                     captureRequestDto.setSpecVersion(bioSpecVaersion);
                                     captureRequestDto.setTransactionId(UUID.randomUUID().toString());
                                     captureRequestDto.setBio(captureRequestDeviceDetailDto);
-                                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken to start biometric signature using mockMDS " + trackerColumn + " - " + entry.getKey() + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
+                                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Time Taken to start biometric signature using mockMDS " + trackerColumn + " - " + entry.getKey() + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
 
                                     BioMetricsDto bioMetricsDto = mockDeviceUtil.getBiometricData(bioType, captureRequestDto, StringHelper.base64UrlEncode((byte[]) bioData.getBioData()), "en", "0");
-                                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken to get biometric data from mockMDS " + trackerColumn + " - " + entry.getKey() + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
+                                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Time Taken to get biometric data from mockMDS " + trackerColumn + " - " + entry.getKey() + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
 
                                     String payLoad = mosipDeviceSpecificationHelper.getPayLoad(bioMetricsDto.getData());
                                     String signature = mosipDeviceSpecificationHelper.getSignature(bioMetricsDto.getData());
@@ -338,7 +339,7 @@ public class PacketCreator {
                                     biometricDTO.setPayLoad(decodedPayLoad);
                                     biometricDTO.setSignature(signature);
                                     biometricDTO.setSpecVersion(bioMetricsDto.getSpecVersion());
-                                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken to complete digital signature creation using mockMDS " + trackerColumn + " - " + entry.getKey() + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
+                                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Time Taken to complete digital signature creation using mockMDS " + trackerColumn + " - " + entry.getKey() + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
                                 } else {
                                     biometricDTO = new BiometricsDto(bioAttribute, null, Double.parseDouble("0"));
                                 }
@@ -346,12 +347,12 @@ public class PacketCreator {
                                 biometricDTO.setCaptured(true);
                                 biometricDTO.setAttributeISO((byte[]) bioData.getBioData());
                                 BIR bir = birBuilder.buildBIR(biometricDTO);
-                                LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken for completion for BIR builder is " + trackerColumn + " - " + entry.getKey() + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
+                                LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Time Taken for completion for BIR builder is " + trackerColumn + " - " + entry.getKey() + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
 
                                 if (bioQualityScore==null) {
                                     if(biosdkCheckEnabled) {
                                         BiometricType biometricType = Biometric.getSingleTypeByAttribute(bioAttribute);
-                                        LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken to fetch biometric type for BIOSDK quality calculation" + trackerColumn + " - " + entry.getKey() + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
+                                        LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Time Taken to fetch biometric type for BIOSDK quality calculation" + trackerColumn + " - " + entry.getKey() + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
 
                                         BioSDKRequestWrapper requestWrapper = new BioSDKRequestWrapper();
                                         requestWrapper.setSegments(new ArrayList<>());
@@ -386,7 +387,7 @@ public class PacketCreator {
                                                     bir.getBdbInfo().getQuality().setScore(score.longValue());
                                             }
 
-                                            LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken After Calculation of Quality from BIOSDK " + trackerColumn + " - " + entry.getKey() + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
+                                            LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Time Taken After Calculation of Quality from BIOSDK " + trackerColumn + " - " + entry.getKey() + " " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
                                         } catch (ValidationFailedException e) {
                                             throw new Exception(trackerColumn + " Error : " + biometricType.toString() + ", " + bioAttribute + " Error Message :" + e.getLocalizedMessage());
                                         } catch (Exception e) {

@@ -30,8 +30,7 @@ import java.io.ObjectOutputStream;
 import java.sql.*;
 import java.util.*;
 
-import static io.mosip.packet.core.constant.GlobalConfig.IS_TPM_AVAILABLE;
-import static io.mosip.packet.core.constant.GlobalConfig.PACKET_TRACKER_ADDITIONAL_FIELDS;
+import static io.mosip.packet.core.constant.GlobalConfig.*;
 import static io.mosip.packet.core.constant.RegistrationConstants.*;
 
 @Component
@@ -111,7 +110,7 @@ public class TrackerUtil {
                             for(String script : scripts)
                                 statement.execute(script);
                         } catch (Exception e1) {
-                            LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID,
+                            LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID,
                                     "Exception encountered during Table Creation  "
                                             + ExceptionUtils.getStackTrace(e1));
                             System.exit(1);
@@ -144,7 +143,7 @@ public class TrackerUtil {
                             for(String script : scripts)
                                 statement.execute(script);
                         } catch (Exception e1) {
-                            LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID,
+                            LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID,
                                     "Exception encountered during Table Creation  "
                                             + ExceptionUtils.getStackTrace(e1));
                             System.exit(1);
@@ -158,14 +157,14 @@ public class TrackerUtil {
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID,
+            LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID,
                     "Exception encountered during context initialization - TrackerUtil "
                             + ExceptionUtils.getStackTrace(e));
         }
     }
 
     public synchronized void addTrackerEntry(TrackerRequestDto trackerRequestDto) throws SQLException, IOException, InterruptedException {
-        addTrackerLocalEntry(trackerRequestDto.getRefId(), trackerRequestDto.getRegNo(), TrackerStatus.valueOf(trackerRequestDto.getStatus()), trackerRequestDto.getProcess(), trackerRequestDto.getComments(), trackerRequestDto.getSessionKey(), trackerRequestDto.getActivity());
+        addTrackerLocalEntry(trackerRequestDto.getRefId(), trackerRequestDto.getRegNo(), TrackerStatus.valueOf(trackerRequestDto.getStatus()), trackerRequestDto.getProcess(), trackerRequestDto.getComments(), trackerRequestDto.getRunInstanceId(), trackerRequestDto.getActivity(), trackerRequestDto.getSessionId());
 
         if(appConfig.isTrackerEnabled()) {
             PreparedStatement preparedStatement = null;
@@ -195,6 +194,7 @@ public class TrackerUtil {
                 valueMap.put("REF_ID", trackerRequestDto.getRefId());
                 valueMap.put("REG_NO", trackerRequestDto.getRegNo());
                 valueMap.put("STATUS", trackerRequestDto.getStatus());
+                valueMap.put("SESSION_ID", trackerRequestDto.getSessionId());
                 if(trackerRequestDto.getStatus().equals(TrackerStatus.STARTED.toString())) {
                     valueMap.put("CR_BY", "MIGRATOR");
                     valueMap.put("CR_DTIMES", DateUtils.formatDate(timestamp, dateFormat));
@@ -206,7 +206,7 @@ public class TrackerUtil {
                     valueMap.put("UPD_BY", "MIGRATOR");
                     valueMap.put("UPD_DTIMES", DateUtils.formatDate(timestamp, dateFormat));
                 }
-                valueMap.put("SESSION_KEY", trackerRequestDto.getSessionKey());
+                valueMap.put("RUN_INSTANCE_ID", trackerRequestDto.getRunInstanceId());
                 valueMap.put("ACTIVITY", trackerRequestDto.getActivity());
                 valueMap.put("PROCESS", trackerRequestDto.getProcess());
                 valueMap.put("COMMENTS", trackerRequestDto.getComments());
@@ -240,7 +240,7 @@ public class TrackerUtil {
                     this.initialize();
                     addTrackerEntry(trackerRequestDto);
                 } else {
-                    LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID,
+                    LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID,
                             "Exception encountered during Tracker record insertion - TrackerUtil "
                                     + ExceptionUtils.getStackTrace(throwables));
                 }
@@ -260,7 +260,7 @@ public class TrackerUtil {
                 String query = TableQueries.getInsertQueries(OFFSET_TRACKER_TABLE_NAME, dbType);
                 Map<String, String> valueMap = new HashMap<>();
                 valueMap.put("TABLE_NAME", OFFSET_TRACKER_TABLE_NAME);
-                valueMap.put("SESSION_ID", appConfig.getPredefinedSessionKey());
+                valueMap.put("RUN_INSTANCE_ID", appConfig.getPredefinedRunInstanceId());
                 valueMap.put("HASH_VALUE", appConfig.getHashValue());
                 valueMap.put("VALUE", offset.toString());
                 valueMap.put("IN_USE", "N");
@@ -288,16 +288,16 @@ public class TrackerUtil {
                     Thread.sleep(2000);
 
                 statement = conn.createStatement();
-                resultSet = statement.executeQuery("SELECT OFFSET_VALUE, IN_USE FROM " + OFFSET_TRACKER_TABLE_NAME + " WHERE SESSION_KEY = '" + appConfig.getPredefinedSessionKey() + "' AND HASH_VALUE = '" + appConfig.getHashValue() + "'");
+                resultSet = statement.executeQuery("SELECT OFFSET_VALUE, IN_USE FROM " + OFFSET_TRACKER_TABLE_NAME + " WHERE RUN_INSTANCE_ID = '" + appConfig.getPredefinedRunInstanceId() + "' AND HASH_VALUE = '" + appConfig.getHashValue() + "'");
                 if(resultSet.next()) {
                     Long value = resultSet.getLong(1);
                     String inUse = resultSet.getString(2);
 
                     if(inUse == null || inUse.equals("N") || inUse.isEmpty()) {
-                        statement.executeUpdate("UPDATE " + OFFSET_TRACKER_TABLE_NAME + " SET IN_USE = 'Y' WHERE SESSION_KEY = '" + appConfig.getPredefinedSessionKey() + "' AND HASH_VALUE = '" + appConfig.getHashValue() + "'");
+                        statement.executeUpdate("UPDATE " + OFFSET_TRACKER_TABLE_NAME + " SET IN_USE = 'Y' WHERE RUN_INSTANCE_ID = '" + appConfig.getPredefinedRunInstanceId() + "' AND HASH_VALUE = '" + appConfig.getHashValue() + "'");
                         return value;
                     } else {
-                        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "OffSet Tracker Table in Use retry after 5 seconds");
+                        LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "OffSet Tracker Table in Use retry after 5 seconds");
                         Thread.sleep(5000);
                         return getDatabaseOffset();
                     }
@@ -305,7 +305,7 @@ public class TrackerUtil {
                     String query = TableQueries.getInsertQueries(OFFSET_TRACKER_TABLE_NAME, dbType);
                     Map<String, String> valueMap = new HashMap<>();
                     valueMap.put("TABLE_NAME", OFFSET_TRACKER_TABLE_NAME);
-                    valueMap.put("SESSION_ID", appConfig.getPredefinedSessionKey());
+                    valueMap.put("RUN_INSTANCE_ID", appConfig.getPredefinedRunInstanceId());
                     valueMap.put("HASH_VALUE", appConfig.getHashValue());
                     valueMap.put("VALUE", "0");
                     valueMap.put("IN_USE", "Y");
@@ -335,7 +335,7 @@ public class TrackerUtil {
                     Thread.sleep(2000);
 
                 statement = conn.createStatement();
-                resultSet = statement.executeQuery("SELECT HASH_VALUE FROM " + OFFSET_TRACKER_TABLE_NAME + " WHERE SESSION_KEY = '" + appConfig.getPredefinedSessionKey() + "'");
+                resultSet = statement.executeQuery("SELECT HASH_VALUE FROM " + OFFSET_TRACKER_TABLE_NAME + " WHERE RUN_INSTANCE_ID = '" + appConfig.getPredefinedRunInstanceId() + "'");
                 while(resultSet.next()) {
                     String hashVal = resultSet.getString(1);
                     assert(hashVal != null);
@@ -365,7 +365,7 @@ public class TrackerUtil {
                         preparedStatement.closeOnCompletion();
                     }
                 } catch (SQLException e) {
-                    LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, " Error While Closing Database Connection " + e.getMessage());
+                    LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, " Error While Closing Database Connection " + e.getMessage());
                 }
             }
         }
@@ -380,10 +380,10 @@ public class TrackerUtil {
                 while(isConnCreation)
                     Thread.sleep(2000);
 
-                statement = conn.prepareStatement(String.format("SELECT 1 FROM %s WHERE REF_ID = ? AND ACTIVITY = ? AND SESSION_KEY = ? AND STATUS != 'FAILED'", TRACKER_TABLE_NAME));
+                statement = conn.prepareStatement(String.format("SELECT 1 FROM %s WHERE REF_ID = ? AND ACTIVITY = ? AND RUN_INSTANCE_ID = ? AND STATUS != 'FAILED'", TRACKER_TABLE_NAME));
                 statement.setString(1, value.toString());
                 statement.setString(2, activity);
-                statement.setString(3, appConfig.getPredefinedSessionKey());
+                statement.setString(3, appConfig.getPredefinedRunInstanceId());
                 resultSet = statement.executeQuery();
 
                 if(resultSet.next())
@@ -398,7 +398,7 @@ public class TrackerUtil {
                     this.initialize();
                     return isRecordPresent(value, activity);
                 } else {
-                    LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID,
+                    LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID,
                             "Exception encountered while checking Tracker Record present - TrackerUtil "
                                     + ExceptionUtils.getStackTrace(throwables));
                     throw throwables;
@@ -433,7 +433,8 @@ public class TrackerUtil {
 
             if(isTrackerTable) {
                 sb.append(String.format("CREATE TABLE %s (", TRACKER_TABLE_NAME));
-                sb.append(addColumn("SESSION_KEY", String.class, 100, true, dbTypes) + ",");
+                sb.append(addColumn("RUN_INSTANCE_ID", String.class, 100, true, dbTypes) + ",");
+                sb.append(addColumn("SESSION_ID", String.class, 100, true, dbTypes) + ",");
                 sb.append(addColumn("REF_ID", String.class, 100, true, dbTypes) + ",");
                 sb.append(addColumn("REG_NO", String.class, 100, false, dbTypes) + ",");
                 sb.append(addColumn("ACTIVITY", String.class, 50, false, dbTypes) + ",");
@@ -454,20 +455,20 @@ public class TrackerUtil {
                 }
                 sb.append(");");
 
-                sb.append(String.format("ALTER TABLE %s ADD PRIMARY KEY (SESSION_KEY, REF_ID);", TRACKER_TABLE_NAME));
-                sb.append(String.format("CREATE INDEX IX_SEARCH_1 ON  %s (REF_ID, ACTIVITY, SESSION_KEY);", TRACKER_TABLE_NAME));
-                sb.append(String.format("CREATE INDEX IX_SEARCH_2 ON  %s (REF_ID, ACTIVITY, SESSION_KEY, STATUS);", TRACKER_TABLE_NAME));
+                sb.append(String.format("ALTER TABLE %s ADD PRIMARY KEY (RUN_INSTANCE_ID, REF_ID);", TRACKER_TABLE_NAME));
+                sb.append(String.format("CREATE INDEX IX_SEARCH_1 ON  %s (REF_ID, ACTIVITY, RUN_INSTANCE_ID);", TRACKER_TABLE_NAME));
+                sb.append(String.format("CREATE INDEX IX_SEARCH_2 ON  %s (REF_ID, ACTIVITY, RUN_INSTANCE_ID, STATUS);", TRACKER_TABLE_NAME));
                 sb.append(String.format("CREATE INDEX IX_SEARCH_3 ON  %s (REF_ID);", TRACKER_TABLE_NAME));
-                sb.append(String.format("CREATE INDEX IX_SEARCH_4 ON  %s (REF_ID, SESSION_KEY);", TRACKER_TABLE_NAME));
+                sb.append(String.format("CREATE INDEX IX_SEARCH_4 ON  %s (REF_ID, RUN_INSTANCE_ID);", TRACKER_TABLE_NAME));
             } else {
                 sb.append(String.format("CREATE TABLE %s (", OFFSET_TRACKER_TABLE_NAME));
-                sb.append(addColumn("SESSION_KEY", String.class, 100, true, dbTypes) + ",");
+                sb.append(addColumn("RUN_INSTANCE_ID", String.class, 100, true, dbTypes) + ",");
                 sb.append(addColumn("HASH_VALUE", String.class, 100, true, dbTypes) + ",");
                 sb.append(addColumn("OFFSET_VALUE", Number.class, 12, false, dbTypes) + ",");
                 sb.append(addColumn("IN_USE", Character.class, 1, false, dbTypes));
                 sb.append(");");
 
-                sb.append(String.format("ALTER TABLE %s ADD PRIMARY KEY (SESSION_KEY, HASH_VALUE);", OFFSET_TRACKER_TABLE_NAME));
+                sb.append(String.format("ALTER TABLE %s ADD PRIMARY KEY (RUN_INSTANCE_ID, HASH_VALUE);", OFFSET_TRACKER_TABLE_NAME));
             }
         }
 
@@ -501,7 +502,7 @@ public class TrackerUtil {
 
     }
 
-    public void addTrackerLocalEntry(String refId, String regNo, TrackerStatus status, String process, Object request, String sessionKey, String activity) throws SQLException, IOException, InterruptedException {
+    public void addTrackerLocalEntry(String refId, String regNo, TrackerStatus status, String process, Object request, String runInstanceId, String activity, String sessionId) throws SQLException, IOException, InterruptedException {
         while(isConnCreation)
             Thread.sleep(10000);
 
@@ -536,7 +537,8 @@ public class TrackerUtil {
                 if(process != null ) packetTracker.setProcess(process);
                 if(request != null ) packetTracker.setRequest(Base64.getEncoder().encodeToString(requestValue));
                 if(activity != null ) packetTracker.setActivity(activity);
-                packetTracker.setSessionKey(sessionKey);
+                packetTracker.setRunInstanceId(runInstanceId);
+                packetTracker.setSessionId(sessionId);
                 packetTracker.setUpdBy("BATCH");
                 packetTracker.setUpdDtimes(Timestamp.valueOf(DateUtils.getUTCCurrentDateTime()));
             } else {
@@ -547,7 +549,8 @@ public class TrackerUtil {
                 if(process != null ) packetTracker.setProcess(process);
                 if(request != null ) packetTracker.setRequest(requestValue == null ? null : Base64.getEncoder().encodeToString(requestValue));
                 if(activity != null ) packetTracker.setActivity(activity);
-                packetTracker.setSessionKey(sessionKey);
+                packetTracker.setRunInstanceId(runInstanceId);
+                packetTracker.setSessionId(sessionId);
                 packetTracker.setCrBy("BATCH");
                 packetTracker.setCrDtime(Timestamp.valueOf(DateUtils.getUTCCurrentDateTime()));
             }

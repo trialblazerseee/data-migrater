@@ -14,8 +14,9 @@ public class TrackerRequestDto {
     private String regNo;
     private String status;
     private String process;
-    private String sessionKey;
+    private String runInstanceId;
     private String activity;
     private String comments;
     private Map<String, Object> additionalMaps;
+    private String sessionId;
 }

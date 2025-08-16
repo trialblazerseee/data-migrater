@@ -38,7 +38,7 @@ public class RegistrationConstants {
 
 	// Logger - Constants
 	public static final String APPLICATION_ID = "MGR";
-	public static final String APPLICATION_NAME = "MIGRATOR";
+	public static final String APPLICATION_NAME = "ID MIGRATOR";
 
 	// api related constant values
 	public static final String HTTPMETHOD = "service.httpmethod";

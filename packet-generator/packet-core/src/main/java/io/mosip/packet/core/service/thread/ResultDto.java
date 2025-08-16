@@ -13,6 +13,8 @@ import java.util.Map;
 public class ResultDto {
     private String refId;
     private String regNo;
+    private String source;
+    private String process;
     private String comments;
     private Map<String, Object> additionalMaps;
     private TrackerStatus status;

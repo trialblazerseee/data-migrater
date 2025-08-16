@@ -33,6 +33,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.Map;
 
+import static io.mosip.packet.core.constant.GlobalConfig.SESSION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
@@ -68,7 +69,7 @@ public class MockDeviceUtil {
     public BioMetricsDto getBiometricData (String deviceTypeName, CaptureRequestDto requestObject, String bioValue,
                                             String lang, String errorCode) throws JsonGenerationException, JsonMappingException, IOException, NoSuchAlgorithmException, DecoderException
     {
-        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "MockDeviceUtil :: getBiometricData():: entry");
+        LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "MockDeviceUtil :: getBiometricData():: entry");
         SBIDeviceHelper deviceHelper = getDeviceHelper(deviceTypeName);
         DeviceInfo deviceInfo = deviceHelper.getDeviceInfo();
 
@@ -117,7 +118,7 @@ public class MockDeviceUtil {
         System.arraycopy (currentBioDataHash, 0, finalBioDataHash, previousBioDataHash.length, currentBioDataHash.length);
 
         biometric.setHash(toHex (generateHash (finalBioDataHash)));
-        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "MockDeviceUtil :: getBiometricData():: exit");
+        LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "MockDeviceUtil :: getBiometricData():: exit");
 
         return biometric;
     }

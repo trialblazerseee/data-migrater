@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static io.mosip.packet.core.constant.GlobalConfig.SESSION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
@@ -72,15 +73,15 @@ public class MOSIPPostProcessor implements DataPostProcessor {
         PacketDto packetDto = (PacketDto) processObject.getResponses().get("packetDto");
         HashMap<String, Object> demoDetails = (HashMap<String, Object>) processObject.getResponses().get("demoDetails");
 
-        LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "PacketDto Response " +  (new Gson()).toJson(packetDto));
+        LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "PacketDto Response " +  (new Gson()).toJson(packetDto));
         String trackerRefId = processObject.getTrackerRefId();
         List<PacketInfo> infoList = packetCreatorService.persistPacket(packetDto);
         PacketInfo info = infoList.get(0);
 
         Long timeDifference = System.nanoTime()-processStartTime;
-        LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken for Packet Creation in Local Storage " + trackerRefId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
+        LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Time Taken for Packet Creation in Local Storage " + trackerRefId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
 
-        trackerUtil.addTrackerLocalEntry(processObject.getRefId(), info.getId(), TrackerStatus.CREATED, processObject.getProcess(), demoDetails, appConfig.getPredefinedSessionKey(), GlobalConfig.getActivityName());
+        trackerUtil.addTrackerLocalEntry(processObject.getRefId(), info.getId(), TrackerStatus.CREATED, processObject.getProcess(), demoDetails, appConfig.getPredefinedRunInstanceId(), GlobalConfig.getActivityName(), GlobalConfig.getSessionId());
 
         Path identityFile = Paths.get(System.getProperty("user.dir"), "identity.json");
 
@@ -117,14 +118,14 @@ public class MOSIPPostProcessor implements DataPostProcessor {
             uploadDTO.setLangCode(primaryLanguage);
 
             timeDifference = System.nanoTime()-processStartTime;
-            LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken for Completion of Data Process Function " + trackerRefId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
+            LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Time Taken for Completion of Data Process Function " + trackerRefId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
 
             if (enablePacketUpload) {
                 responseDto.getResponses().put("uploadDTO", uploadDTO);
-                trackerUtil.addTrackerLocalEntry(processObject.getRefId(), info.getId(), TrackerStatus.READY_TO_SYNC, null, responseDto, appConfig.getPredefinedSessionKey(), GlobalConfig.getActivityName());
+                trackerUtil.addTrackerLocalEntry(processObject.getRefId(), info.getId(), TrackerStatus.READY_TO_SYNC, null, responseDto, appConfig.getPredefinedRunInstanceId(), GlobalConfig.getActivityName(), GlobalConfig.getSessionId());
             } else {
                 responseDto.getResponses().put("message", "Successfully Inserted into Packet Tracker Table with Status PROCESSED_WITHOUT_UPLOAD");
-                LOGGER.warn("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Packet Uploader Disabled : " + trackerRefId);
+                LOGGER.warn(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Packet Uploader Disabled : " + trackerRefId);
                 ResultDto resultDto = new ResultDto();
                 resultDto.setRegNo(info.getId());
                 resultDto.setRefId(processObject.getRefId());
@@ -132,7 +133,7 @@ public class MOSIPPostProcessor implements DataPostProcessor {
                 resultDto.setStatus(TrackerStatus.PROCESSED_WITHOUT_UPLOAD);
                 setter.setResult(resultDto);
                 timeDifference = System.nanoTime()-processStartTime;
-                LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken to Stored Packet Information in Local Table for Export OPeration " + trackerRefId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
+                LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Time Taken to Stored Packet Information in Local Table for Export OPeration " + trackerRefId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
             }
         } else {
             throw new Exception("Identity Mapping JSON File missing");

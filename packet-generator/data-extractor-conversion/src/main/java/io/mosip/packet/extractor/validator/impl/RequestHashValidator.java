@@ -39,13 +39,11 @@ public class RequestHashValidator implements Validator {
         String hmacValue1 = HMACUtils2.digestAsPlainText(canonicalJson.getBytes(StandardCharsets.UTF_8));
         List<String> hmacList = trackerUtil.getOffsetHash();
 
-        for(String hash : hmacList) {
-            if(hash.equals(hmacValue1)) {
-                LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Existing request HASH value found : " + hmacValue1);
-                System.out.println("Existing request HASH value found : " + hmacValue1);
-                applicationConfig.setHashValue(hmacValue1);
-                return true;
-            }
+        if(hmacList.contains(hmacValue1)) {
+            LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Existing request HASH value found : " + hmacValue1);
+            System.out.println("Existing request HASH value found : " + hmacValue1);
+            applicationConfig.setHashValue(hmacValue1);
+            return true;
         }
 
         LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Request HASH value not found. Creating new : " + hmacValue1);

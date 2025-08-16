@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static io.mosip.packet.core.constant.GlobalConfig.SESSION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
@@ -49,12 +50,13 @@ public class MosipPacketExporter implements DataExporter {
         uploadList.add(uploadDTO);
         HashMap<String, PacketUploadResponseDTO> response = new HashMap<>();
         packetUploaderService.syncPacket(uploadList, ConfigUtil.getConfigUtil().getCenterId(), ConfigUtil.getConfigUtil().getMachineId(), response);
-        trackerUtil.addTrackerLocalEntry(dataPostProcessorResponseDto.getRefId(), uploadDTO.getPacketId(), TrackerStatus.SYNCED, null, uploadList, appConfig.getPredefinedSessionKey(), GlobalConfig.getActivityName());
+        trackerUtil.addTrackerLocalEntry(dataPostProcessorResponseDto.getRefId(), uploadDTO.getPacketId(), TrackerStatus.SYNCED, null, uploadList, appConfig.getPredefinedRunInstanceId(), GlobalConfig.getActivityName(), GlobalConfig.getSessionId());
         packetUploaderService.uploadSyncedPacket(uploadList, response);
-        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Packet Upload Response for " + refId + " : " + (new Gson()).toJson(response));
+        LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Packet Upload Response for " + refId + " : " + (new Gson()).toJson(response));
         ResultDto resultDto = new ResultDto();
         resultDto.setRegNo(uploadDTO.getPacketId());
         resultDto.setRefId(dataPostProcessorResponseDto.getRefId());
+        resultDto.setProcess(dataPostProcessorResponseDto.getProcess());
         resultDto.setComments((new Gson()).toJson(response));
         resultDto.setStatus(GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_EXPORTER) ? TrackerStatus.PROCESSED : TrackerStatus.PROCESSED_WITHOUT_UPLOAD);
         setter.setResult(resultDto);

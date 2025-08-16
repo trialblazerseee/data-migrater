@@ -53,6 +53,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static io.mosip.kernel.core.util.JsonUtils.javaObjectToJsonString;
+import static io.mosip.packet.core.constant.GlobalConfig.SESSION_ID;
 import static java.lang.Integer.parseInt;
 import static java.lang.Long.parseLong;
 import static io.mosip.packet.core.constant.RegistrationConstants.*;
@@ -109,11 +110,11 @@ public class PacketUploaderServiceImpl  implements PacketUploaderService {
             this.centerId = centerId;
             this.machineId = machineId;
             String trackerRefId = packets.stream().map(p -> p.getPacketId()).collect(Collectors.toSet()).toString();
-            LOGGER.debug("SESSION_ID", "PACKET_SYNC", "syncPacket()", "Time Taken for syncPacket Start. Reference ID : " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
+            LOGGER.debug(SESSION_ID, "PACKET_SYNC", "syncPacket()", "Time Taken for syncPacket Start. Reference ID : " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
             restApiClient.setCenterMachineId(centerId, machineId);
             Object obj = syncRIDToServerWithRetryWrapper(packets, trackerRefId, startTime);
-            LOGGER.debug("SESSION_ID", "PACKET_SYNC", "syncPacket()", "Time Taken for syncPacket Complete. Reference ID : " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
-            LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Packet Sync API Response" + (new Gson()).toJson(obj));
+            LOGGER.debug(SESSION_ID, "PACKET_SYNC", "syncPacket()", "Time Taken for syncPacket Complete. Reference ID : " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
+            LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Packet Sync API Response" + (new Gson()).toJson(obj));
         } catch (JsonProcessingException | KeymanagerServiceException e) {
             e.printStackTrace();
         }
@@ -125,7 +126,7 @@ public class PacketUploaderServiceImpl  implements PacketUploaderService {
             @Override
             public Boolean doWithRetry(RetryContext retryContext) throws Exception {
                 syncRIDToServer(packets, startTime, trackerRefId);
-                LOGGER.debug("SESSION_ID", "PACKET_SYNC", "syncRIDToServerWithRetryWrapper()", "Time Taken to complete sync. Reference ID : " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
+                LOGGER.debug(SESSION_ID, "PACKET_SYNC", "syncRIDToServerWithRetryWrapper()", "Time Taken to complete sync. Reference ID : " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
                 return true;
             }
         };
@@ -135,7 +136,7 @@ public class PacketUploaderServiceImpl  implements PacketUploaderService {
         private synchronized void syncRIDToServer(List<PacketUploadDTO> packets, Long startTime, String trackerRefId) throws Exception {
 
         List<SyncRegistrationDTO> syncDtoList = getPacketSyncDtoList(packets);
-            LOGGER.debug("SESSION_ID", "PACKET_SYNC", "syncRIDToServer()", "Time Taken for getPacketSyncDtoList() Reference ID : " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
+            LOGGER.debug(SESSION_ID, "PACKET_SYNC", "syncRIDToServer()", "Time Taken for getPacketSyncDtoList() Reference ID : " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
         List<SyncRegistrationDTO> syncDtoWithPacketId = syncDtoList.stream().filter(dto -> !dto.getRegistrationId().equals(dto.getPacketId())).collect(Collectors.toList());
 
         if (syncDtoList != null && !syncDtoList.isEmpty()) {
@@ -190,9 +191,9 @@ public class PacketUploaderServiceImpl  implements PacketUploaderService {
                     .concat(RegistrationConstants.UNDER_SCORE)
                     .concat(String.valueOf(machineId));
 
-            LOGGER.debug("SESSION_ID", "PACKET_SYNC", "syncRID()", "Time Taken for before encryption. Reference Id : " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
+            LOGGER.debug(SESSION_ID, "PACKET_SYNC", "syncRID()", "Time Taken for before encryption. Reference Id : " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
             String encodedString = CryptoUtil.encodeToURLSafeBase64(offlinePacketCryptoServiceImpl.encrypt(refId, javaObjectToJsonString(registrationPacketSyncDTO).getBytes()));
-            LOGGER.debug("SESSION_ID", "PACKET_SYNC", "syncRID()", "Time Taken for after encryption. Reference Id : " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
+            LOGGER.debug(SESSION_ID, "PACKET_SYNC", "syncRID()", "Time Taken for after encryption. Reference Id : " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
             syncPacketsToServer(encodedString, "User", packetIdExists, trackerRefId, startTime);
 
         }
@@ -219,7 +220,7 @@ public class PacketUploaderServiceImpl  implements PacketUploaderService {
         for (PacketUploadDTO packet : packets) {
             try {
                 Long startTime = System.nanoTime();
-                LOGGER.debug("SESSION_ID", "PACKET_UPLOAD", "uploadSyncedPacket()", "Time Taken to start Packet Upload. Reference Id : " + packet.getPacketId() + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
+                LOGGER.debug(SESSION_ID, "PACKET_UPLOAD", "uploadSyncedPacket()", "Time Taken to start Packet Upload. Reference Id : " + packet.getPacketId() + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
                 uploadPacket(packet, startTime, packet.getPacketId());
             } catch (Exception e) {
                 throw e;
@@ -230,10 +231,10 @@ public class PacketUploaderServiceImpl  implements PacketUploaderService {
         public void uploadPacket(@NonNull PacketUploadDTO packetUpload, Long startTime, String trackerRefid) throws Exception {
         File packet = FileUtils.getFile(packetUpload.getPacketPath() +
                 RegistrationConstants.SLASH + packetUpload.getPacketId() + RegistrationConstants.ZIP_FILE_EXTENSION);
-            LOGGER.debug("SESSION_ID", "PACKET_UPLOAD", "uploadPacket()", "Time Taken to fetch file from local storage. Reference Id : " + trackerRefid + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
+            LOGGER.debug(SESSION_ID, "PACKET_UPLOAD", "uploadPacket()", "Time Taken to fetch file from local storage. Reference Id : " + trackerRefid + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
         try {
             pushPacketWithRetryWrapper(packet, startTime, trackerRefid);
-            LOGGER.debug("SESSION_ID", "PACKET_UPLOAD", "uploadPacket()", "Time Taken to complete packet upload. Reference Id : " + trackerRefid + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
+            LOGGER.debug(SESSION_ID, "PACKET_UPLOAD", "uploadPacket()", "Time Taken to complete packet upload. Reference Id : " + trackerRefid + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
         } catch (ConnectionException e) {
             throw e;
         }

@@ -4,6 +4,7 @@ import io.mosip.commons.packet.dto.packet.PacketDto;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.constant.FieldCategory;
+import io.mosip.packet.core.constant.GlobalConfig;
 import io.mosip.packet.core.constant.tracker.TrackerStatus;
 import io.mosip.packet.core.dto.DataProcessorResponseDto;
 import io.mosip.packet.core.dto.dbimport.DBImportRequest;
@@ -25,8 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static io.mosip.packet.core.constant.GlobalConfig.IS_ONLY_FOR_QUALITY_CHECK;
-import static io.mosip.packet.core.constant.GlobalConfig.getActivityName;
+import static io.mosip.packet.core.constant.GlobalConfig.*;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
@@ -73,14 +73,14 @@ public class MosipPacketDTOProcessor implements DataProcessor {
                         if(dataHashMap.get(FieldCategory.DEMO).containsKey(applicationIdColumn)) {
                             registrationId = dataHashMap.get(FieldCategory.DEMO).get(applicationIdColumn).toString();
                         } else {
-                            LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Application ID : " + applicationIdColumn + " not found in DataMap");
+                            LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Application ID : " + applicationIdColumn + " not found in DataMap");
                             throw new Exception("Application ID : " + applicationIdColumn + " not found in DataMap");
                         }
                     } else {
                         registrationId = commonUtil.generateRegistrationId(ConfigUtil.getConfigUtil().getCenterId(), ConfigUtil.getConfigUtil().getMachineId());
                     }
                 }
-                trackerUtil.addTrackerLocalEntry(dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()).toString(), registrationId, TrackerStatus.STARTED, dbImportRequest.getProcess(), null, appConfig.getPredefinedSessionKey(), getActivityName());
+                trackerUtil.addTrackerLocalEntry(dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()).toString(), registrationId, TrackerStatus.STARTED, dbImportRequest.getProcess(), null, appConfig.getPredefinedRunInstanceId(), getActivityName(), GlobalConfig.getSessionId());
 
                 Long startTime = System.nanoTime();
                 HashMap<String, Object> demoDetails = dataHashMap.get(FieldCategory.DEMO);
@@ -89,7 +89,7 @@ public class MosipPacketDTOProcessor implements DataProcessor {
                 String refId = registrationId == null ? demoDetails.get(trackerColumn).toString() : registrationId;
                 responseDto.setRefId(demoDetails.get(trackerColumn).toString());
                 responseDto.setTrackerRefId(refId);
-                LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Thread - " + refId + " Process Started");
+                LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread - " + refId + " Process Started");
 
                 try {
                     HashMap<String, String> csvMap = qualityWriterFactory.getDataMap();
@@ -108,21 +108,21 @@ public class MosipPacketDTOProcessor implements DataProcessor {
                         packetDto.setDocuments(packetCreator.setDocuments(docDetails, dbImportRequest.getIgnoreIdSchemaFields(), metaInfo, demoDetails));
                     }
                     Long timeDifference = System.nanoTime()-startTime;
-                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken for Completion of Document Process " + refId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
+                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Time Taken for Completion of Document Process " + refId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
 
                     if (!IS_ONLY_FOR_QUALITY_CHECK && demoDetails.size() > 0) {
                         packetDto.setFields(packetCreator.setDemographic(demoDetails, (bioDetails.size() > 0), dbImportRequest.getIgnoreIdSchemaFields()));
                     }
 
                     timeDifference = System.nanoTime()-startTime;
-                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken for Completion of Demographic Process " + refId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
+                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Time Taken for Completion of Demographic Process " + refId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
 
-                    LOGGER.debug("SESSION_ID", "DATA_PROCESSOR", "process()", "Reference Id : " + refId + " Biometrics found size is  : " + bioDetails.size());
+                    LOGGER.debug(SESSION_ID, "DATA_PROCESSOR", "process()", "Reference Id : " + refId + " Biometrics found size is  : " + bioDetails.size());
                     Map<String, Object> ageGroup = commonUtil.getAgeGroup(demoDetails);
                     packetDto.setBiometrics(packetCreator.setBiometrics(bioDetails, metaInfo, csvMap, refId, startTime, (ageGroup.isEmpty() ? null : ageGroup.get("ageGroup"))));
 
                     timeDifference = System.nanoTime()-startTime;
-                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken for Completion of Biometric Process " + refId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
+                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Time Taken for Completion of Biometric Process " + refId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
 
                     csvMap.put("reg_no", registrationId);
                     csvMap.put("ref_id", demoDetails.get(trackerColumn).toString());
@@ -133,20 +133,20 @@ public class MosipPacketDTOProcessor implements DataProcessor {
                     packetDto.setMetaInfo(metaInfo);
                     packetDto.setAudits(packetCreator.setAudits(packetDto.getId()));
                     timeDifference = System.nanoTime()-startTime;
-                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken for Completion of Audit Log set Process " + refId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
+                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Time Taken for Completion of Audit Log set Process " + refId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
 
                     HashMap<String, Object> idSchema = commonUtil.getLatestIdSchema();
                     packetDto.setSchemaJson(idSchema.get("schemaJson").toString());
                     packetDto.setOfflineMode(true);
 
                     timeDifference = System.nanoTime()-startTime;
-                    LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Time Taken for Fetching Latest ID Schema " + refId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
+                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Time Taken for Fetching Latest ID Schema " + refId + " " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
 
                     responseDto.getResponses().put("demoDetails", demoDetails);
                     responseDto.getResponses().put("packetDto", packetDto);
                     return responseDto;
                 } catch (Exception e) {
-                    LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Exception : " + e.getMessage(), e);
+                    LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Exception : " + e.getMessage(), e);
                     ResultDto resultDto = new ResultDto();
                     resultDto.setRegNo(null);
                     resultDto.setRefId(demoDetails.get(trackerColumn).toString());

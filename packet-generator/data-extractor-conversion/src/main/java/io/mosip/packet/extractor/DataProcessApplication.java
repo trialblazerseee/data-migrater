@@ -13,6 +13,8 @@ import io.mosip.packet.core.constant.activity.ActivityName;
 import io.mosip.packet.core.dto.RequestWrapper;
 import io.mosip.packet.core.dto.dbimport.DBImportRequest;
 import io.mosip.packet.core.dto.dbimport.PacketCreatorResponse;
+import io.mosip.packet.core.event.AppReadyEvent;
+import io.mosip.packet.core.event.AppReadyEventPublisher;
 import io.mosip.packet.core.logger.DataProcessLogger;
 import io.mosip.packet.core.spi.datareprocessor.DataReProcessorApiFactory;
 import io.mosip.packet.core.util.regclient.ConfigUtil;
@@ -24,6 +26,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
@@ -46,11 +49,11 @@ public class DataProcessApplication {
         ConfigurableApplicationContext context = SpringApplication.run(DataProcessApplication.class, args);
         try {
             ApplicationConfig appConfig = context.getBean(ApplicationConfig.class);
-
             context.getBean(MockDeviceUtil.class).resetDevices();
             context.getBean(MockDeviceUtil.class).initDeviceHelpers();
             context.getBean(ConfigUtil.class).loadConfigDetails();
             GlobalConfig.setActivity(context.getBean(Activity.class).setActivity(null));
+            context.getBean(AppReadyEventPublisher.class).publishEvent();
 
             if (GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_REPROCESSOR))
                 context.getBean(DataReProcessorApiFactory.class).reProcess();
@@ -66,7 +69,7 @@ public class DataProcessApplication {
                     System.out.println("Current Flow Enabled for  " + getActivityName());
                     option = "Y";
                 }
-                LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current Flow Enabled for  " + getActivityName());
+                LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Current Flow Enabled for  " + getActivityName());
 
 
                 if (option.equalsIgnoreCase("Y")) {

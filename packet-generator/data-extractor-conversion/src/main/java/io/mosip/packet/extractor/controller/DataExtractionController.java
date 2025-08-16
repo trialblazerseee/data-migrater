@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import static io.mosip.packet.core.constant.GlobalConfig.SESSION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
@@ -136,9 +137,9 @@ public class DataExtractionController {
         try {
             GlobalConfig.setActivity(activity.setActivity(ActivityName.DATA_CREATOR.name()));
             DBImportRequest importRequest = request.getRequest();
-            LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "DataExtractionController :: importPacketsFromOtherDomain():: entry");
+            LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "DataExtractionController :: importPacketsFromOtherDomain():: entry");
             response = dataExtractionService.createPacketFromDataBase(importRequest);
-            LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "DataExtractionController :: importPacketsFromOtherDomain():: exit");
+            LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "DataExtractionController :: importPacketsFromOtherDomain():: exit");
         } catch (SQLException e) {
             e.printStackTrace();
             ServiceError error = new ServiceError();

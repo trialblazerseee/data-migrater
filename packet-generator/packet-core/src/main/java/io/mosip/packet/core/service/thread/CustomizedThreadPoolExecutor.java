@@ -31,6 +31,7 @@ public class CustomizedThreadPoolExecutor {
     private AtomicInteger totalCompletedTaskCount = new AtomicInteger();
     private AtomicInteger failedRecordCount = new AtomicInteger();
     private AtomicInteger currentPendingCount = new AtomicInteger();
+    private CountDownLatch latch;
     private int countOfZeroActiveCount = 0;
     private static final Logger LOGGER = DataProcessLogger.getLogger(CustomizedThreadPoolExecutor.class);
 
@@ -202,7 +203,7 @@ public class CustomizedThreadPoolExecutor {
                 }
 
                 System.out.println("Pool Name : " + NAME + " Avg Count per Min.: " + avgCount + " Avg Time per Record : " + TimeUnit.SECONDS.convert(avgTime, TimeUnit.MILLISECONDS) + " S," +  " Percentage Completed : " +  String.format("%.4f", percentageCompleted) +  " %, " + "Estimate Time of Completion : " + totalYears + "Y " + totalMonths + "M " + totalDays + "D " + totalHours + "H " + remainingMinutes + "M" +"  Total Records for Process : " + TOTAL_RECORDS_FOR_PROCESS + ", Failed in Previous Batch : " + TOTAL_FAILED_RECORDS + ", Total Task : " + totalTaskCount  + ", Active Task : " + threadPoolExecutor.getActiveCount() + ", Completed Task : " + totalCompletedTaskCount + ", Failed Task : " + failedRecordCount + (isCompletionCountRequired ? ", No of "+ trackActivityForCompletion + ", Completed : " +  COMPLETION_COUNT_MAP.get(trackActivityForCompletion) : "."));
-                LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pool Name : " + NAME + " Avg Count per Min.: " + avgCount + " Avg Time per Record : " + TimeUnit.SECONDS.convert(avgTime, TimeUnit.MILLISECONDS) + " S," +  " Percentage Completed : " +  String.format("%.4f", percentageCompleted) +" %, " + "Estimate Time of Completion : " + totalYears + "Y " + totalMonths + "M "  + totalDays + "D " + totalHours + "H " + remainingMinutes + "M" +"  Total Records for Process : " + TOTAL_RECORDS_FOR_PROCESS + ", Failed in Previous Batch : " + TOTAL_FAILED_RECORDS + ", Total Task : " + (totalTaskCount)  + ", Active Task : " + threadPoolExecutor.getActiveCount() + ", Completed Task : " + totalCompletedTaskCount + ", Failed Task : " + failedRecordCount + (isCompletionCountRequired ? ", No of "+ trackActivityForCompletion + ", Completed : " + COMPLETION_COUNT_MAP.get(trackActivityForCompletion) : "."));
+                LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Pool Name : " + NAME + " Avg Count per Min.: " + avgCount + " Avg Time per Record : " + TimeUnit.SECONDS.convert(avgTime, TimeUnit.MILLISECONDS) + " S," +  " Percentage Completed : " +  String.format("%.4f", percentageCompleted) +" %, " + "Estimate Time of Completion : " + totalYears + "Y " + totalMonths + "M "  + totalDays + "D " + totalHours + "H " + remainingMinutes + "M" +"  Total Records for Process : " + TOTAL_RECORDS_FOR_PROCESS + ", Failed in Previous Batch : " + TOTAL_FAILED_RECORDS + ", Total Task : " + (totalTaskCount)  + ", Active Task : " + threadPoolExecutor.getActiveCount() + ", Completed Task : " + totalCompletedTaskCount + ", Failed Task : " + failedRecordCount + (isCompletionCountRequired ? ", No of "+ trackActivityForCompletion + ", Completed : " + COMPLETION_COUNT_MAP.get(trackActivityForCompletion) : "."));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -220,11 +221,15 @@ public class CustomizedThreadPoolExecutor {
                 totalCompletedTaskCount.incrementAndGet();
 
                 COMPLETION_COUNT_MAP.merge(NAME, 1L, Long::sum);
+                if(latch != null)
+                    latch.countDown();
             }
 
             @Override
             public void onFailure() {
                 currentPendingCount.decrementAndGet();
+                if(latch != null)
+                    latch.countDown();
             }
         });
 
