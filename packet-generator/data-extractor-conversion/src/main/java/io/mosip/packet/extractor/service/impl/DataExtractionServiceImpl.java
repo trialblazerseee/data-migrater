@@ -264,65 +264,6 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                 }
             };
 
-            if(GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_EXPORTER)) {
-                Activity exportActivity = activity.getActivity(ActivityName.DATA_EXPORTER.name());
-                CustomizedThreadPoolExecutor uploadExector = new CustomizedThreadPoolExecutor(uploadMaxThreadPoolCount, uploadMaxThreadExecCount, uploadMaxRecordsCountPerThreadPool, exportActivity.getActivityName().getActivityName(), exportActivity.isMonitorRequired());
-                Timer uploaderTimer = new Timer("Uploading Packet");
-                uploaderTimer.schedule(new TimerTask() {
-                    @SneakyThrows
-                    @Override
-                    public void run() {
-                        String packetId=null;
-                        try {
-                            if(!uploadProcessStarted) {
-                                uploadProcessStarted = true;
-                                isUploadInProgress = true;
-                                List<String> statusList = new ArrayList<>();
-                                statusList.add("READY_TO_SYNC");
-                                List<PacketTracker> trackerList =  packetTrackerRepository.findByStatusIn(statusList);
-
-                                if(trackerList.size() <= 0) {
-                                    uploadExector.setInputProcessCompleted(true);
-                                } else {
-                                    uploadExector.setInputProcessCompleted(false);
-                                }
-
-                                for(PacketTracker packetTracker : trackerList) {
-                                    ByteArrayInputStream bis = new ByteArrayInputStream(clientCryptoFacade.getClientSecurity().isTPMInstance() ? clientCryptoFacade.decrypt(Base64.getDecoder().decode(packetTracker.getRequest())) : Base64.getDecoder().decode(packetTracker.getRequest()));
-                                    ObjectInputStream is = new ObjectInputStream(bis);
-                                    DataPostProcessorResponseDto responseDto = (DataPostProcessorResponseDto) is.readObject();
-                                    is.close();
-                                    bis.close();
-                                    packetId = responseDto.getRefId();
-                                    LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Data Export for " + (new Gson()).toJson(responseDto));
-
-                                    ThreadUploadController controller = new ThreadUploadController();
-                                    controller.setResult(responseDto);
-                                    controller.setSetter(setter);
-                                    controller.setProcessor(new ThreadUploadProcessor() {
-                                        @Override
-                                        public void processData(ResultSetter setter, DataPostProcessorResponseDto result) throws Exception {
-                                            dataExporterApiFactory.export(result, (new Date()).getTime(), setter);
-                                        }
-                                    });
-                                    uploadExector.ExecuteTask(controller);
-                                }
-                                isUploadInProgress = false;
-                            }
-
-                            LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Upload Batch Current Pending Count " + uploadExector.getCurrentPendingCount());
-                            LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Upload Batch Is-Upload-Inprogress " + isUploadInProgress);
-                            if(uploadExector.getCurrentPendingCount() <= 0 && !isUploadInProgress)
-                                uploadProcessStarted = false;
-                        } catch (Exception e) {
-                            if(uploadExector.getCurrentPendingCount() <= 0)
-                                uploadProcessStarted = false;
-                            LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Packet Upload Error for Packet Id : " + packetId + " - " + e.getMessage() + ExceptionUtils.getStackTrace(e));
-                        }
-                    }
-                }, 0, 5000L);
-            }
-
             if(!enableOnlyPacketUploader)
                 dataReaderApiFactory.readData(dbImportRequest, null, fieldsCategoryMap, DataProcessor);
 

@@ -1,6 +1,8 @@
 package io.mosip.packet.extractor.batch.config;
 
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.packet.core.constant.GlobalConfig;
+import io.mosip.packet.core.constant.activity.ActivityName;
 import io.mosip.packet.core.event.AppReadyEvent;
 import io.mosip.packet.core.logger.DataProcessLogger;
 import org.springframework.batch.core.Job;
@@ -52,7 +54,7 @@ public class BatchSchedulerConfig {
             initialDelayString = "${" + DATA_EXPORTER_JOB_INITIAL_DELAY + ":" + BATCH_DEFAULT_INITIAL_DELAY + "}",
             fixedDelayString = "${" + DATA_EXPORTER_JOB_DELAY + ":" + BATCH_DEFAULT_DELAY + "}")
     public void schedulePacketUploader() {
-        if(!appReady)
+        if(!appReady || !GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_EXPORTER))
             return;
 
         try {
