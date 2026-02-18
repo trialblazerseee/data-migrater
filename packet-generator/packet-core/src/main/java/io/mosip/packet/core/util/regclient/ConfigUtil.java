@@ -2,7 +2,12 @@ package io.mosip.packet.core.util.regclient;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.mosip.kernel.clientcrypto.constant.ClientType;
+import io.mosip.kernel.clientcrypto.dto.TpmCryptoRequestDto;
+import io.mosip.kernel.clientcrypto.dto.TpmCryptoResponseDto;
 import io.mosip.kernel.clientcrypto.service.impl.ClientCryptoFacade;
+import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
+import io.mosip.kernel.clientcrypto.util.ClientCryptoUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.CryptoUtil;
 import io.mosip.kernel.core.util.FileUtils;
@@ -88,6 +93,8 @@ public class ConfigUtil {
     @Autowired
     private ApplicationConfig appConfig;
 
+    @Autowired
+    private ClientCryptoManagerService clientCryptoManagerService;
 
     private static ConfigUtil configUtil;
 
@@ -344,6 +351,19 @@ public class ConfigUtil {
         }
     }
 
+    private void testTPMEncryption() {
+        String publicKey = new String(clientCryptoFacade.getClientSecurity().getEncryptionPublicPart());
+        String value = "[\"{\\\"field\\\":value}\", \"{\\\"field\\\":value}\"]";
+      //  String value = "[{\"field\":value},{\"field\":value}]";
+        TpmCryptoRequestDto tpmCryptoRequestDto = new TpmCryptoRequestDto();
+        tpmCryptoRequestDto.setValue(CryptoUtil.encodeToURLSafeBase64(value.getBytes()));
+        tpmCryptoRequestDto.setPublicKey(publicKey);
+        tpmCryptoRequestDto.setClientType(ClientType.TPM);
+        TpmCryptoResponseDto tpmCryptoResponseDto = clientCryptoManagerService.csEncrypt(tpmCryptoRequestDto);
+
+        byte[] data = clientCryptoFacade.decrypt(ClientCryptoUtils.decodeBase64Data(tpmCryptoResponseDto.getValue()));
+        String value1 = new String(data);
+    }
     private static String getErrorMessage(List<Object> errorList) {
 
         return errorList != null && errorList.get(0) != null

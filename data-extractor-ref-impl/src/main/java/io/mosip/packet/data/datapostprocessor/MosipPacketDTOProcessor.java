@@ -24,6 +24,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static io.mosip.packet.core.constant.GlobalConfig.*;
@@ -98,7 +99,10 @@ public class MosipPacketDTOProcessor implements DataProcessor {
                     PacketDto packetDto = new PacketDto();
                     packetDto.setProcess(dbImportRequest.getProcess());
                     packetDto.setSource(source);
-                    packetDto.setSchemaVersion(String.valueOf(commonUtil.getLatestIdSchema().get("idVersion")));
+                    String schemaVersion = commonUtil.getLatestIdSchema().get("idVersion") != null ? commonUtil.getLatestIdSchema().get("idVersion").toString() : null;
+                    Objects.requireNonNull(schemaVersion, "ID Version should present or not be NULL in IDSchema");
+
+                    packetDto.setSchemaVersion(schemaVersion);
                     packetDto.setAdditionalInfoReqId(null);
                     packetDto.setMetaInfo(null);
                     packetDto.setOfflineMode(false);

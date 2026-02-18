@@ -3,11 +3,11 @@
 	"metadata": {},
 	"request": {
 		"dbType": "POSTGRESQL",
-		"url": "10.0.12.233",
-		"port": "5432",
-		"databaseName": "performance_migration",
+		"url": "localhost",
+		"port": "5433",
+		"databaseName": "migrator-uganda",
 		"userId": "postgres",
-		"password": "test123",
+		"password": "ka09071989",
 		"process": "NEW",
 		"tableDetails": [
 			{

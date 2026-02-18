@@ -12,6 +12,8 @@ import org.springframework.batch.core.configuration.annotation.EnableBatchProces
 import org.springframework.batch.core.launch.JobLauncher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -37,6 +39,9 @@ public class BatchSchedulerConfig {
 
     private boolean appReady = false;
 
+    @Value("${data.migrator.data.exporter.enable:true}")
+    private boolean enablePacketUpload;
+
     @Autowired
     private JobLauncher jobLauncher;
 
@@ -54,7 +59,7 @@ public class BatchSchedulerConfig {
             initialDelayString = "${" + DATA_EXPORTER_JOB_INITIAL_DELAY + ":" + BATCH_DEFAULT_INITIAL_DELAY + "}",
             fixedDelayString = "${" + DATA_EXPORTER_JOB_DELAY + ":" + BATCH_DEFAULT_DELAY + "}")
     public void schedulePacketUploader() {
-        if(!appReady || !GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_EXPORTER))
+        if(!appReady || !GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_EXPORTER) || !enablePacketUpload)
             return;
 
         try {
