@@ -11,7 +11,6 @@ import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.config.activity.Activity;
 import io.mosip.packet.core.constant.*;
-import io.mosip.packet.core.constant.activity.ActivityName;
 import io.mosip.packet.core.constant.tracker.TrackerStatus;
 import io.mosip.packet.core.dto.DataPostProcessorResponseDto;
 import io.mosip.packet.core.dto.DataProcessorResponseDto;
@@ -22,7 +21,6 @@ import io.mosip.packet.core.dto.dbimport.*;
 import io.mosip.packet.core.dto.packet.PacketRequest;
 import io.mosip.packet.core.dto.packet.RegistrationIdRequest;
 import io.mosip.packet.core.dto.tracker.TrackerRequestDto;
-import io.mosip.packet.core.entity.PacketTracker;
 import io.mosip.packet.core.exception.ExceptionUtils;
 import io.mosip.packet.core.logger.DataProcessLogger;
 import io.mosip.packet.core.repository.PacketTrackerRepository;
@@ -45,8 +43,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayInputStream;
-import java.io.ObjectInputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.TimeUnit;
@@ -250,6 +246,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                     trackerRequestDto.setComments("Object Ready For Processing");
                     trackerUtil.addTrackerEntry(trackerRequestDto);
                     LOGGER.debug(SESSION_ID, "QUALITY_CHECK", "DataProcessor", "Request for Data Processor : " + trackerRequestDto.getRefId() + " : " + mapper.writeValueAsString(dataHashMap));
+                    LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread - " + dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()) + " Time taken to complete Data Reader Method " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
                     DataProcessorResponseDto processObject = dataProcessorApiFactory.process(dbImportRequest, dataHashMap, setter);
                     LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread - " + processObject.getRefId() + " Time taken to complete Process Method " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
 

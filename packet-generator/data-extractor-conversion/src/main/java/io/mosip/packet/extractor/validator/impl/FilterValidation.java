@@ -71,13 +71,19 @@ public class FilterValidation implements Validator {
                         Integer.parseInt(filter.getFromValue());
                     }
                 } catch (Exception e) {
-                    throw new Exception("Filter : " + filter.getFilterField() +  " From Value should be numeric for Field Type : " + filter.getFieldType());
+                    if(sequence == 1)
+                        throw new Exception("Filter : " + filter.getFilterField() +  " From Value / Initial Value should be numeric for Field Type : " + filter.getFieldType());
+                    else
+                        throw new Exception("Filter : " + filter.getFilterField() +  " From Value should be numeric for Field Type : " + filter.getFieldType());
                 }
             } else if (filter.getFieldType().equals(FieldType.DATE)){
                 Date toDate = DateUtils.findDateFormat(filter.getFromValue() != null ? filter.getFromValue() : filter.getInitialFromValue());
 
                 if(toDate == null)
-                    throw new Exception("Invalid Date Format Entered in Filter From Value for " + filter.getFilterField() );
+                    if(sequence == 1)
+                        throw new Exception("Invalid Date Format Entered in Filter From Value / Initial Value for " + filter.getFilterField() );
+                    else
+                        throw new Exception("Invalid Date Format Entered in Filter From Value for " + filter.getFilterField() );
             }  else if (filter.getFieldType().equals(FieldType.TIMESTAMP)){
 // TODO Need to Implement Timestamp Filter
 
