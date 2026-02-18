@@ -1,6 +1,7 @@
 package io.mosip.packet.extractor.service.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import io.mosip.commons.packet.dto.packet.PacketDto;
@@ -180,7 +181,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
     }
 
     @Override
-    public PacketCreatorResponse createPacketFromDataBase(DBImportRequest dbImportRequest) throws Exception {
+    public PacketCreatorResponse createPacketFromDataBase(DBImportRequest initialRequest) throws Exception {
         LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "DataExtractionServiceImpl :: createPacketFromDataBase():: entry");
         TIMECONSUPTIONQUEUE = new ConcurrentLinkedQueue<>();
         PacketCreatorResponse packetCreatorResponse = new PacketCreatorResponse();
@@ -189,6 +190,11 @@ public class DataExtractionServiceImpl implements DataExtractionService {
         TOTAL_RECORDS_FOR_PROCESS.set(0);
 
         try {
+            commonUtil.updateNonIdSchemaNonTableFields(initialRequest);
+            JsonNode inputNode = mapper.valueToTree(initialRequest);
+            JsonNode upperCaseNode = commonUtil.toUpperExceptFieldToMap(inputNode);
+            DBImportRequest dbImportRequest = mapper.treeToValue(upperCaseNode, DBImportRequest.class);
+
             Date startTime = new Date();
             IS_PACKET_CREATOR_OPERATION = true;
             List<ValidatorEnum> enumList = new ArrayList<>();
@@ -230,6 +236,7 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                 @SneakyThrows
                 @Override
                 public void setResult(Object obj) {
+                    LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread - setResult Method");
                     Long startTime = System.currentTimeMillis();
                     Map<FieldCategory, HashMap<String, Object>> dataHashMap = (Map<FieldCategory, HashMap<String, Object>>) obj;
                     TrackerRequestDto trackerRequestDto = new TrackerRequestDto();
@@ -244,10 +251,12 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                     trackerUtil.addTrackerEntry(trackerRequestDto);
                     LOGGER.debug(SESSION_ID, "QUALITY_CHECK", "DataProcessor", "Request for Data Processor : " + trackerRequestDto.getRefId() + " : " + mapper.writeValueAsString(dataHashMap));
                     DataProcessorResponseDto processObject = dataProcessorApiFactory.process(dbImportRequest, dataHashMap, setter);
+                    LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread - " + processObject.getRefId() + " Time taken to complete Process Method " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
 
                     if(!IS_ONLY_FOR_QUALITY_CHECK) {
-                        if(GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_POST_PROCESSOR)) {
+                        if(GlobalConfig.getApplicableProcessorConstantList().contains(ProcessorConstant.DATA_POST_PROCESSOR)) {
                             DataPostProcessorResponseDto postProcessorResponseDto = dataPostProcessorApiFactory.postProcess(processObject, setter, startTime);
+                            LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread - " + processObject.getRefId() + " Time taken to complete Post Process Method " + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
                         }
                     } else {
                         ResultDto resultDto = new ResultDto();
@@ -259,13 +268,13 @@ public class DataExtractionServiceImpl implements DataExtractionService {
                     }
                     LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread - " + processObject.getRefId()+ " Process Ended");
                     long timeDifference = System.currentTimeMillis()-startTime;
-                    LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread - " + processObject.getRefId() + " Time taken to complete " + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
+                    LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread - " + processObject.getRefId() + " Time taken to complete Overall Process" + TimeUnit.MILLISECONDS.convert(timeDifference, TimeUnit.NANOSECONDS));
                     TIMECONSUPTIONQUEUE.add(timeDifference);
                 }
             };
 
             if(!enableOnlyPacketUploader)
-                dataReaderApiFactory.readData(dbImportRequest, null, fieldsCategoryMap, DataProcessor);
+                dataReaderApiFactory.readData(dbImportRequest, fieldsCategoryMap, DataProcessor);
 
             do {
                 Thread.sleep(15000);
@@ -384,9 +393,9 @@ public class DataExtractionServiceImpl implements DataExtractionService {
     public byte[] convertBiometric(String fileNamePrefix, FieldFormatRequest fieldFormatRequest, byte[] bioValue, Boolean localStoreRequired, String fieldName) throws Exception {
         if (localStoreRequired) {
             bioConvertorApiFactory.writeFile(fileNamePrefix + "-" + fieldFormatRequest.getFieldList().get(0).getOriginalFieldName() , bioValue, fieldFormatRequest.getSrcFormat());
-            return bioConvertorApiFactory.writeFile(fileNamePrefix + "-" + fieldFormatRequest.getFieldList().get(0).getOriginalFieldName(), bioConvertorApiFactory.convertImage(fieldFormatRequest, bioValue, fieldName), fieldFormatRequest.getDestFormat().get(fieldFormatRequest.getDestFormat().size()-1));
+            return bioConvertorApiFactory.writeFile(fileNamePrefix + "-" + fieldFormatRequest.getFieldList().get(0).getOriginalFieldName(), bioConvertorApiFactory.convertImage(fieldFormatRequest.getSrcFormat(), fieldFormatRequest.getDestFormat(), bioValue, fieldName), fieldFormatRequest.getDestFormat().get(fieldFormatRequest.getDestFormat().size()-1));
         } else {
-            return bioConvertorApiFactory.convertImage(fieldFormatRequest, bioValue, fieldName);
+            return bioConvertorApiFactory.convertImage(fieldFormatRequest.getSrcFormat(), fieldFormatRequest.getDestFormat(), bioValue, fieldName);
         }
     }
 

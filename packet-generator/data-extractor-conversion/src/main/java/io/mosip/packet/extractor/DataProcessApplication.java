@@ -9,6 +9,7 @@ import io.mosip.kernel.dataaccess.hibernate.repository.impl.HibernateRepositoryI
 import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.config.activity.Activity;
 import io.mosip.packet.core.constant.GlobalConfig;
+import io.mosip.packet.core.constant.ProcessorConstant;
 import io.mosip.packet.core.constant.activity.ActivityName;
 import io.mosip.packet.core.dto.RequestWrapper;
 import io.mosip.packet.core.dto.dbimport.DBImportRequest;
@@ -39,7 +40,7 @@ import static io.mosip.packet.core.constant.GlobalConfig.*;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 
-@SpringBootApplication(scanBasePackages = {"io.mosip.packet.*", "${mosip.auth.adapter.impl.basepackage}", "io.mosip.kernel.clientcrypto.*", "io.mosip.kernel.dataaccess", "io.mosip.kernel.keymanagerservice.*", "io.mosip.kernel.biometrics.*", "io.mosip.kernel.cbeffutil.*"}, exclude = {SecurityAutoConfiguration.class, HibernateDaoConfig.class, HibernateJpaAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = { "io.mosip.packet.*", "${mosip.auth.adapter.impl.basepackage}", "io.mosip.kernel.clientcrypto.*", "io.mosip.kernel.dataaccess", "io.mosip.kernel.keymanagerservice.*", "io.mosip.kernel.biometrics.*","io.mosip.kernel.cbeffutil.*", "io.mosip.biometrics.*"}, exclude = {SecurityAutoConfiguration.class, HibernateDaoConfig.class, HibernateJpaAutoConfiguration.class})
 @EntityScan(basePackages = {"io.mosip.packet.core.entity", "io.mosip.kernel.idgenerator.rid.entity", "io.mosip.kernel.keymanagerservice.entity"})
 @EnableJpaRepositories(basePackages = {"io.mosip.packet.core.repository", "io.mosip.kernel.idgenerator.rid.repository", "io.mosip.kernel.keymanagerservice.repository"}, repositoryBaseClass = HibernateRepositoryImpl.class)
 public class DataProcessApplication {
@@ -55,7 +56,7 @@ public class DataProcessApplication {
             GlobalConfig.setActivity(context.getBean(Activity.class).setActivity(null));
             context.getBean(AppReadyEventPublisher.class).publishEvent();
 
-            if (GlobalConfig.getApplicableActivityList().contains(ActivityName.DATA_REPROCESSOR))
+            if(GlobalConfig.getApplicableProcessorConstantList().contains(ProcessorConstant.DATA_REPROCESSOR))
                 context.getBean(DataReProcessorApiFactory.class).reProcess();
 
             if (appConfig.isReferInernalJsonRequestFile()) {

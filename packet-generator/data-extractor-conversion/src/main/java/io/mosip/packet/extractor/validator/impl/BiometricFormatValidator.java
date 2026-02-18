@@ -60,9 +60,15 @@ public class BiometricFormatValidator implements Validator {
                 if(fieldFormatRequest.getFieldCategory().equals(FieldCategory.BIO)) {
                     String[] fieldNames = fieldFormatRequest.getFieldToMap().split(",");
 
-                    for(String fieldName : fieldNames) {
-                        if(!availableFormat.contains(idFieldsList.get(fieldName)))
-                            throw new Exception("Individual Biometric Format not found for " + fieldName + " in APIRequest.json.");
+                    for(BioSubType subType : availableFormat) {
+                        boolean isMatchFound = false;
+                        for(String fieldName : fieldNames) {
+                            if(subType.equals(idFieldsList.get(fieldName)))
+                                isMatchFound = true;
+                        }
+
+                        if(!isMatchFound)
+                            throw new Exception("Individual Biometric Format invalid for " + fieldFormatRequest.getFieldName() + " in APIRequest.json.");
                     }
                 }
             }

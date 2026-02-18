@@ -33,10 +33,10 @@ public class FilterValidation implements Validator {
                         case "LESS_THEN":
                         case "GREATER_THEN":
                         case "GREATER_THEN_AND_EQUAL":
-                            validateFilter(true, true, true, false, false, filter);
+                            validateFilter(true, true, true, false, false, filter, tableRequestDto.getExecutionOrderSequence());
                             break;
                         case "BETWEEN":
-                            validateFilter(true, true, true, true, true, filter);
+                            validateFilter(true, true, true, true, true, filter, tableRequestDto.getExecutionOrderSequence());
                             break;
                     }
                 }
@@ -46,7 +46,7 @@ public class FilterValidation implements Validator {
         return true;
     }
 
-    private Boolean validateFilter (boolean filterField, boolean fieldType, boolean fromValue, boolean toValue, boolean rangeCheck, QueryFilter filter) throws Exception {
+    private Boolean validateFilter (boolean filterField, boolean fieldType, boolean fromValue, boolean toValue, boolean rangeCheck, QueryFilter filter, int sequence) throws Exception {
         if (filterField && (filter.getFilterField() == null || filter.getFilterField().isEmpty())) {
             throw new Exception("Filter : Filter Field Should not be Empty");
         }
@@ -56,17 +56,25 @@ public class FilterValidation implements Validator {
         }
 
         if (fromValue) {
-            if (filter.getFromValue() == null || filter.getFromValue().isEmpty())
-                throw new Exception("Filter : " + filter.getFilterField() +  " From Value Should not be Empty");
+            if ((filter.getFromValue() == null || filter.getFromValue().isEmpty()))
+                if(sequence == 1) {
+                    if(filter.getInitialFromValue() == null || filter.getInitialFromValue().isEmpty())
+                        throw new Exception("Filter : " + filter.getFilterField() +  " Either From Value / Initial Value Should not be Empty");
+                } else
+                    throw new Exception("Filter : " + filter.getFilterField() +  " From Value Should not be Empty");
 
             if (filter.getFieldType().equals(FieldType.NUMBER)){
                 try {
-                    Integer.parseInt(filter.getFromValue());
+                    if(sequence == 1) {
+                        int i = filter.getFromValue() != null ? Integer.parseInt(filter.getFromValue()) : Integer.parseInt(filter.getInitialFromValue());
+                    } else {
+                        Integer.parseInt(filter.getFromValue());
+                    }
                 } catch (Exception e) {
                     throw new Exception("Filter : " + filter.getFilterField() +  " From Value should be numeric for Field Type : " + filter.getFieldType());
                 }
             } else if (filter.getFieldType().equals(FieldType.DATE)){
-                Date toDate = DateUtils.findDateFormat(filter.getFromValue());
+                Date toDate = DateUtils.findDateFormat(filter.getFromValue() != null ? filter.getFromValue() : filter.getInitialFromValue());
 
                 if(toDate == null)
                     throw new Exception("Invalid Date Format Entered in Filter From Value for " + filter.getFilterField() );
@@ -87,15 +95,19 @@ public class FilterValidation implements Validator {
                     throw new Exception("Filter : " + filter.getFilterField() +  " To Value should be numeric for Field Type : " + filter.getFieldType());
                 }
             } else if (filter.getFieldType().equals(FieldType.DATE)){
-                Date fromDate = DateUtils.findDateFormat(filter.getToValue());
+                Date toDate = DateUtils.findDateFormat(filter.getToValue());
 
-                if(fromDate == null)
-                    throw new Exception("Invalid Date Format Entered in Filter To Value for " + filter.getFilterField() );
+                if(toDate == null)
+                   throw new Exception("Invalid Date Format Entered in Filter To Value for " + filter.getFilterField() );
             }  else if (filter.getFieldType().equals(FieldType.TIMESTAMP)){
 // TODO Need to Implement Timestamp Filter
 
             }
         }
+
+        if((filter.getFromValue() != null && filter.getInitialFromValue() != null)
+                || (filter.getToValue() != null && filter.getFromValue() == null))
+            throw new Exception("Invalid Configuration, Either one set From & To or InitialFrom & InitialTo should be configured for " + filter.getFilterField() );
 
         if(rangeCheck ) {
             if (filter.getFieldType().equals(FieldType.NUMBER)){
