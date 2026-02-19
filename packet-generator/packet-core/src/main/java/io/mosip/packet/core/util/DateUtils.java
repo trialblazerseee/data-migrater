@@ -890,9 +890,9 @@ public final class DateUtils {
 			SimpleDateFormat dateFormat = new SimpleDateFormat(format.getFormat());
 			try {
 				Date date = dateFormat.parse(value);
-				String formattedValue = dateFormat.format(date);
+				String formattedValue = dateFormat.format(date).toLowerCase();
 
-				if(formattedValue.equals(value))
+				if(formattedValue.equals(value.toLowerCase()))
 					return date;
 			} catch (Exception e) {
 				//do nothing

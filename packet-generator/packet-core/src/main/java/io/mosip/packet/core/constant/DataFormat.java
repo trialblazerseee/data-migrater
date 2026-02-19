@@ -5,6 +5,8 @@ public enum DataFormat {
     JP2("jpeg 2000", "jp2"),
     WSQ("wsq","wsq"),
     ISO("ISO", "iso"),
+    WEBP("WEBP", "webp"),
+    BMP("BMP", "bmp"),
     PNG("png","png"),
     YMD("yyyy/MM/dd", "yyyy/MM/dd"),
     DMY("dd/MM/yyyy", "dd/MM/yyyy"),

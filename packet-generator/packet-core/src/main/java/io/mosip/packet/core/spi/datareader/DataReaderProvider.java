@@ -38,8 +38,8 @@ public class DataReaderProvider implements DataReaderApiFactory {
     }
 
     @Override
-    public void readData(DBImportRequest dbImportRequest, Map<FieldCategory, HashMap<String, Object>> dataHashMap, Map<String, HashMap<String, String>> fieldsCategoryMap, ResultSetter setter) throws Exception {
-        getReader().readData(dbImportRequest, dataHashMap, fieldsCategoryMap, setter);
+    public void readData(DBImportRequest dbImportRequest, Map<String, HashMap<String, String>> fieldsCategoryMap, ResultSetter setter) throws Exception {
+        getReader().readData(dbImportRequest, fieldsCategoryMap, setter);
     }
 
     @Override

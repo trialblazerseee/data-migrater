@@ -14,6 +14,7 @@ public class QueryFilter {
     private FieldType fieldType;
     private String fromValue;
     private String toValue;
+    private String initialFromValue;
     private FilterCondition filterCondition;
     private ConjunctionFilter conjunctionFilter;
 

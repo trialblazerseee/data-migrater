@@ -1,7 +1,10 @@
 package io.mosip.packet.core.util;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.mosip.kernel.core.idgenerator.spi.RidGenerator;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.packet.core.constant.ApiName;
@@ -74,6 +77,8 @@ public class CommonUtil {
 
     private static final Logger LOGGER = DataProcessLogger.getLogger(CommonUtil.class);
 
+    @Value("#{'${mosip.extractor.common.skip.attributes.on.request.json}'.split(',')}")
+    private List<String> skipAttributes;
 
     public synchronized String generateRegistrationId(String centerId, String machineId) {
         return (String) ridGenerator.generateId(centerId, machineId);
@@ -210,12 +215,12 @@ public class CommonUtil {
 
         for (TableRequestDto tableRequestDto: dbImportRequest.getTableDetails()) {
             if(tableRequestDto.getNonIdSchemaTableFields() != null) {
-                List<String> nonIdSchemaFieldList = Arrays.asList(tableRequestDto.getNonIdSchemaTableFields());
+                List<String> nonIdSchemaFieldList = Arrays.stream(tableRequestDto.getNonIdSchemaTableFields()).map(String::toUpperCase).collect(Collectors.toList());
                 nonIdSchemaFieldsMap.addAll(nonIdSchemaFieldList);
             }
 
             if(tableRequestDto.getNonIdSchemaNonTableFields() != null) {
-                List<String> nonIdSchemaFieldList = Arrays.asList(tableRequestDto.getNonIdSchemaNonTableFields());
+                List<String> nonIdSchemaFieldList = Arrays.stream(tableRequestDto.getNonIdSchemaNonTableFields()).map(String::toUpperCase).collect(Collectors.toList());
                 nonIdSchemaFieldsMap.addAll(nonIdSchemaFieldList);
                 nonIdSchemaNonTableFieldsMap.addAll(nonIdSchemaFieldList);
             }
@@ -290,4 +295,55 @@ public class CommonUtil {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern);
         return LocalDate.parse(dateString, formatter);
     }
+
+    public JsonNode toUpperExceptFieldToMap(JsonNode node) {
+        ObjectMapper mapper = new ObjectMapper();
+
+        // If leaf and string → convert to uppercase
+        if (node.isTextual()) {
+            return mapper.getNodeFactory().textNode(node.asText().toUpperCase());
+        }
+
+        // If object → loop fields
+        if (node.isObject()) {
+            ObjectNode obj = (ObjectNode) node;
+
+            Iterator<Map.Entry<String, JsonNode>> it = obj.fields();
+            while (it.hasNext()) {
+                Map.Entry<String, JsonNode> entry = it.next();
+
+                String fieldName = entry.getKey();
+                JsonNode value = entry.getValue();
+
+                List<String> mandatoryFields = new ArrayList<>();
+                mandatoryFields.add("fieldToMap");
+                mandatoryFields.add("fromValue");
+                mandatoryFields.add("toValue");
+
+                if ((skipAttributes.contains(fieldName) && !mandatoryFields.contains(fieldName)) ||
+                        (fieldName.equals("fieldToMap") && !nonIdSchemaFieldsMap.contains(value.asText().toUpperCase())) ||
+                        (fieldName.equals("fromValue") && !value.asText().contains("${")) ||
+                        (fieldName.equals("toValue") && !value.asText().contains("${")) ) {
+                    continue;
+                }
+
+                // recursive call for nested elements
+                obj.set(fieldName, toUpperExceptFieldToMap(value));
+            }
+            return obj;
+        }
+
+        // If array → loop elements
+        if (node.isArray()) {
+            ArrayNode arr = (ArrayNode) node;
+            for (int i = 0; i < arr.size(); i++) {
+                arr.set(i, toUpperExceptFieldToMap(arr.get(i)));
+            }
+            return arr;
+        }
+
+        // return unchanged for other types
+        return node;
+    }
+
 }

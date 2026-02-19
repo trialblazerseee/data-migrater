@@ -23,10 +23,6 @@ public class QueryFormatter {
 
                     validateType(type);
                     Object val = dataMap.get(category).get(column);
-
-                    if (val == null)
-                        throw  new Exception("Missing Value in " + category.toString() + "category for the column " + column);
-
                     String fval = formatValueBasedOnType(type, val);
                     query = query.replace("'${" + columnText + "}'",  fval );
                     query = query.replace("${" + columnText + "}", fval);
@@ -49,11 +45,13 @@ public class QueryFormatter {
     }
 
     private String formatValueBasedOnType(String type, Object val) {
+        if(val == null) return "NULL";
+
         switch (type) {
             case "NUMBER":
                 return String.valueOf(val);
             default:
-                return String.valueOf("'" + val +"'");
+                return "'" + val + "'";
         }
     }
 

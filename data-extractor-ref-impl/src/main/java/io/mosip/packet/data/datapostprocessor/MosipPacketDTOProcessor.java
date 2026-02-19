@@ -101,7 +101,6 @@ public class MosipPacketDTOProcessor implements DataProcessor {
                     packetDto.setSource(source);
                     String schemaVersion = commonUtil.getLatestIdSchema().get("idVersion") != null ? commonUtil.getLatestIdSchema().get("idVersion").toString() : null;
                     Objects.requireNonNull(schemaVersion, "ID Version should present or not be NULL in IDSchema");
-
                     packetDto.setSchemaVersion(schemaVersion);
                     packetDto.setAdditionalInfoReqId(null);
                     packetDto.setMetaInfo(null);

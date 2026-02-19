@@ -23,4 +23,9 @@ public class BioDocDataConverter implements BioDocApiFactory {
         map.put(fieldName, byteval);
         return map;
     }
+
+    @Override
+    public Map<String, byte[]> getDemoData(byte[] byteval, String fieldName) throws Exception {
+        return null;
+    }
 }

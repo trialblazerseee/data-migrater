@@ -32,6 +32,7 @@ public class FieldFormatRequest implements Serializable {
     private String staticValue;
     private List<IndividualBiometricFormat> individualBiometricFormat;
     private Boolean useAsHandle;
+    private FetchInstruction fetchInsruction;
 
     @SneakyThrows
     public List<FieldName> getFieldList() {

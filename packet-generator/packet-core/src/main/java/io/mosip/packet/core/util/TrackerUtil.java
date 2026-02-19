@@ -1,7 +1,9 @@
 package io.mosip.packet.core.util;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.mosip.kernel.clientcrypto.service.impl.ClientCryptoFacade;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -354,6 +356,83 @@ public class TrackerUtil {
         }
     }
 
+    public synchronized ObjectNode getDatabaseFilterParameter() throws SQLException, InterruptedException, JsonProcessingException {
+        if(appConfig.isTrackerEnabled()) {
+            Statement statement = null;
+            ResultSet resultSet = null;
+            DBTypes dbType = Enum.valueOf(DBTypes.class, env.getProperty("spring.datasource.tracker.dbtype"));
+
+            try {
+                while(isConnCreation)
+                    Thread.sleep(2000);
+
+                statement = conn.createStatement();
+                resultSet = statement.executeQuery("SELECT FILTER_PARM, IN_USE FROM " + OFFSET_TRACKER_TABLE_NAME + " WHERE SESSION_KEY = '" + SESSION_KEY + "'");
+                if(resultSet.next()) {
+                    String value = resultSet.getString(1);
+                    String inUse = resultSet.getString(2);
+
+                    if(inUse == null || inUse.equals("N") || inUse.isEmpty()) {
+                        statement.executeUpdate("UPDATE " + OFFSET_TRACKER_TABLE_NAME + " SET IN_USE = 'Y' WHERE SESSION_KEY = '" + SESSION_KEY + "'");
+
+                        if(value == null || value.isEmpty())
+                            return mapper.createObjectNode();
+                        else
+                            return (ObjectNode) mapper.readTree(value);
+                    } else {
+                        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "OffSet Tracker Table in Use retry after 5 seconds");
+                        Thread.sleep(5000);
+                        return getDatabaseFilterParameter();
+                    }
+                } else {
+                    String query = TableQueries.getInsertQueries(OFFSET_TRACKER_TABLE_NAME, dbType);
+                    Map<String, String> valueMap = new HashMap<>();
+                    valueMap.put("TABLE_NAME", OFFSET_TRACKER_TABLE_NAME);
+                    valueMap.put("SESSION_ID", SESSION_KEY);
+                    valueMap.put("FILTER_PARM", "");
+                    valueMap.put("VALUE", "0");
+                    valueMap.put("IN_USE", "Y");
+                    statement.execute(queryFormatter.queryFormatter(query, valueMap));
+                    return null;
+                }
+            } finally {
+                if(resultSet != null)
+                    resultSet.close();
+
+                if(statement != null)
+                    statement.close();
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public synchronized void updateDatabaseFilterParameters(ObjectNode objectNode) throws SQLException, InterruptedException {
+        if(appConfig.isTrackerEnabled()) {
+            PreparedStatement preparedStatement = null;
+            DBTypes dbType = Enum.valueOf(DBTypes.class, env.getProperty("spring.datasource.tracker.dbtype"));
+
+            try {
+                String query = TableQueries.getInsertQueries(OFFSET_TRACKER_TABLE_NAME, dbType);
+                Map<String, String> valueMap = new HashMap<>();
+                valueMap.put("TABLE_NAME", OFFSET_TRACKER_TABLE_NAME);
+                valueMap.put("SESSION_ID", SESSION_KEY);
+                valueMap.put("FILTER_PARM", objectNode.toString());
+                valueMap.put("VALUE", "0");
+                valueMap.put("IN_USE", "N");
+
+                while(isConnCreation)
+                    Thread.sleep(2000);
+
+                preparedStatement = conn.prepareStatement(queryFormatter.queryFormatter(query, valueMap));
+                preparedStatement.execute();
+            } finally {
+                if(preparedStatement != null)
+                    preparedStatement.close();
+            }
+        }
+    }
+
     @PreDestroy
     public void closeStatement() {
         if(appConfig.isTrackerEnabled()) {
@@ -465,6 +544,7 @@ public class TrackerUtil {
                 sb.append(addColumn("RUN_INSTANCE_ID", String.class, 100, true, dbTypes) + ",");
                 sb.append(addColumn("HASH_VALUE", String.class, 100, true, dbTypes) + ",");
                 sb.append(addColumn("OFFSET_VALUE", Number.class, 12, false, dbTypes) + ",");
+                sb.append(addColumn("FILTER_PARM", String.class, 1000, false, dbTypes) + ",");
                 sb.append(addColumn("IN_USE", Character.class, 1, false, dbTypes));
                 sb.append(");");
 

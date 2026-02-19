@@ -76,6 +76,10 @@ public class GlobalConfig {
         return activity.getApplicableReferenceClass();
     }
 
+    public static List<ProcessorConstant> getApplicableProcessorConstantList() {
+        return activity.getApplicableProcessorList();
+    }
+
     public static void setActivity(Activity activity) {
         GlobalConfig.activity = activity;
 

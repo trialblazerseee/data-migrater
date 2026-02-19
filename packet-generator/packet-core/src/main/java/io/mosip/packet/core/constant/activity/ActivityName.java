@@ -6,8 +6,11 @@ public enum ActivityName {
     DATA_EXPORTER("DATA UPLOADER", new ActivityReferenceClassMapping(ReferenceClassName.MOSIP_PACKET_UPLOAD), null),
     DATA_REPROCESSOR("DATA REPROCESSOR", new ActivityReferenceClassMapping(ReferenceClassName.MOSIP_PACKET_REPROCESSOR),  new ActivityName[]{DATA_EXPORTER}),
     DATA_PROCESSOR("DATA PROCESSOR", new ActivityReferenceClassMapping(ReferenceClassName.MOSIP_PACKET_DTO_GENERATOR),  null),
+    UGANDA_EC_PROCESSOR("UGANDA EC PROCESSOR", new ActivityReferenceClassMapping(ReferenceClassName.MOSIP_UGANDA_EC_MAPPER),  null),
+    UGANDA_EC_EXPORTER("UGANDA EC EXPORTER", new ActivityReferenceClassMapping(ReferenceClassName.MOSIP_UGANDA_EC_EXPORTER),  null),
     DATA_POST_PROCESSOR("DATA POST PROCESSOR", new ActivityReferenceClassMapping(ReferenceClassName.MOSIP_PACKET_POST_PROCESSOR),  null),
     DATA_CREATOR("DATA CREATOR", new ActivityReferenceClassMapping(ReferenceClassName.DATABASE_READER), new ActivityName[]{DATA_REPROCESSOR, DATA_PROCESSOR, DATA_POST_PROCESSOR, DATA_EXPORTER}),
+    UGANDA_EC_CREATOR("UGANDA EC CREATOR", new ActivityReferenceClassMapping(ReferenceClassName.DATABASE_READER), new ActivityName[]{UGANDA_EC_PROCESSOR, UGANDA_EC_EXPORTER}),
     DATA_QUALITY_ANALYZER("QUALITY ANALYSIS", new ActivityReferenceClassMapping(ReferenceClassName.DATABASE_READER), null);
 
     private String activityName;

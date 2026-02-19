@@ -1,4 +1,4 @@
-package io.mosip.packet.data;
+package io.mosip.packet.data.dataprocessor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
@@ -12,7 +12,6 @@ import io.mosip.packet.core.constant.tracker.TrackerStatus;
 import io.mosip.packet.core.dto.DataPostProcessorResponseDto;
 import io.mosip.packet.core.dto.DataProcessorResponseDto;
 import io.mosip.packet.core.dto.ResponseWrapper;
-import io.mosip.packet.core.dto.dbimport.DBImportRequest;
 import io.mosip.packet.core.logger.DataProcessLogger;
 import io.mosip.packet.core.service.thread.ResultDto;
 import io.mosip.packet.core.service.thread.ResultSetter;

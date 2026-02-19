@@ -6,10 +6,13 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Data
 @Getter
 @Setter
 public class IndividualBiometricFormat {
     private BioSubType subType;
-    private DataFormat imageFormat;
+    private DataFormat srcImageFormat;
+    private List<DataFormat> destImageFormat;
 }

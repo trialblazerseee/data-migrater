@@ -1,5 +1,6 @@
 package io.mosip.packet.core.config.activity;
 
+import io.mosip.packet.core.constant.ProcessorConstant;
 import io.mosip.packet.core.constant.activity.ActivityName;
 import io.mosip.packet.core.constant.ReferenceClassName;
 import lombok.Getter;
@@ -31,6 +32,7 @@ public class Activity {
     private boolean isMonitorRequired;
     private ActivityName activityName;
     private List<ReferenceClassName> applicableReferenceClass;
+    private List<ProcessorConstant> applicableProcessorList;
     private List<ActivityName> applicableActivity;
 
     @Autowired
@@ -45,6 +47,7 @@ public class Activity {
             Activity activity = new Activity(name);
             String activityName = name.toString().toLowerCase();
             activity.setApplicableReferenceClass(getApplicableReferenceClassList(name));
+            activity.setApplicableProcessorList(getApplicableProcessorConstantList(activity.getApplicableReferenceClass()));
             activity.setApplicableActivity(getApplicableActivityList(name));
 
             if(config.getActivity().containsKey(activityName)) {
@@ -66,6 +69,7 @@ public class Activity {
                                 list.add(refrenceClass);
                             }
                             activity.setApplicableReferenceClass(list);
+                            activity.setApplicableProcessorList(getApplicableProcessorConstantList(activity.getApplicableReferenceClass()));
                             break;
                         case "additionalActivity":
                             List<ActivityName> activityList = new ArrayList<>();
@@ -93,6 +97,7 @@ public class Activity {
     private List<ReferenceClassName> getApplicableReferenceClassList(ActivityName name) {
         List<ReferenceClassName> list = new ArrayList<>();
 
+
         if(name.getApplicableReferenceClass() != null)
             list.addAll(name.getApplicableReferenceClass().getClassList());
 
@@ -100,6 +105,16 @@ public class Activity {
             for(ActivityName activityName : name.getApplicableOtherActivity()) {
                 list.addAll(getApplicableReferenceClassList(activityName));
             }
+
+        return list;
+    }
+
+    private List<ProcessorConstant> getApplicableProcessorConstantList(List<ReferenceClassName> applicableReferenceClass) {
+        List<ProcessorConstant> list = new ArrayList<>();
+
+        for(ReferenceClassName ReferenceClassName : applicableReferenceClass) {
+            list.add(ReferenceClassName.getProcess());
+        }
 
         return list;
     }

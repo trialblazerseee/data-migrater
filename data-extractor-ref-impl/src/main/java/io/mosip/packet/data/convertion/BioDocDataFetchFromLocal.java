@@ -41,6 +41,11 @@ public class BioDocDataFetchFromLocal implements BioDocApiFactory {
         return map;
     }
 
+    @Override
+    public Map<String, byte[]> getDemoData(byte[] byteval, String fieldName) throws Exception {
+        return null;
+    }
+
     private byte[] getBioFileByteArray(byte[] byteval) throws Exception {
 
         if (byteval != null) {

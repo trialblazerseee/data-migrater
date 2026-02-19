@@ -126,6 +126,11 @@ public class BioDocDataFetchFromLocalXML implements BioDocApiFactory {
         throw new UnsupportedOperationException("getBioData is not supported for this requirement, use getDocData method instead");
     }
 
+    @Override
+    public Map<String, byte[]> getDemoData(byte[] byteval, String fieldName) throws Exception {
+        return null;
+    }
+
     private String getElementValue(Element parent, String tagName) {
         NodeList nodeList = parent.getElementsByTagName(tagName);
         if (nodeList.getLength() > 0) {
