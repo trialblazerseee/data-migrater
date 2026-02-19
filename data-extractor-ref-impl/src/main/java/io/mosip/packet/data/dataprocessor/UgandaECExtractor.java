@@ -1,11 +1,13 @@
-package io.mosip.packet.data.datapostprocessor;
+package io.mosip.packet.data.dataprocessor;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.packet.core.config.ApplicationConfig;
 import io.mosip.packet.core.constant.FieldCategory;
+import io.mosip.packet.core.constant.GlobalConfig;
 import io.mosip.packet.core.constant.tracker.TrackerStatus;
 import io.mosip.packet.core.dto.DataProcessorResponseDto;
 import io.mosip.packet.core.dto.dbimport.DBImportRequest;
@@ -43,6 +45,9 @@ public class UgandaECExtractor implements DataProcessor {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private ApplicationConfig appConfig;
+
     @Override
     public DataProcessorResponseDto process(DBImportRequest dbImportRequest, Object data, ResultSetter setter) throws Exception {
         DataProcessorResponseDto responseDto = new DataProcessorResponseDto();
@@ -59,12 +64,12 @@ public class UgandaECExtractor implements DataProcessor {
                 if(dataHashMap.get(FieldCategory.DEMO).containsKey(applicationIdColumn)) {
                     uinRefId = dataHashMap.get(FieldCategory.DEMO).get(applicationIdColumn).toString();
                 } else {
-                    LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Application ID : " + applicationIdColumn + " not found in DataMap");
+                    LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Application ID : " + applicationIdColumn + " not found in DataMap");
                     throw new Exception("Application ID : " + applicationIdColumn + " not found in DataMap");
                 }
             }
 
-            trackerUtil.addTrackerLocalEntry(dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()).toString(), uinRefId, TrackerStatus.STARTED, dbImportRequest.getProcess(), null, SESSION_KEY, getActivityName());
+            trackerUtil.addTrackerLocalEntry(dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()).toString(), uinRefId, TrackerStatus.STARTED, dbImportRequest.getProcess(), null, appConfig.getPredefinedRunInstanceId(), getActivityName(), GlobalConfig.getSessionId());
 
             HashMap<String, Object> mapDetails = dataHashMap.get(FieldCategory.DEMO);
             mapDetails.putAll(dataHashMap.get(FieldCategory.BIO));
@@ -72,11 +77,11 @@ public class UgandaECExtractor implements DataProcessor {
 
             responseDto.setRefId(mapDetails.get(trackerColumn).toString());
             responseDto.setTrackerRefId(uinRefId);
-            LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Thread - " + uinRefId + " Process Started");
+            LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread - " + uinRefId + " Process Started");
             Long startTime = System.nanoTime();
 
             responseDto.setResponses(extractDataFromMap(objectMapper.readTree(tableMapping), mapDetails));
-            LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Thread - " + uinRefId + " Time taken to Complete extractDataFromMap" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
+            LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread - " + uinRefId + " Time taken to Complete extractDataFromMap" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS));
             return responseDto;
         }
 

@@ -1,4 +1,4 @@
-package io.mosip.packet.data.dataprocessor;
+package io.mosip.packet.data.datapostprocessor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;

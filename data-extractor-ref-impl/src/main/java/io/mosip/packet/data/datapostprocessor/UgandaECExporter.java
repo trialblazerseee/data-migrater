@@ -1,4 +1,4 @@
-package io.mosip.packet.data.dataprocessor;
+package io.mosip.packet.data.datapostprocessor;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -217,6 +217,9 @@ public class UgandaECExporter implements DataPostProcessor {
     // ----------------------
     @PostConstruct
     public void init() throws Exception {
+        if(env.getProperty("spring.datasource.uganda.ec.host") == null)
+            return;
+
         try {
             initializeDataSource();
             prepareFields();

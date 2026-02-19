@@ -34,7 +34,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
-import static io.mosip.packet.core.constant.GlobalConfig.PROCESS;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
 

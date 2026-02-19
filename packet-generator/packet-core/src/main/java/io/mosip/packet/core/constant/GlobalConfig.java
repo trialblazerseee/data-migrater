@@ -61,7 +61,7 @@ public class GlobalConfig {
     @PostConstruct
     public void init() {
         System.out.println("Current Session ID is " + SESSION_ID);
-        LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Current Session ID is " + SESSION_ID);
+        LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Current Session ID is " + SESSION_ID);
     }
 
     public static String getActivityName() {
@@ -145,7 +145,7 @@ public class GlobalConfig {
                                 LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pool : " + executor.getNAME() + " TOTAL_FAILED_RECORDS " + TOTAL_FAILED_RECORDS);
                                 LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pool : " + executor.getNAME() + " executor.getCurrentCompletedTask() " + executor.getCurrentCompletedTask());
                                 LOGGER.debug("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Pool : " + executor.getNAME() + " executor.getCountOfZeroActiveCount() " + executor.getCountOfZeroActiveCount());
-                                if(TOTAL_RECORDS_FOR_PROCESS.get() - TOTAL_FAILED_RECORDS.get() - executor.getCurrentCompletedTask() <= 0 || executor.getCountOfZeroActiveCount() > 10) {
+                                if(TOTAL_RECORDS_FOR_PROCESS.get() - TOTAL_FAILED_RECORDS.get() - executor.getCurrentCompletedTask() <= 0 || executor.getCountOfZeroActiveCount().get() > 10) {
                                     executor.stopWatch();;
                                 } else {
                                     isCompleted = false;

@@ -21,13 +21,16 @@ public class DataMapperProcessor {
     private BioDocApiFactory bioDocApiFactory;
 
     public Map<String, byte[]> processDemoData(FieldFormatRequest fieldFormatRequest, Map<String, Object> resultSet, byte[] byteVal, String fieldToMap) throws Exception {
-        if(fieldFormatRequest.getFetchInsruction().getFetchMode() != null) {
-            byteVal = fetchData(fieldFormatRequest.getFetchInsruction().getFetchMode(), byteVal);
-        }
         Map<String, byte[]> map = null;
 
-        if(fieldFormatRequest.getFetchInsruction().getIsDataFormatRequired())
-            map = bioDocApiFactory.getDemoData(byteVal, fieldToMap);
+        if(fieldFormatRequest.getFetchInsruction() != null) {
+            if(fieldFormatRequest.getFetchInsruction().getFetchMode() != null) {
+                byteVal = fetchData(fieldFormatRequest.getFetchInsruction().getFetchMode(), byteVal);
+            }
+
+            if(fieldFormatRequest.getFetchInsruction().getIsDataFormatRequired())
+                map = bioDocApiFactory.getDemoData(byteVal, fieldToMap);
+        }
 
         if(map == null) {
             map = new HashMap<>();
@@ -38,14 +41,16 @@ public class DataMapperProcessor {
     }
 
     public Map<String, byte[]> processBioData(FieldFormatRequest fieldFormatRequest, Map<String, Object> resultSet, byte[] byteVal, String fieldToMap) throws Exception {
-        if(fieldFormatRequest.getFetchInsruction().getFetchMode() != null) {
-            byteVal = fetchData(fieldFormatRequest.getFetchInsruction().getFetchMode(), byteVal);
-        }
-
         Map<String, byte[]> map = null;
 
-        if(fieldFormatRequest.getFetchInsruction().getIsDataFormatRequired())
-            map = bioDocApiFactory.getBioData(byteVal, fieldToMap);
+        if(fieldFormatRequest.getFetchInsruction() != null) {
+            if(fieldFormatRequest.getFetchInsruction().getFetchMode() != null) {
+                byteVal = fetchData(fieldFormatRequest.getFetchInsruction().getFetchMode(), byteVal);
+            }
+
+            if(fieldFormatRequest.getFetchInsruction().getIsDataFormatRequired())
+                map = bioDocApiFactory.getBioData(byteVal, fieldToMap);
+        }
 
         if(map == null) {
             map = new HashMap<>();
@@ -56,14 +61,16 @@ public class DataMapperProcessor {
     }
 
     public Map<String, byte[]> processDocData(FieldFormatRequest fieldFormatRequest, Map<String, Object> resultSet, byte[] byteVal, String fieldToMap) throws Exception {
-        if(fieldFormatRequest.getFetchInsruction().getFetchMode() != null) {
-            byteVal = fetchData(fieldFormatRequest.getFetchInsruction().getFetchMode(), byteVal);
-        }
-
         Map<String, byte[]> map = null;
 
-        if(fieldFormatRequest.getFetchInsruction().getIsDataFormatRequired())
-            map = bioDocApiFactory.getDocData(byteVal, fieldToMap);
+        if(fieldFormatRequest.getFetchInsruction() != null) {
+            if(fieldFormatRequest.getFetchInsruction().getFetchMode() != null) {
+                byteVal = fetchData(fieldFormatRequest.getFetchInsruction().getFetchMode(), byteVal);
+            }
+
+            if(fieldFormatRequest.getFetchInsruction().getIsDataFormatRequired())
+                map = bioDocApiFactory.getDocData(byteVal, fieldToMap);
+        }
 
         if(map == null) {
             map = new HashMap<>();

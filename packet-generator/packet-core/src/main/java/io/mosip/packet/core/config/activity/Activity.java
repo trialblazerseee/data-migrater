@@ -97,7 +97,6 @@ public class Activity {
     private List<ReferenceClassName> getApplicableReferenceClassList(ActivityName name) {
         List<ReferenceClassName> list = new ArrayList<>();
 
-
         if(name.getApplicableReferenceClass() != null)
             list.addAll(name.getApplicableReferenceClass().getClassList());
 

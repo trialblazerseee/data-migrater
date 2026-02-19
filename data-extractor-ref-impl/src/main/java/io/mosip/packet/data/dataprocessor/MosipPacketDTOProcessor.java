@@ -1,4 +1,4 @@
-package io.mosip.packet.data.datapostprocessor;
+package io.mosip.packet.data.dataprocessor;
 
 import io.mosip.commons.packet.dto.packet.PacketDto;
 import io.mosip.kernel.core.logger.spi.Logger;
