@@ -191,7 +191,7 @@ public class PacketCreator {
                             throw new Exception("Type '" + type + "' implementation missing in setDemographic");
                     }
                 }
-            } else if (required && !ignorableFields.contains(id.toUpperCase())) {
+            } else if (required && !ignorableFields.contains(id)) {
                 throw new Exception("Mandatory Field '" + id + "' value missing");
             }
         }
@@ -226,7 +226,7 @@ public class PacketCreator {
 
                     DocumentType documentType = new DocumentType(id, document.getType(), document.getFormat(), document.getRefNumber());
                     demoDetails.put(id, mapper.writeValueAsString(documentType));
-                }  else if (required && !ignorableFields.contains(id.toUpperCase())) {
+                }  else if (required && !ignorableFields.contains(id)) {
                     throw new Exception("Mandatory Field '" + id + "' value missing");
                 }
 
