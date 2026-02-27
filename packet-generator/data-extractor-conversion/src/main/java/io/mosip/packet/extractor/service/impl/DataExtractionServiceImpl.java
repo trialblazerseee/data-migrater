@@ -44,8 +44,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import static io.mosip.packet.core.constant.GlobalConfig.*;
@@ -273,14 +272,28 @@ public class DataExtractionServiceImpl implements DataExtractionService {
             if(!enableOnlyPacketUploader)
                 dataReaderApiFactory.readData(dbImportRequest, fieldsCategoryMap, DataProcessor);
 
-            do {
-                Thread.sleep(15000);
+            CountDownLatch countDownLatch = new CountDownLatch(1);
+            ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+            scheduler.scheduleAtFixedRate(() -> {
 
                 if(!IS_DATABASE_READ_OPERATION) {
                     IS_PACKET_CREATOR_OPERATION = false;
                 }
-            } while(!GlobalConfig.isThreadPoolCompleted());
 
+                try {
+                    if (GlobalConfig.isThreadPoolCompleted()) {
+                        System.out.println("All tasks completed. Shutting down...");
+
+                        countDownLatch.countDown();
+                        scheduler.shutdown();
+                    }
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }, 10, 10, TimeUnit.SECONDS);
+
+            countDownLatch.await();
             System.out.println("Start Time " + startTime);
             System.out.println("End Time Time " + new Date());
         } catch (Exception e) {

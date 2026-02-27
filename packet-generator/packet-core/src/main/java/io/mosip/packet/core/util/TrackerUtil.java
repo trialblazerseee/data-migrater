@@ -35,6 +35,24 @@ import java.util.*;
 import static io.mosip.packet.core.constant.GlobalConfig.*;
 import static io.mosip.packet.core.constant.RegistrationConstants.*;
 
+//TODO MUCH Better Architecture (Recommended)
+//
+//Stop managing Connection manually.
+//
+//Use Spring Boot DataSource + connection pool (HikariCP default).
+//
+//Let Spring manage connections.
+//
+//Remove:
+//
+//static Connection
+//
+//manual close/reset
+//
+//wait/notify
+//
+//Pooling solves everything cleanly.
+
 @Component
 public class TrackerUtil {
     private static final Logger LOGGER = DataProcessLogger.getLogger(TrackerUtil.class);
@@ -52,7 +70,8 @@ public class TrackerUtil {
 
     private int connSize = 0;
     private static String connectionHost = null;
-    private boolean isConnCreation = false;
+    private final Object lock = new Object();
+    private volatile boolean isConnCreation = false;
 
     @Autowired
     private PacketTrackerRepository packetTrackerRepository;
@@ -176,13 +195,16 @@ public class TrackerUtil {
                 connSize++;
 
                 if(connSize > batchConResetCount) {
-                    isConnCreation=true;
-                    LOGGER.info("TrackerUtil Closing Connection");
-                    conn.close();
-                    conn=null;
-                    this.initialize();
-                    LOGGER.info("TrackerUtil Starting Connection");
-                    isConnCreation=false;
+                    synchronized (lock) {
+                        isConnCreation=true;
+                        LOGGER.info("TrackerUtil Closing Connection");
+                        conn.close();
+                        conn=null;
+                        this.initialize();
+                        LOGGER.info("TrackerUtil Starting Connection");
+                        isConnCreation=false;
+                        lock.notifyAll();
+                    }
                     connSize=1;
                 }
 
@@ -267,8 +289,7 @@ public class TrackerUtil {
                 valueMap.put("VALUE", offset.toString());
                 valueMap.put("IN_USE", "N");
 
-                while(isConnCreation)
-                    Thread.sleep(2000);
+                checkObjectLock();
 
                 preparedStatement = conn.prepareStatement(queryFormatter.queryFormatter(query, valueMap));
                 preparedStatement.execute();
@@ -286,8 +307,7 @@ public class TrackerUtil {
             DBTypes dbType = Enum.valueOf(DBTypes.class, env.getProperty("spring.datasource.tracker.dbtype"));
 
             try {
-                while(isConnCreation)
-                    Thread.sleep(2000);
+                checkObjectLock();
 
                 statement = conn.createStatement();
                 resultSet = statement.executeQuery("SELECT OFFSET_VALUE, IN_USE FROM " + OFFSET_TRACKER_TABLE_NAME + " WHERE RUN_INSTANCE_ID = '" + appConfig.getPredefinedRunInstanceId() + "' AND HASH_VALUE = '" + appConfig.getHashValue() + "'");
@@ -333,8 +353,7 @@ public class TrackerUtil {
             ResultSet resultSet = null;
 
             try {
-                while(isConnCreation)
-                    Thread.sleep(2000);
+                checkObjectLock();
 
                 statement = conn.createStatement();
                 resultSet = statement.executeQuery("SELECT HASH_VALUE FROM " + OFFSET_TRACKER_TABLE_NAME + " WHERE RUN_INSTANCE_ID = '" + appConfig.getPredefinedRunInstanceId() + "'");
@@ -363,8 +382,7 @@ public class TrackerUtil {
             DBTypes dbType = Enum.valueOf(DBTypes.class, env.getProperty("spring.datasource.tracker.dbtype"));
 
             try {
-                while(isConnCreation)
-                    Thread.sleep(2000);
+                checkObjectLock();
 
                 statement = conn.createStatement();
                 resultSet = statement.executeQuery("SELECT FILTER_PARM, IN_USE FROM " + OFFSET_TRACKER_TABLE_NAME + " WHERE SESSION_KEY = '" + SESSION_KEY + "'");
@@ -421,8 +439,7 @@ public class TrackerUtil {
                 valueMap.put("VALUE", "0");
                 valueMap.put("IN_USE", "N");
 
-                while(isConnCreation)
-                    Thread.sleep(2000);
+                checkObjectLock();
 
                 preparedStatement = conn.prepareStatement(queryFormatter.queryFormatter(query, valueMap));
                 preparedStatement.execute();
@@ -456,8 +473,7 @@ public class TrackerUtil {
             ResultSet resultSet = null;
 
             try {
-                while(isConnCreation)
-                    Thread.sleep(2000);
+                checkObjectLock();
 
                 statement = conn.prepareStatement(String.format("SELECT 1 FROM %s WHERE REF_ID = ? AND ACTIVITY = ? AND RUN_INSTANCE_ID = ? AND STATUS != 'FAILED'", TRACKER_TABLE_NAME));
                 statement.setString(1, value.toString());
@@ -583,8 +599,7 @@ public class TrackerUtil {
     }
 
     public void addTrackerLocalEntry(String refId, String regNo, TrackerStatus status, String process, Object request, String runInstanceId, String activity, String sessionId) throws SQLException, IOException, InterruptedException {
-        while(isConnCreation)
-            Thread.sleep(10000);
+        checkObjectLock();
 
         Optional<PacketTracker> optional= packetTrackerRepository.findById(refId);
         PacketTracker packetTracker;
@@ -635,6 +650,13 @@ public class TrackerUtil {
                 packetTracker.setCrDtime(Timestamp.valueOf(DateUtils.getUTCCurrentDateTime()));
             }
             packetTrackerRepository.saveAndFlush(packetTracker);
+        }
+    }
+
+    public void checkObjectLock() throws InterruptedException {
+        synchronized (lock) {
+            while(isConnCreation)
+                lock.wait();
         }
     }
 }

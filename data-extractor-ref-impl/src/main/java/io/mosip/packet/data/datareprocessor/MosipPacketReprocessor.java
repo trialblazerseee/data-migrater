@@ -21,7 +21,6 @@ import io.mosip.packet.core.spi.datareprocessor.DataReProcessor;
 import io.mosip.packet.core.util.TrackerUtil;
 import io.mosip.packet.core.util.regclient.ConfigUtil;
 import io.mosip.packet.uploader.service.PacketUploaderService;
-import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -38,6 +37,10 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_ID;
 import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NAME;
@@ -212,9 +215,22 @@ public class MosipPacketReprocessor implements DataReProcessor {
         }
         threadPool.setInputProcessCompleted(true);
 
-        do {
-            Thread.sleep(15000);
-        } while(!GlobalConfig.isThreadPoolCompleted("RE-PROCESSOR"));
+        CountDownLatch countDownLatch = new CountDownLatch(1);
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+
+        scheduler.scheduleAtFixedRate(() -> {
+            try {
+                if (GlobalConfig.isThreadPoolCompleted("RE-PROCESSOR")) {
+                    System.out.println("Reprocessor tasks completed. Shutting down...");
+                    countDownLatch.countDown();
+                    scheduler.shutdown();
+                }
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }, 10, 10, TimeUnit.SECONDS);
+
+        countDownLatch.await();
         System.out.println("Process : RE-PROCESSOR : Completed");
         LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Process : RE-PROCESSOR : Completed");
     }

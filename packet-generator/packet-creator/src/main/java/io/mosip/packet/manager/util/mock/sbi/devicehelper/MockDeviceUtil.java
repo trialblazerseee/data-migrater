@@ -173,7 +173,7 @@ public class MockDeviceUtil {
         }
 
         try {
-            LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Reset Inprogress Waiting 2 seconds for re-check");
+            LOGGER.info("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, "Reset Inprogress Waiting 1 seconds for re-check");
             Thread.sleep(1000);
         } catch (InterruptedException e) {
         }
