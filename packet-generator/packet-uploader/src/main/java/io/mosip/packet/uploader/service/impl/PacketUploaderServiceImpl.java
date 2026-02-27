@@ -39,8 +39,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigInteger;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -256,10 +255,9 @@ public class PacketUploaderServiceImpl  implements PacketUploaderService {
         HashMap<String, Object> response = (HashMap<String, Object>) restApiClient
                     .post(RegistrationConstants.PACKET_UPLOAD, map, RegistrationConstants.JOB_TRIGGER_POINT_USER, trackerRefid);
 
-
-            if (response.get(RegistrationConstants.ERRORS) != null) {
-            HashMap<String, String> error = ((List<HashMap<String, String>>) response.get(RegistrationConstants.ERRORS)).get(0);
-            throw new Exception(error.get("errorCode") + " : " + error.get("message"));
+        if (response.get(RegistrationConstants.ERRORS) != null) {
+        HashMap<String, String> error = ((List<HashMap<String, String>>) response.get(RegistrationConstants.ERRORS)).get(0);
+        throw new Exception(error.get("errorCode") + " : " + error.get("message"));
         }
 
         if (response.get(RegistrationConstants.REST_RESPONSE_BODY) != null) {
@@ -272,7 +270,7 @@ public class PacketUploaderServiceImpl  implements PacketUploaderService {
                 if(!archieveFile.exists())
                     archieveFile.mkdirs();
 
-                packet.renameTo(new File(path.toAbsolutePath().toString() + "//" + packet.getName()));
+                Files.move(packet.toPath(), path.resolve(packet.getName()), StandardCopyOption.REPLACE_EXISTING);
             }
 
             return status;

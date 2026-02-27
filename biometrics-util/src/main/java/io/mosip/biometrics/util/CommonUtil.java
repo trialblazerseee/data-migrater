@@ -277,6 +277,10 @@ public class CommonUtil {
 		BufferedImage bufferedImage = null;
 		switch (convertRequestDto.getImageType()) {
 		case 0:// JP2000
+		case 3:
+		case 4:
+		case 5:
+		case 6:
 			bufferedImage = ImageIO.read(new ByteArrayInputStream(convertRequestDto.getInputBytes()));
 			break;
 		case 1:// WSQ

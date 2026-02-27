@@ -33,7 +33,7 @@ public class BatchSchedulerConfig {
 
     private final String BATCH_DEFAULT_DELAY = "1000";
 
-    private final String BATCH_DEFAULT_INITIAL_DELAY = "10000";
+    private final String BATCH_DEFAULT_INITIAL_DELAY = "1000";
 
     private boolean appReady = false;
 

@@ -6,10 +6,12 @@ import io.mosip.packet.core.config.login.LoginConfig;
 import io.mosip.packet.core.constant.LoggerFileConstant;
 import io.mosip.packet.core.constant.LoginType;
 import io.mosip.packet.core.dto.PasswordRequest;
+import io.mosip.packet.core.dto.ResponseWrapper;
 import io.mosip.packet.core.dto.request.ClientSecretKeyRequest;
 import io.mosip.packet.core.dto.request.Metadata;
 import io.mosip.packet.core.dto.request.SecretKeyRequest;
 import io.mosip.packet.core.dto.request.TokenRequestDTO;
+import io.mosip.packet.core.exception.ServiceError;
 import io.mosip.packet.core.exception.TokenGenerationFailedException;
 import io.mosip.packet.core.logger.DataProcessLogger;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +47,7 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -112,11 +115,24 @@ public class RestApiClient {
 	public <T> T getApi(URI uri, Class<?> responseType, LoginType loginType, String trackerRefId) throws Exception {
 		this.loginType = loginType;
 		T result = null;
+		ResponseEntity<T> response = null;
 		try {
 			Long startTime = System.nanoTime();
-			result = (T) localRestTemplate.exchange(uri, HttpMethod.GET, setRequestHeader(null, null), responseType)
-					.getBody();
+			response = (ResponseEntity<T>) localRestTemplate.exchange(uri, HttpMethod.GET, setRequestHeader(null, null), responseType);
 			logger.debug("SESSION_ID", APPLICATION_NAME, "getApi()", "Time Taken for GET Api Call " + uri.toString() + " Reference Id: " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
+			if(response.getStatusCode().is2xxSuccessful()) {
+				result = response.getBody();
+			} else {
+				ResponseWrapper res = (ResponseWrapper) response.getBody();
+				StringBuffer errMessage = new StringBuffer();
+				if(!res.getErrors().isEmpty()) {
+					res.getErrors().forEach(e -> {
+						ServiceError se = (ServiceError) e;
+						errMessage.append("\n").append(se.getErrorCode()).append(" - ").append(se.getMessage());
+					});
+				}
+				throw new Exception(errMessage.toString());
+			}
 		} catch (Exception e) {
 			logger.error(LoggerFileConstant.SESSIONID.toString(), APPLICATION_NAME,
 					APPLICATION_ID, e.getMessage() + ExceptionUtils.getStackTrace(e));
@@ -142,12 +158,26 @@ public class RestApiClient {
 	public <T> T postApi(String uri, MediaType mediaType, Object requestType, Class<?> responseClass, LoginType loginType, String trackerRefId) throws Exception {
 		this.loginType = loginType;
 		T result = null;
+		ResponseEntity<T> response = null;
 		try {
 			logger.info(LoggerFileConstant.SESSIONID.toString(), APPLICATION_NAME,
 					APPLICATION_ID, uri);
 			Long startTime = System.nanoTime();
-			result = (T) localRestTemplate.postForObject(uri, setRequestHeader(requestType, mediaType), responseClass);
+			response = (ResponseEntity<T>) localRestTemplate.postForObject(uri, setRequestHeader(requestType, mediaType), responseClass);
 			logger.debug("SESSION_ID", APPLICATION_NAME, "postApi()", "Time Taken for POST Api Call " + uri.toString() + " Reference Id: " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
+			if(response.getStatusCode().is2xxSuccessful()) {
+				result = response.getBody();
+			} else {
+				ResponseWrapper res = (ResponseWrapper) response.getBody();
+				StringBuffer errMessage = new StringBuffer();
+				if(!res.getErrors().isEmpty()) {
+					res.getErrors().forEach(e -> {
+						ServiceError se = (ServiceError) e;
+						errMessage.append("\n").append(se.getErrorCode()).append(" - ").append(se.getMessage());
+					});
+				}
+				throw new Exception(errMessage.toString());
+			}
 		} catch (Exception e) {
 			logger.error(LoggerFileConstant.SESSIONID.toString(), APPLICATION_NAME,
 					APPLICATION_ID, e.getMessage() + ExceptionUtils.getStackTrace(e));
@@ -176,12 +206,26 @@ public class RestApiClient {
 		this.loginType = loginType;
 		RestTemplate restTemplate;
 		T result = null;
+		ResponseEntity<T> response = null;
 		try {
 			logger.info(LoggerFileConstant.SESSIONID.toString(), APPLICATION_NAME,
 					APPLICATION_ID, uri);
 			Long startTime = System.nanoTime();
-			result = (T) localRestTemplate.patchForObject(uri, setRequestHeader(requestType, mediaType), responseClass);
+			response = (ResponseEntity<T>) localRestTemplate.patchForObject(uri, setRequestHeader(requestType, mediaType), responseClass);
 			logger.debug("SESSION_ID", APPLICATION_NAME, "patchApi()", "Time Taken for PATCH Api Call " + uri.toString() + " Reference Id: " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
+			if(response.getStatusCode().is2xxSuccessful()) {
+				result = response.getBody();
+			} else {
+				ResponseWrapper res = (ResponseWrapper) response.getBody();
+				StringBuffer errMessage = new StringBuffer();
+				if(!res.getErrors().isEmpty()) {
+					res.getErrors().forEach(e -> {
+						ServiceError se = (ServiceError) e;
+						errMessage.append("\n").append(se.getErrorCode()).append(" - ").append(se.getMessage());
+					});
+				}
+				throw new Exception(errMessage.toString());
+			}
 		} catch (Exception e) {
 
 			logger.error(LoggerFileConstant.SESSIONID.toString(), APPLICATION_NAME,
@@ -224,7 +268,19 @@ public class RestApiClient {
 			response = (ResponseEntity<T>) localRestTemplate.exchange(uri, HttpMethod.PUT,
 					setRequestHeader(requestType, mediaType), responseClass);
 			logger.debug("SESSION_ID", APPLICATION_NAME, "putApi()", "Time Taken for PUT Api Call " + uri.toString() + " Reference Id: " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
-			result = response.getBody();
+			if(response.getStatusCode().is2xxSuccessful()) {
+				result = response.getBody();
+			} else {
+				ResponseWrapper res = (ResponseWrapper) response.getBody();
+				StringBuffer errMessage = new StringBuffer();
+				if(!res.getErrors().isEmpty()) {
+					res.getErrors().forEach(e -> {
+						ServiceError se = (ServiceError) e;
+						errMessage.append("\n").append(se.getErrorCode()).append(" - ").append(se.getMessage());
+					});
+				}
+				throw new Exception(errMessage.toString());
+			}
 		} catch (Exception e) {
 
 			logger.error(LoggerFileConstant.SESSIONID.toString(), APPLICATION_NAME,
@@ -333,26 +389,39 @@ public class RestApiClient {
 					post.setEntity(postingString);
 					post.setHeader("Content-type", "application/json");
 					Long startTime = System.nanoTime();
-					HttpResponse response = httpClient.execute(post);
+					HttpResponse httpResponse = httpClient.execute(post);
 					logger.debug("SESSION_ID", APPLICATION_NAME, "getToken()", "Time Taken for AUTH Api Call " + post.getURI().toString() + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
-					org.apache.http.HttpEntity entity = response.getEntity();
+					org.apache.http.HttpEntity entity = httpResponse.getEntity();
 					String responseBody = EntityUtils.toString(entity, "UTF-8");
-					if(!loginType.equals(LoginType.USER)) {
-						Header[] cookie = response.getHeaders("Set-Cookie");
-						if (cookie.length == 0)
-							throw new TokenGenerationFailedException();
-						token = response.getHeaders("Set-Cookie")[0].getValue();
-						System.setProperty("token", token.substring(14, token.indexOf(';')));
-						currentLoginType = loginType;
-						return token.substring(0, token.indexOf(';'));
+					JSONParser jsonParser = new JSONParser();
+					JSONObject responseJsonObject = (JSONObject) jsonParser.parse(responseBody);
+					int statusCode = httpResponse.getStatusLine().getStatusCode();
+					if(statusCode >= 200 && statusCode < 300) {
+						if(!loginType.equals(LoginType.USER)) {
+							Header[] cookie = httpResponse.getHeaders("Set-Cookie");
+							if (cookie.length == 0)
+								throw new TokenGenerationFailedException();
+							token = httpResponse.getHeaders("Set-Cookie")[0].getValue();
+							System.setProperty("token", token.substring(14, token.indexOf(';')));
+							currentLoginType = loginType;
+							return token.substring(0, token.indexOf(';'));
+						} else {
+							JSONObject tokenJsonObject = (JSONObject) responseJsonObject.get("response");
+							token = tokenJsonObject.get("token").toString();
+							System.setProperty("token", token);
+							currentLoginType = loginType;
+							return AUTHORIZATION + token;
+						}
 					} else {
-						JSONParser jsonParser = new JSONParser();
-						JSONObject responseJsonObject = (JSONObject) jsonParser.parse(responseBody);
-						JSONObject tokenJsonObject = (JSONObject) responseJsonObject.get("response");
-						token = tokenJsonObject.get("token").toString();
-						System.setProperty("token", token);
-						currentLoginType = loginType;
-						return AUTHORIZATION + token;
+						StringBuffer errMessage = new StringBuffer();
+						List<ServiceError> errList = (List<ServiceError>) responseJsonObject.get("errors");
+						if(!errList.isEmpty()) {
+							errList.forEach(e -> {
+								ServiceError se = (ServiceError) e;
+								errMessage.append("\n").append(se.getErrorCode()).append(" - ").append(se.getMessage());
+							});
+						}
+						throw new Exception(errMessage.toString());
 					}
 				} catch (IOException | ParseException e) {
 					logger.error(LoggerFileConstant.SESSIONID.toString(), APPLICATION_NAME,
@@ -431,9 +500,10 @@ public class RestApiClient {
 		return request;
 	}
 
-	public <T> T  invoke(URI uri, HttpMethod httpMethod, HttpEntity<?> entity, Class<?> responseClass, SimpleClientHttpRequestFactory factory, String trackerRefId) throws NoSuchAlgorithmException, KeyStoreException, KeyManagementException, IOException {
+	public <T> T  invoke(URI uri, HttpMethod httpMethod, HttpEntity<?> entity, Class<?> responseClass, SimpleClientHttpRequestFactory factory, String trackerRefId) throws Exception {
 		RestTemplate restTemplate;
 		T result = null;
+		ResponseEntity<T> response = null;
 		try {
 			restTemplate = getRestTemplate();
 			if (factory != null)
@@ -441,9 +511,21 @@ public class RestApiClient {
 
 	//		entity.add("Cookie", getToken());
 			Long startTime = System.nanoTime();
-			result = (T) restTemplate.exchange(uri, httpMethod, entity, responseClass).getBody();
+			response = (ResponseEntity<T>) restTemplate.exchange(uri, httpMethod, entity, responseClass);
 			logger.debug("SESSION_ID", APPLICATION_NAME, "invoke()", "Time Taken for "+ httpMethod.name() + " Api Call " + uri.toString() + " Reference Id: " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
-
+			if(response.getStatusCode().is2xxSuccessful()) {
+				result = response.getBody();
+			} else {
+				ResponseWrapper res = (ResponseWrapper) response.getBody();
+				StringBuffer errMessage = new StringBuffer();
+				if(!res.getErrors().isEmpty()) {
+					res.getErrors().forEach(e -> {
+						ServiceError se = (ServiceError) e;
+						errMessage.append("\n").append(se.getErrorCode()).append(" - ").append(se.getMessage());
+					});
+				}
+				throw new Exception(errMessage.toString());
+			}
 		} catch (Exception e) {
 			logger.error(LoggerFileConstant.SESSIONID.toString(), APPLICATION_NAME,
 					APPLICATION_ID, e.getMessage() + ExceptionUtils.getStackTrace(e));
