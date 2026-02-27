@@ -269,19 +269,19 @@ public class CustomizedThreadPoolExecutor {
         return this.isInputProcessCompleted;
     }
 
-    public ScheduledExecutorService getWatch() {
+    public ScheduledExecutorService getWatchService() {
         return scheduledExecutorService2;
     }
 
     public void stopWatch() {
         printProcessingStatus(true);
-        if(getWatch() != null)
-            getWatch().shutdownNow();
-        if(getEstimateTimer() != null)
-            getEstimateTimer().shutdownNow();
+        if(getWatchService() != null)
+            getWatchService().shutdownNow();
+        if(getEstimateService() != null)
+            getEstimateService().shutdownNow();
     }
 
-    public ScheduledExecutorService getEstimateTimer() {
+    public ScheduledExecutorService getEstimateService() {
         return scheduledExecutorService1;
     }
 
