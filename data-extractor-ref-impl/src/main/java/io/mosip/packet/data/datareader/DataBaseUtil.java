@@ -31,6 +31,9 @@ import org.springframework.stereotype.Component;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static io.mosip.packet.core.constant.GlobalConfig.*;
 import static io.mosip.packet.core.constant.RegistrationConstants.*;
@@ -413,164 +416,165 @@ public class DataBaseUtil extends DataReaderImpl {
                     }
                 };
 
-                Timer dataReader = new Timer("DataBase Reader");
-                dataReader.schedule(new TimerTask() {
-                    @SneakyThrows
-                    @Override
-                    public void run() {
-                        Map<FieldCategory, HashMap<String, Object>> dataHashMap1 = new HashMap<>();
-                        dataHashMap1.put(FieldCategory.DYN, new HashMap<>());
+                ScheduledExecutorService scheduledExecutorService = Executors.newSingleThreadScheduledExecutor();
 
-                        PreparedStatement statement1 = null;
-                        ResultSet scrollableResultSet = null;
-                        try {
-                            Float processPercentage = Float.valueOf((getPendingCountForProcess().floatValue() / Float.valueOf(dbReaderMaxThreadPoolCount * dbReaderMaxRecordsCountPerThreadPool)));
-                            LOGGER.debug("Database Reader Initial Condition for DB Read  ProcessPercentage : {}, OFFSET_VALUE : {}, OneTimeCheckForZeroOffset : {}, CurrentPendingCount : {}, PendingCountForProcess : {}" ,
-                                    processPercentage, OFFSET_VALUE, oneTimeCheckForZeroOffset, threadPool.getCurrentPendingCount(), getPendingCountForProcess());
+                scheduledExecutorService.scheduleAtFixedRate(() -> {
+                    Map<FieldCategory, HashMap<String, Object>> dataHashMap1 = new HashMap<>();
+                    dataHashMap1.put(FieldCategory.DYN, new HashMap<>());
 
-                            if ((processPercentage > 0.05 && processPercentage != 0) || (processPercentage == 0 && OFFSET_VALUE > 0 && oneTimeCheckForZeroOffset) || threadPool.getCurrentPendingCount() > 0) {
+                    PreparedStatement statement1 = null;
+                    ResultSet scrollableResultSet = null;
+                    try {
+                        Float processPercentage = Float.valueOf((getPendingCountForProcess().floatValue() / Float.valueOf(dbReaderMaxThreadPoolCount * dbReaderMaxRecordsCountPerThreadPool)));
+                        LOGGER.debug("Database Reader Initial Condition for DB Read  ProcessPercentage : {}, OFFSET_VALUE : {}, OneTimeCheckForZeroOffset : {}, CurrentPendingCount : {}, PendingCountForProcess : {}" ,
+                                processPercentage, OFFSET_VALUE, oneTimeCheckForZeroOffset, threadPool.getCurrentPendingCount(), getPendingCountForProcess());
+
+                        if ((processPercentage > 0.05 && processPercentage != 0) || (processPercentage == 0 && OFFSET_VALUE > 0 && oneTimeCheckForZeroOffset) || threadPool.getCurrentPendingCount() > 0) {
+                        } else {
+                            if(appConfig.isTrackerEnabled())
+                                trackerUtil.closeStatement();
+
+                            if(isOffsetFilterParamEnabled) {
+                                FILTER_PARM = trackerUtil.getDatabaseFilterParameter();
+
+                                FILTER_PARM.fields().forEachRemaining(entry -> {
+                                    String key = entry.getKey();
+                                    if (entry.getValue() != null) {
+                                        ObjectNode value = (ObjectNode) entry.getValue();
+                                        String val = value.get("fromValue").asText();
+                                        dataHashMap1.get(FieldCategory.DYN).put(key, val);
+                                    }
+                                });
                             } else {
-                                if(appConfig.isTrackerEnabled())
-                                    trackerUtil.closeStatement();
+                                OFFSET_VALUE = trackerUtil.getDatabaseOffset();
+                            }
 
-                                if(isOffsetFilterParamEnabled) {
-                                    FILTER_PARM = trackerUtil.getDatabaseFilterParameter();
+                            if(OFFSET_VALUE == null)
+                                OFFSET_VALUE = 0L;
 
-                                    FILTER_PARM.fields().forEachRemaining(entry -> {
+                            List<TableRequestDto> tableRequestDtoList = dbImportRequest.getTableDetails();
+                            Collections.sort(tableRequestDtoList);
+                            TableRequestDto tableRequestDto = tableRequestDtoList.get(0);
+                            statement1 = conn.prepareStatement(generateQuery(tableRequestDto, dataHashMap1, fieldsCategoryMap, true));
+                            ResultSet resultSetCount = statement1.executeQuery();
+                            if(resultSetCount.next()) {
+                                TOTAL_RECORDS_FOR_PROCESS.set(resultSetCount.getInt(1) - OFFSET_VALUE.intValue());
+                            }
+
+                            statement1 = conn.prepareStatement(generateQuery(tableRequestDto, dataHashMap1, fieldsCategoryMap, false), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                            scrollableResultSet = statement1.executeQuery();
+
+                            if(scrollableResultSet.last()) {
+                                LOGGER.warn(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "OFFSET Tracker auto disabled if Tracker Table belongs to same Database");
+                                LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Current Row Count from result set is " + scrollableResultSet.getRow());
+                                LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Current OFFSET Value is " + OFFSET_VALUE);
+                                LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Current Fetch Size is " + scrollableResultSet.getFetchSize());
+                                //    TOTAL_RECORDS_FOR_PROCESS += (long) scrollableResultSet.getRow();
+                                if(!isOffsetFilterParamEnabled) {
+                                    OFFSET_VALUE += (long) scrollableResultSet.getRow();
+                                    trackerUtil.updateDatabaseOffset(OFFSET_VALUE);
+                                } else {
+                                    OFFSET_VALUE= 1L;
+                                    ObjectNode obj = (ObjectNode) FILTER_PARM;
+
+                                    ResultSet finalScrollableResultSet = scrollableResultSet;
+                                    obj.fields().forEachRemaining(entry -> {
                                         String key = entry.getKey();
-                                        if (entry.getValue() != null) {
-                                            ObjectNode value = (ObjectNode) entry.getValue();
-                                            String val = value.get("fromValue").asText();
-                                            dataHashMap1.get(FieldCategory.DYN).put(key, val);
+                                        String val = null;
+                                        try {
+                                            val = finalScrollableResultSet.getString(key);
+                                            if (val != null) {
+                                                ObjectNode value = (ObjectNode) entry.getValue();
+
+                                                value.put("fromValue", val);
+                                                obj.set(key, value);
+                                            }
+                                        } catch (SQLException e) {
+                                            LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, " Error While update JSONNode for Filter Parameters for " + key + " Stack Trace : " + ExceptionUtils.getStackTrace(e));
                                         }
                                     });
-                                } else {
-                                    OFFSET_VALUE = trackerUtil.getDatabaseOffset();
+                                    trackerUtil.updateDatabaseFilterParameters(obj);
                                 }
-
-                                if(OFFSET_VALUE == null)
-                                    OFFSET_VALUE = 0L;
-
-                                List<TableRequestDto> tableRequestDtoList = dbImportRequest.getTableDetails();
-                                Collections.sort(tableRequestDtoList);
-                                TableRequestDto tableRequestDto = tableRequestDtoList.get(0);
-                                statement1 = conn.prepareStatement(generateQuery(tableRequestDto, dataHashMap1, fieldsCategoryMap, true));
-                                ResultSet resultSetCount = statement1.executeQuery();
-                                if(resultSetCount.next()) {
-                                    TOTAL_RECORDS_FOR_PROCESS.set(resultSetCount.getInt(1) - OFFSET_VALUE.intValue());
-                                }
-
-                                statement1 = conn.prepareStatement(generateQuery(tableRequestDto, dataHashMap1, fieldsCategoryMap, false), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                                scrollableResultSet = statement1.executeQuery();
-
-                                if(scrollableResultSet.last()) {
-                                    LOGGER.warn(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "OFFSET Tracker auto disabled if Tracker Table belongs to same Database");
-                                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Current Row Count from result set is " + scrollableResultSet.getRow());
-                                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Current OFFSET Value is " + OFFSET_VALUE);
-                                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Current Fetch Size is " + scrollableResultSet.getFetchSize());
-                                //    TOTAL_RECORDS_FOR_PROCESS += (long) scrollableResultSet.getRow();
-                                    if(!isOffsetFilterParamEnabled) {
-                                        OFFSET_VALUE += (long) scrollableResultSet.getRow();
-                                        trackerUtil.updateDatabaseOffset(OFFSET_VALUE);
-                                    } else {
-                                        OFFSET_VALUE= 1L;
-                                        ObjectNode obj = (ObjectNode) FILTER_PARM;
-
-                                        ResultSet finalScrollableResultSet = scrollableResultSet;
-                                        obj.fields().forEachRemaining(entry -> {
-                                            String key = entry.getKey();
-                                            String val = null;
-                                            try {
-                                                val = finalScrollableResultSet.getString(key);
-                                                if (val != null) {
-                                                    ObjectNode value = (ObjectNode) entry.getValue();
-
-                                                    value.put("fromValue", val);
-                                                    obj.set(key, value);
-                                                }
-                                            } catch (SQLException e) {
-                                                LOGGER.error("SESSION_ID", APPLICATION_NAME, APPLICATION_ID, " Error While update JSONNode for Filter Parameters for " + key + " Stack Trace : " + ExceptionUtils.getStackTrace(e));
-                                            }
-                                        });
-                                        trackerUtil.updateDatabaseFilterParameters(obj);
-                                    }
-                                }
-
-                                if (scrollableResultSet.getRow() <= 0) {
-                                    LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Cancelling Database Reader since No Data" + scrollableResultSet.getFetchSize());
-                                    dataReader.cancel();
-                                    threadPool.setInputProcessCompleted(true);
-                                    if(!isOffsetFilterParamEnabled)
-                                        trackerUtil.updateDatabaseOffset(OFFSET_VALUE);
-                                    IS_DATABASE_READ_OPERATION = false;
-                                }
-
-                                scrollableResultSet.beforeFirst();
-
-                                while (scrollableResultSet.next()) {
-                                    try {
-                                        Map<String, Object> resultData = extractResultSet(scrollableResultSet);
-                                        ThreadDBController baseDbThreadController = new ThreadDBController();
-                                        baseDbThreadController.setSetter(setter);
-                                        baseDbThreadController.setResultMap(resultData);
-                                        baseDbThreadController.setProcessor(new ThreadDBProcessor() {
-                                            @Override
-                                            public void processData(ResultSetter setter, Map<String, Object> resultMap) throws Exception {
-                                                LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread -  Entering Data Reader for Data ");
-                                                Map<FieldCategory, HashMap<String, Object>> dataHashMap = new HashMap<>(dataHashMap1);
-                                                populateDataFromResultSet(tableRequestDto, dbImportRequest.getColumnDetails(), resultMap, dataHashMap, fieldsCategoryMap, false);
-                                                LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread -  Completed Populate from DataMap");
-
-                                                if (!trackerUtil.isRecordPresent(dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()), GlobalConfig.getActivityName())) {
-                                                    for (int i = 1; i < tableRequestDtoList.size(); i++) {
-                                                        PreparedStatement statement2 = null;
-                                                        ResultSet resultSet1 = null;
-                                                        try {
-                                                            TableRequestDto tableRequestDto1 = tableRequestDtoList.get(i);
-                                                            statement2 = conn.prepareStatement(generateQuery(tableRequestDto1, dataHashMap, fieldsCategoryMap, false), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
-                                                            resultSet1 = statement2.executeQuery();
-
-                                                            Map<String, Object> resultData1 = new HashMap<>();
-                                                            while (resultSet1 != null && resultSet1.next()) {
-                                                                resultData1.putAll(extractResultSet(resultSet1));
-                                                            }
-
-                                                            populateDataFromResultSet(tableRequestDto1, dbImportRequest.getColumnDetails(), resultData1, dataHashMap, fieldsCategoryMap, false);
-                                                        } finally {
-                                                            if (resultSet1 != null)
-                                                                resultSet1.close();
-
-                                                            if (statement2 != null)
-                                                                statement2.close();
-                                                        }
-                                                    }
-                                                    LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread -  Existing DatabaseUtil");
-                                                    setter.setResult(dataHashMap);
-                                                } else {
-                                                    LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, " Record Already Processed for ref_id" + dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()));
-                                                }
-                                            }
-                                        });
-                                        threadPool.ExecuteTask(baseDbThreadController);
-                                    } catch (Exception e) {
-                                        threadPool.increaseFailedRecordCount();
-                                        LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, " Error While Extracting Data " + (new Gson()).toJson(dataHashMap1) + " Stack Trace : " + ExceptionUtils.getStackTrace(e));
-                                    }
-                                }
-                                oneTimeCheckForZeroOffset = false;
                             }
-                        } catch (Exception e) {
-                            LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, " Error While Extracting Data " + (new Gson()).toJson(dataHashMap1) + " Stack Trace : " + ExceptionUtils.getStackTrace(e));
-                            throw e;
-                        } finally {
+
+                            if (scrollableResultSet.getRow() <= 0) {
+                                LOGGER.debug(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Cancelling Database Reader since No Data" + scrollableResultSet.getFetchSize());
+                                scheduledExecutorService.shutdownNow();
+                                threadPool.setInputProcessCompleted(true);
+                                if(!isOffsetFilterParamEnabled)
+                                    trackerUtil.updateDatabaseOffset(OFFSET_VALUE);
+                                IS_DATABASE_READ_OPERATION = false;
+                            }
+
+                            scrollableResultSet.beforeFirst();
+
+                            while (scrollableResultSet.next()) {
+                                try {
+                                    Map<String, Object> resultData = extractResultSet(scrollableResultSet);
+                                    ThreadDBController baseDbThreadController = new ThreadDBController();
+                                    baseDbThreadController.setSetter(setter);
+                                    baseDbThreadController.setResultMap(resultData);
+                                    baseDbThreadController.setProcessor(new ThreadDBProcessor() {
+                                        @Override
+                                        public void processData(ResultSetter setter, Map<String, Object> resultMap) throws Exception {
+                                            LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread -  Entering Data Reader for Data ");
+                                            Map<FieldCategory, HashMap<String, Object>> dataHashMap = new HashMap<>(dataHashMap1);
+                                            populateDataFromResultSet(tableRequestDto, dbImportRequest.getColumnDetails(), resultMap, dataHashMap, fieldsCategoryMap, false);
+                                            LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread -  Completed Populate from DataMap");
+
+                                            if (!trackerUtil.isRecordPresent(dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()), GlobalConfig.getActivityName())) {
+                                                for (int i = 1; i < tableRequestDtoList.size(); i++) {
+                                                    PreparedStatement statement2 = null;
+                                                    ResultSet resultSet1 = null;
+                                                    try {
+                                                        TableRequestDto tableRequestDto1 = tableRequestDtoList.get(i);
+                                                        statement2 = conn.prepareStatement(generateQuery(tableRequestDto1, dataHashMap, fieldsCategoryMap, false), ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+                                                        resultSet1 = statement2.executeQuery();
+
+                                                        Map<String, Object> resultData1 = new HashMap<>();
+                                                        while (resultSet1 != null && resultSet1.next()) {
+                                                            resultData1.putAll(extractResultSet(resultSet1));
+                                                        }
+
+                                                        populateDataFromResultSet(tableRequestDto1, dbImportRequest.getColumnDetails(), resultData1, dataHashMap, fieldsCategoryMap, false);
+                                                    } finally {
+                                                        if (resultSet1 != null)
+                                                            resultSet1.close();
+
+                                                        if (statement2 != null)
+                                                            statement2.close();
+                                                    }
+                                                }
+                                                LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, "Thread -  Existing DatabaseUtil");
+                                                setter.setResult(dataHashMap);
+                                            } else {
+                                                LOGGER.info(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, " Record Already Processed for ref_id" + dataHashMap.get(FieldCategory.DEMO).get(dbImportRequest.getTrackerInfo().getTrackerColumn()));
+                                            }
+                                        }
+                                    });
+                                    threadPool.ExecuteTask(baseDbThreadController);
+                                } catch (Exception e) {
+                                    threadPool.increaseFailedRecordCount();
+                                    LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, " Error While Extracting Data " + (new Gson()).toJson(dataHashMap1) + " Stack Trace : " + ExceptionUtils.getStackTrace(e));
+                                }
+                            }
+                            oneTimeCheckForZeroOffset = false;
+                        }
+                    } catch (Exception e) {
+                        LOGGER.error(SESSION_ID, APPLICATION_NAME, APPLICATION_ID, " Error While Extracting Data " + (new Gson()).toJson(dataHashMap1) + " Stack Trace : " + ExceptionUtils.getStackTrace(e));
+                        throw new RuntimeException(e);
+                    } finally {
+                        try {
                             if(scrollableResultSet != null)
                                 scrollableResultSet.close();
 
                             if(statement1 != null)
                                 statement1.close();
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
                         }
                     }
-                }, 0,  70000L);
+                },0, 70000L, TimeUnit.MILLISECONDS);
             } else
                 throw new SQLException("Unable to Connect With Database. Please check the Configuration");
         } catch(Exception e) {

@@ -45,8 +45,8 @@ public class CustomizedThreadPoolExecutor {
         TOTAL_FAILED_RECORDS.incrementAndGet();
     }
 
-    private Timer watch = null;
-    private Timer estimateTimer = null;
+    private ScheduledExecutorService scheduledExecutorService2 = null;
+    private ScheduledExecutorService scheduledExecutorService1 = null;
     private String NAME;
     private FixedListQueue<Long> timeConsumptionPerMin = new FixedListQueue<>(100);
     private FixedListQueue<Integer> countOfProcessPerMin = new FixedListQueue<>(100);
@@ -109,41 +109,35 @@ public class CustomizedThreadPoolExecutor {
         };
 
         threadPoolExecutor = new ThreadPoolExecutor(this.corePoolSize, this.maxPoolSize, 0L, TimeUnit.MILLISECONDS, new ArrayBlockingQueue<>(this.queueSize), blockingHandler);
-         if(monitorRequired) {
-            estimateTimer = new Timer("Estimate Time Calculator");
-            estimateTimer.schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    try {
-                        if (TIMECONSUPTIONQUEUE != null && !TIMECONSUPTIONQUEUE.isEmpty()) {
-                            ConcurrentLinkedQueue<Long> listQueue = new ConcurrentLinkedQueue<>(TIMECONSUPTIONQUEUE);
-                            TIMECONSUPTIONQUEUE.clear();
-                            long avgTime = 0l;
-                            Long[] consumedTimeList = listQueue.toArray(new Long[listQueue.size()]);
 
-                            long TotalSum = Arrays.stream(consumedTimeList).mapToLong(Long::longValue).sum();
-                            int noOfRecords = consumedTimeList.length;
-                            if(noOfRecords > 0)
-                                avgTime = TotalSum / noOfRecords;
+        scheduledExecutorService1 = Executors.newSingleThreadScheduledExecutor();
+        scheduledExecutorService1.scheduleAtFixedRate(()->{
+            try {
+                if(monitorRequired) {
+                    if (TIMECONSUPTIONQUEUE != null && !TIMECONSUPTIONQUEUE.isEmpty()) {
+                        ConcurrentLinkedQueue<Long> listQueue = new ConcurrentLinkedQueue<>(TIMECONSUPTIONQUEUE);
+                        TIMECONSUPTIONQUEUE.clear();
+                        long avgTime = 0l;
+                        Long[] consumedTimeList = listQueue.toArray(new Long[listQueue.size()]);
 
-                            timeConsumptionPerMin.add(avgTime);
-                            countOfProcessPerMin.add(noOfRecords);
+                        long TotalSum = Arrays.stream(consumedTimeList).mapToLong(Long::longValue).sum();
+                        int noOfRecords = consumedTimeList.length;
+                        if(noOfRecords > 0)
+                            avgTime = TotalSum / noOfRecords;
 
-                        }
-                    } catch (Exception e){
-                        e.printStackTrace();
+                        timeConsumptionPerMin.add(avgTime);
+                        countOfProcessPerMin.add(noOfRecords);
                     }
                 }
-            }, 0, DELAY_SECONDS);
-        }
-
-        watch = new Timer("ThreadPool_Wathcer");
-        watch.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                printProcessingStatus(monitorRequired);
+            } catch (Exception e){
+                e.printStackTrace();
             }
-        }, 0, 120000L);
+        },0, DELAY_SECONDS, TimeUnit.MILLISECONDS);
+
+        scheduledExecutorService2 = Executors.newSingleThreadScheduledExecutor();
+        scheduledExecutorService2.scheduleAtFixedRate(()-> {
+            printProcessingStatus(monitorRequired);
+        }, 0, 120000L, TimeUnit.MILLISECONDS);
 
         THREAD_POOL_EXECUTOR_LIST.add(this);
     }
@@ -275,20 +269,20 @@ public class CustomizedThreadPoolExecutor {
         return this.isInputProcessCompleted;
     }
 
-    public Timer getWatch() {
-        return watch;
+    public ScheduledExecutorService getWatch() {
+        return scheduledExecutorService2;
     }
 
     public void stopWatch() {
         printProcessingStatus(true);
         if(getWatch() != null)
-            getWatch().cancel();
+            getWatch().shutdownNow();
         if(getEstimateTimer() != null)
-            getEstimateTimer().cancel();
+            getEstimateTimer().shutdownNow();
     }
 
-    public Timer getEstimateTimer() {
-        return estimateTimer;
+    public ScheduledExecutorService getEstimateTimer() {
+        return scheduledExecutorService1;
     }
 
     public Long getCurrentCompletedTask() {
