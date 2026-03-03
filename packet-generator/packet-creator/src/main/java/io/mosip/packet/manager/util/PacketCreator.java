@@ -6,10 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mosip.commons.packet.constants.Biometric;
 import io.mosip.commons.packet.constants.PacketManagerConstants;
 import io.mosip.commons.packet.dto.Document;
-import io.mosip.commons.packet.dto.packet.DeviceMetaInfo;
-import io.mosip.commons.packet.dto.packet.DigitalId;
-import io.mosip.commons.packet.dto.packet.DocumentType;
-import io.mosip.commons.packet.dto.packet.PacketDto;
+import io.mosip.commons.packet.dto.packet.*;
 import io.mosip.kernel.biometrics.constant.BiometricType;
 import io.mosip.kernel.biometrics.entities.BIR;
 import io.mosip.kernel.biometrics.entities.BiometricRecord;
@@ -185,6 +182,7 @@ public class PacketCreator {
                     case "number":
 
                     case "string" :
+                    case "array" :
                         demoMap.put(id, demoDetails.get(id) == null ? "" : String.valueOf(demoDetails.get(id)));
                         break;
                         default:
@@ -287,9 +285,13 @@ public class PacketCreator {
                 bioAttributes.add("unknown");
 
                  for (Map.Entry<String, Object> entry : bioDetails.entrySet()) {
-                    String[] keyEntries = entry.getKey().split("_");
-                    String fieldId = keyEntries[0];
-                    String bioAttribute = keyEntries.length > 1 ? keyEntries[1] : null;
+                     if(!entry.getKey().contains(id))
+                         continue;
+
+                     String[] keyEntries = entry.getKey().split("_");
+                     String fieldId = keyEntries[0];
+                     String bioAttribute = keyEntries.length > 1 ? keyEntries[1] : null;
+                     String bioType = bioAttribute != null ? Biometric.getSingleTypeByAttribute(bioAttribute).value() : null;
 
                     if(fieldId.equals(id) && bioAttributes.contains(bioAttribute)) {
                         if(entry.getValue() != null && !entry.getValue().toString().isEmpty()) {
@@ -297,7 +299,6 @@ public class PacketCreator {
                             if(bioData.getBioData() != null) {
                                 bioAttributes.remove(bioAttribute);
                                 String bioQualityScore = !bioData.getQualityScore().isEmpty() ? bioData.getQualityScore() : null;
-                                String bioType = Biometric.getSingleTypeByAttribute(bioAttribute).value();
 
                                 BiometricsDto biometricDTO = null;
                                 if(isDigitalSignatureRequired) {
@@ -381,6 +382,9 @@ public class PacketCreator {
                                                         } else {
                                                             csvMap.put("EXCEPTION_MARKED_BY_TOOL", entry.getKey());
                                                         }
+
+                                                        exceptionMetaInfo.computeIfAbsent(fieldId, k->new HashMap<>()).put(bioAttribute,
+                                                                new BiometricsException(bioType, bioAttribute, "Poor Biometric Quality", "Temporary", subtype));
                                                     } else
                                                         throw new ValidationFailedException(PlatformErrorMessages.MGR_PKT_CRT_IGNORE_EXCEPTION.getCode(), String.format(PlatformErrorMessages.MGR_PKT_CRT_IGNORE_EXCEPTION.getMessage(), biometricType.value().toUpperCase()));
                                                 } else
@@ -427,6 +431,8 @@ public class PacketCreator {
                                 }
                                 capturedMetaInfo.get(id).put(bioAttribute, new BiometricsMetaInfoDto(1, false, bir.getBdbInfo().getIndex()));
                                 bioAttributes.remove(bioAttribute);
+                                exceptionMetaInfo.computeIfAbsent(fieldId, k->new HashMap<>()).put(bioAttribute,
+                                        new BiometricsException(bioType, bioAttribute, "Missing Biometric Data", "Temporary", subtype));
                             }
                        } else {
                             BiometricsDto biometricDTO = new BiometricsDto(bioAttribute, null, Double.parseDouble("0"));
@@ -444,6 +450,8 @@ public class PacketCreator {
                             }
                             capturedMetaInfo.get(id).put(bioAttribute, new BiometricsMetaInfoDto(1, false, bir.getBdbInfo().getIndex()));
                             bioAttributes.remove(bioAttribute);
+                            exceptionMetaInfo.computeIfAbsent(fieldId, k->new HashMap<>()).put(bioAttribute,
+                                    new BiometricsException(bioType, bioAttribute, "Missing Data", "Temporary", subtype));
                         }
                     }
                 }
@@ -453,6 +461,7 @@ public class PacketCreator {
                     bioAttributes.clear();
 
                 for (String bioAttribute : bioAttributes) {
+                    String bioType = Biometric.getSingleTypeByAttribute(bioAttribute).value();
                     BiometricsDto biometricDTO = new BiometricsDto(bioAttribute, null, Double.parseDouble("0"));
                     biometricDTO.setSpecVersion(bioSpecVaersion);
                     biometricDTO.setCaptured(false);
@@ -467,19 +476,12 @@ public class PacketCreator {
                         capturedMetaInfo.put(id, new HashMap<>());
                     }
                     capturedMetaInfo.get(id).put(bioAttribute, new BiometricsMetaInfoDto(1, false, bir.getBdbInfo().getIndex()));
+                    exceptionMetaInfo.computeIfAbsent(id, k->new HashMap<>()).put(bioAttribute,
+                            new BiometricsException(bioType, bioAttribute, "Biometric Exception", "Temporary", subtype));
                 }
             }
 
         }
-
-  /*      for(String key : registrationDTO.getBiometricExceptions().keySet()) {
-            String fieldId = key.split("_")[0];
-            String bioAttribute = key.split("_")[1];
-            BIR bir = birBuilder.buildBIR(new BiometricsDto(bioAttribute, null, 0));
-            capturedBiometrics.getOrDefault(fieldId, new ArrayList<>()).add(bir);
-            exceptionMetaInfo.getOrDefault(fieldId, new HashMap<>()).put(bioAttribute,
-                    registrationDTO.getBiometricExceptions().get(key));
-        } */
 
         capturedBiometrics.keySet().forEach(fieldId -> {
             BiometricRecord biometricRecord = new BiometricRecord();
