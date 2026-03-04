@@ -46,6 +46,8 @@ import static io.mosip.packet.core.constant.RegistrationConstants.APPLICATION_NA
 public class DataProcessApplication {
 
     public static void main(String[] args) {
+        //TODO find out how many cpu allocated and how many we created. how many safe for execution
+
         Logger LOGGER = DataProcessLogger.getLogger(DataProcessApplication.class);
         ConfigurableApplicationContext context = SpringApplication.run(DataProcessApplication.class, args);
         try {
