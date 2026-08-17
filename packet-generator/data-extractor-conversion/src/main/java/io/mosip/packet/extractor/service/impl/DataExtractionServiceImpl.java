@@ -94,9 +94,6 @@ public class DataExtractionServiceImpl implements DataExtractionService {
     @Autowired
     private DataRestClientService dataRestClientService;
 
-    private boolean uploadProcessStarted = false;
-    private boolean isUploadInProgress = false;
-
     private Map<String, HashMap<String, String>> fieldsCategoryMap = new HashMap<>();
 
     @Autowired

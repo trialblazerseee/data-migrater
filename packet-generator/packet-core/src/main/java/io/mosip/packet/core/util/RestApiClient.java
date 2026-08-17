@@ -155,7 +155,7 @@ public class RestApiClient {
 	 * @return the t
 	 */
 	@SuppressWarnings("unchecked")
-	public <T> T postApi(String uri, MediaType mediaType, Object requestType, Class<?> responseClass, LoginType loginType, String trackerRefId) throws Exception {
+	public <T> T postApi(String uri, MediaType mediaType, Object requestType, Class<T> responseClass, LoginType loginType, String trackerRefId) throws Exception {
 		this.loginType = loginType;
 		T result = null;
 		ResponseEntity<T> response = null;
@@ -163,7 +163,7 @@ public class RestApiClient {
 			logger.info(LoggerFileConstant.SESSIONID.toString(), APPLICATION_NAME,
 					APPLICATION_ID, uri);
 			Long startTime = System.nanoTime();
-			response = (ResponseEntity<T>) localRestTemplate.postForObject(uri, setRequestHeader(requestType, mediaType), responseClass);
+			response = localRestTemplate.exchange(uri, HttpMethod.POST, setRequestHeader(requestType, mediaType), responseClass);
 			logger.debug("SESSION_ID", APPLICATION_NAME, "postApi()", "Time Taken for POST Api Call " + uri.toString() + " Reference Id: " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
 			if(response.getStatusCode().is2xxSuccessful()) {
 				result = response.getBody();
@@ -211,7 +211,7 @@ public class RestApiClient {
 			logger.info(LoggerFileConstant.SESSIONID.toString(), APPLICATION_NAME,
 					APPLICATION_ID, uri);
 			Long startTime = System.nanoTime();
-			response = (ResponseEntity<T>) localRestTemplate.patchForObject(uri, setRequestHeader(requestType, mediaType), responseClass);
+			response = (ResponseEntity<T>) localRestTemplate.exchange(uri, HttpMethod.PATCH, setRequestHeader(requestType, mediaType), responseClass);
 			logger.debug("SESSION_ID", APPLICATION_NAME, "patchApi()", "Time Taken for PATCH Api Call " + uri.toString() + " Reference Id: " + trackerRefId + " (" + TimeUnit.MILLISECONDS.convert(System.nanoTime()-startTime, TimeUnit.NANOSECONDS) + " ms)");
 			if(response.getStatusCode().is2xxSuccessful()) {
 				result = response.getBody();

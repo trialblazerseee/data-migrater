@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
 
-	<property name="LOG_PATTERN" value="%d %p [%t] %c{5} : %m%n" />
+	<property name="LOG_PATTERN" value="%d %p [%t] [%X{logType}] %logger : %m%n" />
 	<property name="APP_LOG_ROOT" value="logs"/>
 
-	<appender name="applicationLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	<!-- <appender name="applicationLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>${APP_LOG_ROOT}/migrator.log</file>
 		<encoder>
 			<pattern>${LOG_PATTERN}</pattern>
@@ -17,6 +17,53 @@
 		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
 			<maxFileSize>100MB</maxFileSize>
 		</triggeringPolicy>
+	</appender>
+
+	<!- Batch Log ->
+	<appender name="batchLog" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>${APP_LOG_ROOT}/batch.log</file>
+		<encoder>
+			<pattern>${LOG_PATTERN}</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>${APP_LOG_ROOT}/batch-%i.log</fileNamePattern>
+			<minIndex>1</minIndex>
+			<maxIndex>20</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>100MB</maxFileSize>
+		</triggeringPolicy>
+	</appender> -->
+
+	<appender name="BATCH_SIFT" class="ch.qos.logback.classic.sift.SiftingAppender">
+
+		<discriminator class="ch.qos.logback.classic.sift.MDCBasedDiscriminator">
+			<Key>logType</Key>
+			<DefaultValue>migrator</DefaultValue>
+		</discriminator>
+
+		<sift>
+			<appender name="FILE-${logType}"
+					  class="ch.qos.logback.core.rolling.RollingFileAppender">
+
+				<file>${APP_LOG_ROOT}/${logType}.log</file>
+
+				<encoder>
+					<pattern>${LOG_PATTERN}</pattern>
+				</encoder>
+
+				<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+					<fileNamePattern>${APP_LOG_ROOT}/${logType}-%i.log</fileNamePattern>
+					<minIndex>1</minIndex>
+					<maxIndex>20</maxIndex>
+				</rollingPolicy>
+
+				<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+					<maxFileSize>100MB</maxFileSize>
+				</triggeringPolicy>
+
+			</appender>
+		</sift>
 	</appender>
 
 	<!-- Error-only log -->
@@ -36,12 +83,17 @@
 			<maxIndex>10</maxIndex>
 		</rollingPolicy>
 		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
-			<maxFileSize>50MB</maxFileSize>
+			<maxFileSize>100MB</maxFileSize>
 		</triggeringPolicy>
 	</appender>
 
+	<!-- Spring Batch logs
+	<logger name="org.springframework.batch" level="INFO" additivity="false">
+		<appender-ref ref="batchLog"/>
+	</logger>-->
+
 	<root level="INFO">
-		<appender-ref ref="applicationLog"/>
 		<appender-ref ref="errorLog"/>
+		<appender-ref ref="BATCH_SIFT"/>
 	</root>
 </configuration>

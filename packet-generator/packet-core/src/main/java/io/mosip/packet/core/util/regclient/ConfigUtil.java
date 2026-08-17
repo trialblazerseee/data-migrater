@@ -108,14 +108,13 @@ public class ConfigUtil {
                 configUtil.selectedLanguages = env.getProperty("mosip.selected.languages");
                 IS_TPM_AVAILABLE = clientCryptoFacade.getClientSecurity().isTPMInstance();
 
+                System.out.println("Machine Name : " + configUtil.machineName);
                 if(!IS_TPM_AVAILABLE) {
-                    String machineName = configUtil.machineName;
-
-                    if (machineName == null || machineName.isEmpty())
+                    if (configUtil.machineName == null || configUtil.machineName.isEmpty())
                         throw new RuntimeException("MachineName is null or empty!");
 
                     List<HashMap<String, Object>> machines = null;
-                    RequestWrapper wrapper = prepareMachineSearchDto(machineName);
+                    RequestWrapper wrapper = prepareMachineSearchDto(configUtil.machineName);
                     ResponseWrapper responseWrapper = (ResponseWrapper<PageDto>) restApiClient.postApi(ApiName.MASTER_MACHINE_SEARCH,null, null, wrapper, ResponseWrapper.class, MediaType.APPLICATION_JSON, REFERENCE_ID);
 
                     if(responseWrapper.getErrors() != null && responseWrapper.getErrors().size() > 0) {
@@ -128,7 +127,7 @@ public class ConfigUtil {
                         machines = (List<HashMap<String, Object>>) response.get("data");
 
                         if(machines == null) {
-                            createMachine(machineName);
+                            createMachine(configUtil.machineName);
                         } else {
                             for(HashMap<String, Object> map : machines) {
                                 if(map.get("isActive").equals(true)) {

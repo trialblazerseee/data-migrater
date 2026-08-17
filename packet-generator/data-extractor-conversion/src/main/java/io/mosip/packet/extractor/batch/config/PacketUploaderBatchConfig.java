@@ -1,6 +1,6 @@
 package io.mosip.packet.extractor.batch.config;
 
-import io.mosip.packet.extractor.batch.impl.upload.PacketUploaderExecutionListener;
+import io.mosip.packet.extractor.batch.impl.upload.BatchExecutionListener;
 import io.mosip.packet.extractor.batch.impl.upload.PacketUploaderTasklet;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -30,7 +30,7 @@ public class PacketUploaderBatchConfig {
 
     @Bean
     @Qualifier("packetUploaderJob")
-    public Job packetUploaderJob(PacketUploaderExecutionListener listener) {
+    public Job packetUploaderJob(BatchExecutionListener listener) {
         return jobBuilderFactory.get("packetUploaderJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(listener)

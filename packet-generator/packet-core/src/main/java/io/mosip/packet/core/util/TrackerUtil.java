@@ -359,7 +359,7 @@ public class TrackerUtil {
                 resultSet = statement.executeQuery("SELECT HASH_VALUE FROM " + OFFSET_TRACKER_TABLE_NAME + " WHERE RUN_INSTANCE_ID = '" + appConfig.getPredefinedRunInstanceId() + "'");
                 while(resultSet.next()) {
                     String hashVal = resultSet.getString(1);
-                    assert(hashVal != null);
+                    assert(hashVal != null && !hashVal.isEmpty());
                     hashValList.add(hashVal);
                 }
                 return hashValList;
